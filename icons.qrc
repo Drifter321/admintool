@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/alienswarm.png</file>
+        <file>icons/csgo.png</file>
+        <file>icons/cspromod.png</file>
+        <file>icons/dod.png</file>
+        <file>icons/dota2.png</file>
+        <file>icons/fortressforever.gif</file>
+        <file>icons/garrysmod.png</file>
+        <file>icons/hl2.gif</file>
+        <file>icons/insurgency.gif</file>
+        <file>icons/l4d.png</file>
+        <file>icons/nucleardawn.png</file>
+        <file>icons/rust.png</file>
+        <file>icons/tf.png</file>
+        <file>icons/zps.gif</file>
+        <file>icons/czero.gif</file>
+        <file>icons/cstrike.gif</file>
+        <file>icons/css.png</file>
+        <file>icons/dods.png</file>
+        <file>icons/ark.png</file>
+        <file>icons/l4d2.gif</file>
+        <file>icons/tf2.png</file>
+        <file>icons/tfc.png</file>
+        <file>icons/lock.png</file>
+        <file>icons/vac.png</file>
+    </qresource>
+</RCC>

@@ -17,6 +17,7 @@
 moc_*
 *.app
 qrc_*
+Makefile*
 
 # Build directories
 debug*/

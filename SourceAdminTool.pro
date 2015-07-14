@@ -41,4 +41,11 @@ FORMS    += mainwindow.ui
 RESOURCES += \
     icons.qrc
 
-RC_FILE = sourceadmin.rc
+win32
+{
+    RC_FILE = sourceadmin.rc
+}
+macx
+{
+    ICON = icons/psyduck.icns
+}

@@ -84,34 +84,18 @@ void MainWindow::browserTableItemSelected()
 {
     if(this->ui->browserTable->selectedItems().size() == 0)
     {
-        this->ui->rconPassword->setEnabled(false);
-        this->ui->commandText->setEnabled(false);
-        this->ui->commandOutput->setEnabled(false);
-        this->ui->rconSave->setEnabled(false);
-        this->ui->rconSave->setChecked(false);
-        this->ui->rconLogin->setEnabled(false);
+        this->SetRconEnabled(false);
         return;
     }
 
-    this->ui->rconPassword->setEnabled(true);
-    this->ui->commandText->setEnabled(true);
-    this->ui->commandOutput->setEnabled(true);
-    this->ui->rconSave->setEnabled(true);
-    this->ui->rconLogin->setEnabled(true);
+    this->SetRconEnabled(true);
 
     QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
     int index = item->text().toInt();
 
-    this->ui->rconSave->blockSignals(true);
-    this->ui->rconPassword->blockSignals(true);
-    this->ui->commandOutput->blockSignals(true);
-    this->ui->rconSave->setChecked(serverList.at(index-1)->saveRcon);
-    this->ui->rconPassword->setText(serverList.at(index -1)->rconPassword);
-    this->ui->commandOutput->setPlainText(serverList.at(index-1)->rconOutput);
-    this->ui->commandOutput->moveCursor(QTextCursor::End);
-    this->ui->rconSave->blockSignals(false);
-    this->ui->rconPassword->blockSignals(false);
-    this->ui->commandOutput->blockSignals(false);
+    this->SetRconSignals(true);
+    this->RestoreRcon(index-1);
+    this->SetRconSignals(false);
 
     this->UpdateSelectedItemInfo(true, true);
 }

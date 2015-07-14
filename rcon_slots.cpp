@@ -174,3 +174,26 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
         info->rconOutput.append(result);
     }
 }
+
+void MainWindow::SetRconSignals(bool block)
+{
+    this->ui->rconSave->blockSignals(block);
+    this->ui->rconPassword->blockSignals(block);
+    this->ui->commandOutput->blockSignals(block);
+}
+
+void MainWindow::RestoreRcon(int index)
+{
+    this->ui->rconSave->setChecked(serverList.at(index)->saveRcon);
+    this->ui->rconPassword->setText(serverList.at(index)->rconPassword);
+    this->ui->commandOutput->setPlainText(serverList.at(index)->rconOutput);
+    this->ui->commandOutput->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::SetRconEnabled(bool enabled)
+{
+    this->ui->rconSave->setEnabled(enabled);
+    this->ui->rconPassword->setEnabled(enabled);
+    this->ui->commandOutput->setEnabled(enabled);
+    this->ui->commandText->setEnabled(enabled);
+}

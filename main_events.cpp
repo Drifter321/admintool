@@ -44,9 +44,6 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
                     if(other == index)
                     {
                         this->ui->browserTable->removeRow(i);
-                        settings->beginGroup("servers");
-                        settings->remove(serverList.at(index-1)->ipPort);
-                        settings->endGroup();
                         break;
                     }
                 }

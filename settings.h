@@ -14,8 +14,8 @@ public:
     void ReadSettings();
     void SaveSettings();
     void GetAppIDListMap();
-private:
     QSettings *pSettings;
+private:
     QSettings *pAppIds;
     MainWindow *pMain;
 };

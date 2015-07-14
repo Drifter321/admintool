@@ -61,5 +61,8 @@ private:
     QTimer *updateTimer;
     void ConnectSlots();
     void HookEvents();
+    void SetRconSignals(bool block);
+    void RestoreRcon(int index);
+    void SetRconEnabled(bool);
 };
 #endif // MAINWINDOW_H

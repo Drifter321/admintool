@@ -280,6 +280,9 @@
        </widget>
       </widget>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="tabPosition">
         <enum>QTabWidget::South</enum>
        </property>
@@ -287,6 +290,9 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="rconTab">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <attribute name="title">
          <string>RCon</string>
         </attribute>
@@ -322,7 +328,7 @@
                <item>
                 <widget class="QLineEdit" name="rconPassword">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -344,7 +350,7 @@
                <item>
                 <widget class="QCheckBox" name="rconSave">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -360,7 +366,7 @@
                <item>
                 <widget class="QPushButton" name="rconLogin">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>Login</string>
@@ -372,7 +378,7 @@
              <item>
               <widget class="QPlainTextEdit" name="commandOutput">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="undoRedoEnabled">
                 <bool>false</bool>
@@ -409,7 +415,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="defaultUp">

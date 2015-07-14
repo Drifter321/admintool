@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.0
+** Created by: Qt User Interface Compiler version 5.4.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -184,9 +184,11 @@ public:
         splitter->addWidget(rulesSplitter);
         tabWidget = new QTabWidget(splitter);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        tabWidget->setEnabled(true);
         tabWidget->setTabPosition(QTabWidget::South);
         rconTab = new QWidget();
         rconTab->setObjectName(QStringLiteral("rconTab"));
+        rconTab->setEnabled(true);
         gridLayout_2 = new QGridLayout(rconTab);
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -214,7 +216,7 @@ public:
 
         rconPassword = new QLineEdit(rconTab);
         rconPassword->setObjectName(QStringLiteral("rconPassword"));
-        rconPassword->setEnabled(false);
+        rconPassword->setEnabled(true);
         sizePolicy.setHeightForWidth(rconPassword->sizePolicy().hasHeightForWidth());
         rconPassword->setSizePolicy(sizePolicy);
         rconPassword->setBaseSize(QSize(300, 20));
@@ -224,7 +226,7 @@ public:
 
         rconSave = new QCheckBox(rconTab);
         rconSave->setObjectName(QStringLiteral("rconSave"));
-        rconSave->setEnabled(false);
+        rconSave->setEnabled(true);
         sizePolicy.setHeightForWidth(rconSave->sizePolicy().hasHeightForWidth());
         rconSave->setSizePolicy(sizePolicy);
 
@@ -232,7 +234,7 @@ public:
 
         rconLogin = new QPushButton(rconTab);
         rconLogin->setObjectName(QStringLiteral("rconLogin"));
-        rconLogin->setEnabled(false);
+        rconLogin->setEnabled(true);
 
         rconLeft->addWidget(rconLogin);
 
@@ -241,7 +243,7 @@ public:
 
         commandOutput = new QPlainTextEdit(rconTab);
         commandOutput->setObjectName(QStringLiteral("commandOutput"));
-        commandOutput->setEnabled(false);
+        commandOutput->setEnabled(true);
         commandOutput->setUndoRedoEnabled(false);
         commandOutput->setReadOnly(true);
 
@@ -268,7 +270,7 @@ public:
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setEnabled(true);
-        menuBar->setGeometry(QRect(0, 0, 1024, 21));
+        menuBar->setGeometry(QRect(0, 0, 1024, 22));
         menuBar->setDefaultUp(false);
         menuBar->setNativeMenuBar(true);
         menuFile = new QMenu(menuBar);

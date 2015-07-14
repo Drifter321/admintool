@@ -70,8 +70,8 @@ void Settings::SetDefaultSettings()
     pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
     pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
     pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
-    pMain->GetUi()->browserTable->horizontalHeaderItem(6)->setTextAlignment(Qt::AlignLeft);
     pMain->GetUi()->browserTable->horizontalHeaderItem(5)->setTextAlignment(Qt::AlignLeft);
+    pMain->GetUi()->browserTable->horizontalHeaderItem(6)->setTextAlignment(Qt::AlignLeft);
 
     intList.clear();
 
@@ -165,6 +165,7 @@ void Settings::ReadSettings()
         }
     }
     pSettings->endGroup();
+    this->SaveSettings();//Call this again to make sure we cleaned up any garbage entries
 }
 
 void Settings::SaveSettings()
@@ -188,9 +189,12 @@ void Settings::SaveSettings()
 
     pSettings->setValue("darkTheme", pMain->GetUi()->menuTheme->actions().at(0)->isChecked());
 
+    pSettings->beginGroup("servers");
+
+    pSettings->remove("");
+
     if(serverList.size() > 0)
     {
-        pSettings->beginGroup("servers");
         for(int i = 0; i < serverList.size(); i++)
         {
             ServerInfo *info = serverList.at(i);
@@ -206,6 +210,7 @@ void Settings::SaveSettings()
             }
             pSettings->setValue(QString::number(i+1), list);
         }
-        pSettings->endGroup();
     }
+
+    pSettings->endGroup();
 }

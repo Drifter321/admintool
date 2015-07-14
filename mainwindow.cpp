@@ -16,9 +16,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Source Admin Tool");
 
+    this->SetRconEnabled(false);
     settings = new Settings(this);
     settings->SetDefaultSettings();
     settings->ReadSettings();
+
+    if(this->ui->browserTable->rowCount() > 0)
+    {
+        this->ui->browserTable->selectRow(0);
+        this->SetRconEnabled(true);
+        this->SetRconSignals(true);
+        this->RestoreRcon(0);
+        this->SetRconSignals(false);
+    }
 
     this->HookEvents();
     this->ConnectSlots();

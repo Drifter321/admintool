@@ -12,6 +12,11 @@
 *.sdf
 *.suo
 *.user*
+*.o
+*.qmake*
+moc_*
+*.app
+qrc_*
 
 # Build directories
 debug*/

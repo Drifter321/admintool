@@ -1,14 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "ui_mainwindow.h"
 #include <QDebug>
 #include <QMainWindow>
 #include <QSplitter>
 #include <QStringList>
 #include <QHostAddress>
 #include <QTableWidget>
-#include <QTimer>
 #include "query.h"
 #include "serverinfo.h"
 
@@ -46,11 +44,11 @@ public slots:
     void RulesInfoReady(QList<RulesInfo> *, QTableWidgetItem *);
     void RconAuthReady(ServerInfo *info);
     void RconOutput(ServerInfo *info, QByteArray res);
-    void on_actionDark_Theme_triggered();
+    void darkThemeTriggered();
 
 private slots:
-    void on_actionAdd_Server_triggered();
-    void on_browserTable_itemSelectionChanged();
+    void addServer();
+    void browserTableItemSelected();
     void TimedUpdate();
     void processCommand();
     void passwordUpdated(const QString &);
@@ -61,8 +59,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QTimer *updateTimer;
+    void ConnectSlots();
+    void HookEvents();
 };
-
-extern QPalette defaultPalette;
-
 #endif // MAINWINDOW_H

@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include <QSettings>
+#include <QMAp>
 
 class Settings : public QSettings
 {
@@ -19,7 +20,5 @@ private:
     MainWindow *pMain;
 };
 
-extern QList<ServerInfo *> serverList;
-extern QMap<int, QString> appIDMap;
 #endif // SETTINGS
 

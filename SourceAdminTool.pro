@@ -20,7 +20,11 @@ SOURCES += main.cpp\
     worker.cpp \
     customitems.cpp \
     rcon.cpp \
-    simplecrypt.cpp
+    simplecrypt.cpp \
+    main_events.cpp \
+    main_slots.cpp \
+    rcon_slots.cpp \
+    query_slots.cpp
 
 HEADERS  += mainwindow.h \
     query.h \
@@ -29,7 +33,8 @@ HEADERS  += mainwindow.h \
     worker.h \
     customitems.h \
     rcon.h \
-    simplecrypt.h
+    simplecrypt.h \
+    ui_mainwindow.h
 
 FORMS    += mainwindow.ui
 

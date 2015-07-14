@@ -6,6 +6,12 @@
 #include <QImage>
 #include <QMap>
 
+QColor errorColor(255, 60, 60);
+QColor queryingColor(80, 170, 80);
+QMap<int, QString> appIDMap;
+Settings *settings;
+QList<ServerInfo *> serverList;
+
 Settings::Settings(MainWindow *main)
 {
     this->pMain = main;
@@ -110,7 +116,7 @@ void Settings::ReadSettings()
     if(darkTheme)
     {
         pMain->GetUi()->menuTheme->actions().at(0)->setChecked(true);
-        pMain->on_actionDark_Theme_triggered();
+        pMain->darkThemeTriggered();
     }
 
     pSettings->beginGroup("servers");
@@ -137,7 +143,7 @@ void Settings::ReadSettings()
             QTableWidgetItem *id = new QTableWidgetItem();
             id->setData(Qt::DisplayRole, serverList.size());
 
-            item->setTextColor(QColor(80, 170, 80));
+            item->setTextColor(queryingColor);
             item->setText(QString("Querying server %1...").arg(info->ipPort));
             pMain->GetUi()->browserTable->setItem(row, 0, id);
             pMain->GetUi()->browserTable->setItem(row, 4, item);

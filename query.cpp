@@ -2,7 +2,7 @@
 #include "worker.h"
 #include "mainwindow.h"
 
-char *GetStringFromStream(QDataStream &stream)
+QString GetStringFromStream(QDataStream &stream)
 {
     qint64 pos = stream.device()->pos();
     qint64 bytes = stream.device()->bytesAvailable();
@@ -16,14 +16,14 @@ char *GetStringFromStream(QDataStream &stream)
         {
             qint64 size = bytes - stream.device()->bytesAvailable();
 
-            char *ret = new char[size];
+            char ret[size];
 
             stream.device()->reset();
             stream.skipRawData(pos);
 
             stream.readRawData(ret, size);
 
-            return ret;
+            return QString(ret);
         }
 
     }while(stream.device()->bytesAvailable() > 0);
@@ -190,7 +190,7 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
             data.skipRawData(sizeof(qint8)*3);
         }
 
-        delete [] GetStringFromStream(data);//Version
+        GetStringFromStream(data);//Version
 
         qint8 edf;
         data >> edf;
@@ -206,11 +206,11 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
         if(edf & 0x40)
         {
             data.skipRawData(sizeof(qint16));
-            delete [] GetStringFromStream(data);
+            GetStringFromStream(data);
         }
         if(edf & 0x20)
         {
-            delete [] GetStringFromStream(data);
+            GetStringFromStream(data);
         }
         if(edf & 0x01)
         {
@@ -223,7 +223,7 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
     else if(header == -1 && check == A2S_INFO_GOLDSRC_CHECK)//Welp
     {
         this->success = true;
-        delete [] GetStringFromStream(data); // Address
+        GetStringFromStream(data); // Address
         this->hostname = GetStringFromStream(data);
         this->map = GetStringFromStream(data);
         this->mod = GetStringFromStream(data);
@@ -244,8 +244,8 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
         if(mod)
         {
             //Skip more stuff but we cant assume a size for strings so read 2
-            delete [] GetStringFromStream(data);
-            delete [] GetStringFromStream(data);
+            GetStringFromStream(data);
+            GetStringFromStream(data);
 
             //Skip known size
             data.skipRawData(sizeof(qint8)*3 + sizeof(qint32)*2);

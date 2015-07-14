@@ -30,17 +30,10 @@ class InfoReply
 {
 public:
     InfoReply(QByteArray, ServerInfo *);
-    ~InfoReply()
-    {
-        delete [] hostname;
-        delete [] map;
-        delete [] mod;
-        delete [] gamedesc;
-    }
-    char *hostname;
-    char *map;
-    char *mod;
-    char *gamedesc;
+    QString hostname;
+    QString map;
+    QString mod;
+    QString gamedesc;
     qint32 appId;
     quint8 players;
     quint8 maxplayers;
@@ -56,7 +49,7 @@ class PlayerInfo
 {
 public:
     //~PlayerInfo(){delete [] name;}
-    char *name;
+    QString name;
     qint32 score;
     float time;
 };
@@ -65,8 +58,8 @@ class RulesInfo
 {
 public:
    //~RulesInfo(){delete [] name; delete[] value;}
-   char *name;
-   char *value;
+   QString name;
+   QString value;
 };
 
 class InfoQuery : public QObject
@@ -117,6 +110,6 @@ QList<PlayerInfo> *GetPlayerReply(ServerInfo *);
 InfoReply *GetInfoReply(ServerInfo *);
 QList<RulesInfo> *GetRulesReply(ServerInfo *);
 QString SecondsToDisplayTime(float time);
-char *GetStringFromStream(QDataStream &stream);
+QString GetStringFromStream(QDataStream &stream);
 #endif // INFOQUERY
 

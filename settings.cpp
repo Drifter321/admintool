@@ -24,6 +24,7 @@ Settings::~Settings()
 {
     this->SaveSettings();
     delete this->pSettings;
+    delete this->pAppIds;
 }
 
 void Settings::GetAppIDListMap()

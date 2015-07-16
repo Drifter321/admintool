@@ -16,14 +16,16 @@ QString GetStringFromStream(QDataStream &stream)
         {
             qint64 size = bytes - stream.device()->bytesAvailable();
 
-            char ret[size];
+            char *ret = new char[size];
 
             stream.device()->reset();
             stream.skipRawData(pos);
 
             stream.readRawData(ret, size);
 
-            return QString(ret);
+            QString res = QString(ret);
+            delete [] ret;
+            return res;
         }
 
     }while(stream.device()->bytesAvailable() > 0);

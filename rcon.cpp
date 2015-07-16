@@ -19,6 +19,7 @@ RconQuery::RconQuery(MainWindow *main, ServerInfo *info)
 void RconQuery::socketDisconnected()
 {
     this->isAuthed = false;
+    this->socket->readAll();
 }
 
 void RconQuery::socketReadyRead()
@@ -70,7 +71,7 @@ void RconQuery::socketReadyRead()
 
         size = 0;
 
-    }while(this->socket->bytesAvailable() > 4);
+    }while(this->socket->bytesAvailable() > 4 && this->socket->state() == QAbstractSocket::ConnectedState);
 }
 
 void RconQuery::auth()
@@ -79,6 +80,8 @@ void RconQuery::auth()
     {
         this->socket->connectToHost(this->server->host, this->server->port);
     }
+
+    this->socket->readAll();
 
     if(this->server->rconPassword.length() == 0 || this->isAuthed)
         return;

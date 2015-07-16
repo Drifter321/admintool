@@ -18,6 +18,7 @@ moc_*
 *.app
 qrc_*
 Makefile*
+*.ini
 
 # Build directories
 debug*/

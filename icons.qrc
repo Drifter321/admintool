@@ -23,5 +23,7 @@
         <file>icons/tfc.png</file>
         <file>icons/lock.png</file>
         <file>icons/vac.png</file>
+        <file>icons/lock-light.png</file>
+        <file>icons/vac-light.png</file>
     </qresource>
 </RCC>

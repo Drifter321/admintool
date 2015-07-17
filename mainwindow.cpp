@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if(this->ui->browserTable->rowCount() > 0)
     {
         this->ui->browserTable->selectRow(0);
+        this->browserTableItemSelected();
         this->SetRconEnabled(true);
         this->SetRconSignals(true);
         this->RestoreRcon(0);
@@ -45,7 +46,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//SERVER EVENT HANDLERS
 AddServerError MainWindow::CheckServerList(QString server)
 {
     ServerInfo info(server);
@@ -62,4 +62,22 @@ AddServerError MainWindow::CheckServerList(QString server)
     }
 
     return AddServerError_None;
+}
+
+QImage MainWindow::GetVACImage()
+{
+    if(this->ui->actionDark_Theme->isChecked())
+    {
+        return QImage(":/icons/icons/vac.png");
+    }
+    return QImage(":/icons/icons/vac-light.png");
+}
+
+QImage MainWindow::GetLockImage()
+{
+    if(this->ui->actionDark_Theme->isChecked())
+    {
+        return QImage(":/icons/icons/lock.png");
+    }
+    return QImage(":/icons/icons/lock-light.png");
 }

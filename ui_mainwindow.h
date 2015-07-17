@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.2
+** Created by: Qt User Interface Compiler version 5.5.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -122,7 +122,7 @@ public:
         browserTable->setWordWrap(false);
         browserTable->setColumnCount(7);
         splitter->addWidget(browserTable);
-        browserTable->horizontalHeader()->setHighlightSections(true);
+        browserTable->horizontalHeader()->setHighlightSections(false);
         browserTable->horizontalHeader()->setStretchLastSection(false);
         browserTable->verticalHeader()->setVisible(false);
         browserTable->verticalHeader()->setDefaultSectionSize(20);
@@ -142,6 +142,7 @@ public:
         rulesTable->setHorizontalHeaderItem(1, __qtablewidgetitem8);
         rulesTable->setObjectName(QStringLiteral("rulesTable"));
         rulesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        rulesTable->setProperty("showDropIndicator", QVariant(false));
         rulesTable->setDragDropOverwriteMode(false);
         rulesTable->setSelectionMode(QAbstractItemView::SingleSelection);
         rulesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -150,8 +151,10 @@ public:
         rulesTable->setWordWrap(false);
         rulesSplitter->addWidget(rulesTable);
         rulesTable->horizontalHeader()->setDefaultSectionSize(250);
+        rulesTable->horizontalHeader()->setHighlightSections(false);
         rulesTable->verticalHeader()->setVisible(false);
         rulesTable->verticalHeader()->setDefaultSectionSize(20);
+        rulesTable->verticalHeader()->setHighlightSections(false);
         rulesTable->verticalHeader()->setMinimumSectionSize(20);
         playerTable = new QTableWidget(rulesSplitter);
         if (playerTable->columnCount() < 4)
@@ -178,9 +181,12 @@ public:
         playerTable->setWordWrap(false);
         playerTable->setColumnCount(4);
         rulesSplitter->addWidget(playerTable);
+        playerTable->horizontalHeader()->setHighlightSections(false);
         playerTable->horizontalHeader()->setStretchLastSection(false);
         playerTable->verticalHeader()->setVisible(false);
         playerTable->verticalHeader()->setDefaultSectionSize(20);
+        playerTable->verticalHeader()->setHighlightSections(false);
+        playerTable->verticalHeader()->setMinimumSectionSize(20);
         splitter->addWidget(rulesSplitter);
         tabWidget = new QTabWidget(splitter);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
@@ -270,7 +276,7 @@ public:
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setEnabled(true);
-        menuBar->setGeometry(QRect(0, 0, 1024, 22));
+        menuBar->setGeometry(QRect(0, 0, 1024, 21));
         menuBar->setDefaultUp(false);
         menuBar->setNativeMenuBar(true);
         menuFile = new QMenu(menuBar);

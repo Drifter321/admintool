@@ -64,5 +64,7 @@ private:
     void SetRconSignals(bool block);
     void RestoreRcon(int index);
     void SetRconEnabled(bool);
+    QImage GetVACImage();
+    QImage GetLockImage();
 };
 #endif // MAINWINDOW_H

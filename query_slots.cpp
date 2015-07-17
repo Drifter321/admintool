@@ -126,23 +126,19 @@ void MainWindow::ServerInfoReady(ServerInfo *info, InfoReply *reply, QTableWidge
 
         this->ui->browserTable->setItem(row, 1, mod);
 
-        QImage vacImage;
         if(reply->vac)
-            vacImage.load(QString(":/icons/icons/vac.png"));
+        {
+            QTableWidgetItem *vacItem = new QTableWidgetItem();
+            vacItem->setData(Qt::DecorationRole, this->GetVACImage());
+            this->ui->browserTable->setItem(row, 2, vacItem);
+        }
 
-        QTableWidgetItem *vacItem = new QTableWidgetItem();
-        vacItem->setData(Qt::DecorationRole, vacImage);
-
-        this->ui->browserTable->setItem(row, 2, vacItem);
-
-        QImage lockImage;
         if(reply->visibility)
-            lockImage.load(QString(":/icons/icons/lock.png"));
-
-        QTableWidgetItem *privateItem = new QTableWidgetItem();
-        privateItem->setData(Qt::DecorationRole, lockImage);
-
-        this->ui->browserTable->setItem(row, 3, privateItem);
+        {
+            QTableWidgetItem *lockedItem = new QTableWidgetItem();
+            lockedItem->setData(Qt::DecorationRole, this->GetLockImage());
+            this->ui->browserTable->setItem(row, 3, lockedItem);
+        }
 
         this->ui->browserTable->setItem(row, 4, new QTableWidgetItem(reply->hostname));
         this->ui->browserTable->setItem(row, 5, new QTableWidgetItem(reply->map));

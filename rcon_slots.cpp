@@ -114,7 +114,7 @@ void MainWindow::rconLogin()
         message.exec();
         return;
     }
-    else if(info->rconPassword == 0)
+    if(info->rconPassword == 0)
     {
         QMessageBox message(this);
         message.setText("Please enter a password");

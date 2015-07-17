@@ -102,7 +102,7 @@ void MainWindow::browserTableItemSelected()
 
 void MainWindow::darkThemeTriggered()
 {
-    if(this->ui->menuTheme->actions().at(0)->isChecked())
+    if(this->ui->actionDark_Theme->isChecked())
     {
         QPalette palette;
         palette.setColor(QPalette::Window, QColor(50,50,50));
@@ -123,5 +123,21 @@ void MainWindow::darkThemeTriggered()
     else
     {
         qApp->setPalette(defaultPalette);
+    }
+
+    for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
+    {
+        if(this->ui->browserTable->item(i, 2))
+        {
+            QTableWidgetItem *vacItem = new QTableWidgetItem();
+            vacItem->setData(Qt::DecorationRole, this->GetVACImage());
+            this->ui->browserTable->setItem(i, 2, vacItem);
+        }
+        if(this->ui->browserTable->item(i, 3))
+        {
+            QTableWidgetItem *lockedItem = new QTableWidgetItem();
+            lockedItem->setData(Qt::DecorationRole, this->GetLockImage());
+            this->ui->browserTable->setItem(i, 3, lockedItem);
+        }
     }
 }

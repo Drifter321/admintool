@@ -164,7 +164,7 @@ void MainWindow::ServerInfoReady(ServerInfo *info, InfoReply *reply, QTableWidge
 
 void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *indexCell)
 {
-    if(this->ui->browserTable->selectedItems().at(0) != indexCell)
+    if(this->ui->browserTable->selectedItems().empty() || this->ui->browserTable->selectedItems().at(0) != indexCell)
     {
         if(list)
         {
@@ -210,7 +210,7 @@ void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *inde
 
 void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexCell)
 {
-    if(this->ui->browserTable->selectedItems().at(0) != indexCell)
+    if(this->ui->browserTable->selectedItems().empty() || this->ui->browserTable->selectedItems().at(0) != indexCell)
     {
         if(list)
         {

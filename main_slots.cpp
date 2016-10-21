@@ -158,21 +158,21 @@ void MainWindow::showPortEntry()
 
 void MainWindow::getLog()
 {
-   int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
-   ServerInfo *info = serverList.at(index-1);
+    int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
+    ServerInfo *info = serverList.at(index-1);
 
-   if(!info)
-       return;//WHAT?!?!
+    if(!info)
+        return;//WHAT?!?!
 
-   if(!info->rcon || !info->rcon->isAuthed)
-   {
+    if(!info->rcon || !info->rcon->isAuthed)
+    {
         QMessageBox::information(this, "Log Handler Error", "Please authenticate over RCon first.");
         return;
-   }
+    }
 
-   info->rcon->execCommand("log on");
-   info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort));
-   pLogHandler->addServer(serverList.at(index-1));
+    info->rcon->execCommand("log on");
+    info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort));
+    pLogHandler->addServer(serverList.at(index-1));
 }
 
 void MainWindow::parseLogLine(QString line, ServerInfo *info)

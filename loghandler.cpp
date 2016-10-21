@@ -1,5 +1,6 @@
 #include "loghandler.h"
 #include "mainwindow.h"
+#include "worker.h"
 #include <QMessageBox>
 
 #define MINIUPNP_STATICLIB
@@ -12,16 +13,36 @@
 
 LogHandler::LogHandler(MainWindow *main)
 {
-    isBound = false;
     this->logPort = 0;
-    this->logsocket = new QUdpSocket();
-    QObject::connect(this->logsocket, &QUdpSocket::readyRead, this, &LogHandler::socketReadyRead);
+    this->logsocket = NULL;
+    this->createSocket();
     this->pMain = main;
 }
 
 LogHandler::~LogHandler()
 {
-   delete this->logsocket;
+    if(this->logsocket)
+    {
+        this->logsocket->close();
+        delete this->logsocket;
+    }
+}
+
+void LogHandler::createSocket()
+{
+    if(!this->logsocket)
+    {
+        this->logsocket = new QUdpSocket();
+        connect(this->logsocket, &QUdpSocket::readyRead, this, &LogHandler::socketReadyRead);
+        connect(this->logsocket, &QUdpSocket::disconnected, this, &LogHandler::socketDisconnected);
+        this->isBound = false;
+    }
+}
+
+void LogHandler::socketDisconnected()
+{
+    this->isBound = false;
+    this->createBind(this->logPort);
 }
 
 void LogHandler::socketReadyRead()
@@ -73,17 +94,13 @@ void LogHandler::removeServer(ServerInfo *info)
 
 void LogHandler::createBind(quint16 port)
 {
-    if(!this->logsocket)
-    {
-        this->logsocket = new QUdpSocket();
-        connect(this->logsocket, &QUdpSocket::readyRead, this, &LogHandler::socketReadyRead);
-        this->isBound = false;
-    }
-
+    this->createSocket();
     if(this->isBound)
     {
        this->logsocket->close();
     }
+
+    bool newPort = (this->logPort != port);
 
     this->logPort = port;
     this->szPort = QString::number(port);
@@ -96,28 +113,45 @@ void LogHandler::createBind(quint16 port)
 
     this->isBound = true;
 
-    if(!this->setupUPnP())
+    if(!workerThread.isRunning() && newPort)
     {
-        QMessageBox::critical(pMain, "Log Handler Error", "Failed port mapping");
-        return;
+        Worker *worker = new Worker;
+        worker->moveToThread(&workerThread);
+        connect(&workerThread, &QThread::finished, worker, &Worker::deleteLater);
+        connect(this, &LogHandler::setupUPnP, worker, &Worker::setupUPnP);
+        connect(worker, &Worker::UPnPReady, this, &LogHandler::UPnPReady);
+
+        workerThread.start();
+        this->setupUPnP(this);
     }
 }
 
+void LogHandler::UPnPReady()
+{
+    QMessageBox::information(this->pMain, "Log Handler", QString("Listening on: %1:%2").arg(this->externalIP.toString(), this->szPort));
+}
+
 #ifdef WIN32
-bool LogHandler::setupUPnP()
+void Worker::setupUPnP(LogHandler *logger)
 {
     WSADATA wsaData;
     int nResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
     if(nResult != NO_ERROR)
-        return false;
+    {
+        emit UPnPReady();
+        this->currentThread()->quit();
+        return;
+    }
 
     int error;
     UPNPDev *devlist = upnpDiscover(2000, NULL, NULL, 0, 0, 2, &error);
 
     if(!devlist)
     {
-        return false;
+        emit UPnPReady();
+        this->currentThread()->quit();
+        return;
     }
 
     char lanaddress[64] = "";
@@ -127,22 +161,25 @@ bool LogHandler::setupUPnP()
 
     nResult = UPNP_GetValidIGD(devlist, &urls, &data, lanaddress, sizeof(lanaddress));
 
-    this->internalIP = QHostAddress(QString(lanaddress));
+    logger->internalIP = QHostAddress(QString(lanaddress));
 
     char externalIPAddress[64] = "";
     nResult = UPNP_GetExternalIPAddress(urls.controlURL, data.first.servicetype, externalIPAddress);
 
     if(nResult != UPNPCOMMAND_SUCCESS)
     {
-       return false;
+        emit UPnPReady();
+        this->currentThread()->quit();
+        return;
     }
 
-    this->externalIP = QHostAddress(QString(externalIPAddress));
+    logger->externalIP = QHostAddress(QString(externalIPAddress));
 
-    UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,  this->szPort.toLatin1().data(), this->szPort.toLatin1().data(), lanaddress, "Source Admin Tool", "UDP", 0, "0");
+    UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,  logger->szPort.toLatin1().data(), logger->szPort.toLatin1().data(), lanaddress, "Source Admin Tool", "UDP", 0, "0");
     freeUPNPDevlist(devlist);
     WSACleanup();
 
-    return true;
+    emit UPnPReady();
+    this->currentThread()->quit();
 }
 #endif

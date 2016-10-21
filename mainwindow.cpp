@@ -46,6 +46,7 @@ MainWindow::~MainWindow()
     delete settings;
     serverList.clear();
     delete ui;
+    delete pLogHandler;
 }
 
 AddServerError MainWindow::CheckServerList(QString server)

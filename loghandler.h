@@ -3,6 +3,9 @@
 
 #include "serverinfo.h"
 #include <QUdpSocket>
+#include <QThread>
+
+class Worker;
 
 class LogHandler: public QObject
 {
@@ -11,23 +14,31 @@ public:
     LogHandler(MainWindow *);
     ~LogHandler();
     void createBind(quint16);
-    bool setupUPnP();
     void removeServer(ServerInfo *);
     void addServer(ServerInfo *);
+    void createSocket();
     QString szPort;
+    bool isBound;
     QHostAddress externalIP;
+    QHostAddress internalIP;
+
+signals:
+    void setupUPnP(LogHandler *);
+
 private slots:
     void socketReadyRead();
+    void socketDisconnected();
+
+public slots:
+    void UPnPReady();
 
 private:
-
-    QHostAddress internalIP;
-    bool isBound;
     quint16 logPort;
-
     QUdpSocket *logsocket;
     QList<ServerInfo *> logList;
     MainWindow *pMain;
+    QThread workerThread;
+    Worker *worker;
 };
 
 #endif // LOGHANDLER_H

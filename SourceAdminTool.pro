@@ -51,7 +51,7 @@ win32
 }
 macx
 {
-    ICON = icons/psyduck.icns
+    ICON = icons/icon.icns
 }
 
 unix:!macx|win32: LIBS += -L$$PWD/thirdparty/miniupnpc/libs/ -lminiupnpc

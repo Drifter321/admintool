@@ -192,7 +192,7 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
             data.skipRawData(sizeof(qint8)*3);
         }
 
-        GetStringFromStream(data);//Version
+        info->version = GetStringFromStream(data);//Version
 
         qint8 edf;
         data >> edf;
@@ -212,7 +212,7 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
         }
         if(edf & 0x20)
         {
-            GetStringFromStream(data);
+            info->tags = GetStringFromStream(data);
         }
         if(edf & 0x01)
         {
@@ -255,6 +255,8 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
         data >> this->vac;
         data >> this->bots;
     }
+    info->os = this->os;
+    info->vac = this->vac;
     info->appId = this->appId;
 }
 
@@ -439,14 +441,21 @@ QList<RulesInfo> *GetRulesReply(ServerInfo *info)
             quint16 count;
             rulesResponse >> count;
 
+            QString name;
+            QString value;
             for(int i = 0; i < count; i++)
             {
-                RulesInfo rule;
-                rule.name = GetStringFromStream(rulesResponse);
-                rule.value = GetStringFromStream(rulesResponse);
-                list->append(rule);
+                name = GetStringFromStream(rulesResponse);
+                value = GetStringFromStream(rulesResponse);
+                list->append(RulesInfo(name, value));
+                name = "";
+                value = "";
             }
-        }
+        } 
     }
+    list->append(RulesInfo("vac", QString::number(info->vac)));
+    list->append(RulesInfo("version", info->version));
+    list->append(RulesInfo("appID", QString::number(info->appId)));
+    list->append(RulesInfo("os", info->os));
     return list;
 }

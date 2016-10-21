@@ -57,6 +57,7 @@ public:
 class RulesInfo
 {
 public:
+    RulesInfo(QString n, QString v){this->name = n; this->value = v;}
    //~RulesInfo(){delete [] name; delete[] value;}
    QString name;
    QString value;

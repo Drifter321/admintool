@@ -224,43 +224,10 @@ InfoReply::InfoReply(QByteArray response, ServerInfo *info)
 
             this->appId = temp & ((1 << 24) - 1);
         }
+        info->os = this->os;
+        info->vac = this->vac;
+        info->appId = this->appId;
     }
-    else if(header == -1 && check == A2S_INFO_GOLDSRC_CHECK)//Welp
-    {
-        this->success = true;
-        GetStringFromStream(data); // Address
-        this->hostname = GetStringFromStream(data);
-        this->map = GetStringFromStream(data);
-        this->mod = GetStringFromStream(data);
-        this->gamedesc = GetStringFromStream(data);
-        data >> this->players;
-        data >> this->maxplayers;
-        data >> info->protocol;
-
-        //Skip a few to get to stuff we want
-        data.skipRawData(sizeof(qint8)*2);
-
-        data >> this->visibility;
-
-        qint8 mod;
-
-        data >> mod;
-
-        if(mod)
-        {
-            //Skip more stuff but we cant assume a size for strings so read 2
-            GetStringFromStream(data);
-            GetStringFromStream(data);
-
-            //Skip known size
-            data.skipRawData(sizeof(qint8)*3 + sizeof(qint32)*2);
-        }
-        data >> this->vac;
-        data >> this->bots;
-    }
-    info->os = this->os;
-    info->vac = this->vac;
-    info->appId = this->appId;
 }
 
 InfoQuery::InfoQuery(MainWindow *main)

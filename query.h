@@ -12,7 +12,6 @@
 
 #define A2S_INFO 0x54
 #define A2S_INFO_CHECK 0x49
-#define A2S_INFO_GOLDSRC_CHECK 0x6D
 #define A2S_INFO_STRING "Source Engine Query"
 
 #define A2S_PLAYER 0x55

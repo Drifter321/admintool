@@ -63,6 +63,7 @@ QByteArray SendUDPQuery(QByteArray query, ServerInfo *info)
                 if(header == -1)
                 {
                     socket->close();
+                    delete socket;
                     return reply;
                 }
                 else if(header == -2)
@@ -135,12 +136,14 @@ QByteArray SendUDPQuery(QByteArray query, ServerInfo *info)
                             }while(packetNum != total-1);
 
                             socket->close();
+                            delete socket;
                             return reply;
                         }
                     }
                 }
             }
             socket->close();
+            delete socket;
         }
 
         tryCount ++;

@@ -94,7 +94,7 @@ void Settings::SetDefaultSettings()
         pMain->GetUi()->playerTable->setColumnWidth(i, intList.at(i));
 
     qsrand((uint)(QTime::currentTime()).msec());
-    pMain->u16logPort = qrand() % ((65535 + 1) - 49152) + 49152;
+    pMain->u16logPort = qrand() % ((PORT_MAX + 1) - PORT_MIN) + PORT_MIN;
 }
 
 void Settings::ReadSettings()

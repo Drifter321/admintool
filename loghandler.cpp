@@ -58,13 +58,14 @@ void LogHandler::socketReadyRead()
     ServerInfo *info = NULL;
     for(int i = 0; i < this->logList.size(); i++)
     {
-        if((this->logList.at(i)->host == sender || (this->logList.at(i)->host == this->internalIP && this->externalIP == sender)) && this->logList.at(i)->port == senderPort)
+        if(this->logList.at(i)->host == sender && this->logList.at(i)->port == senderPort)
         {
             info = this->logList.at(i);
             break;
         }
     }
     int idx = QString(datagram).indexOf(" ");
+
     pMain->parseLogLine(QString(datagram).remove(0, idx+1), info);
 }
 

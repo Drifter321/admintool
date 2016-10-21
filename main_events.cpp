@@ -59,6 +59,11 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
                         item->setData(Qt::DisplayRole, other-1);
                     }
                 }
+
+                ServerInfo *info = serverList.at(index-1);
+                pLogHandler->removeServer(info);
+                delete info;
+
                 serverList.removeAt(index-1);
                 settings->SaveSettings();
                 return true;

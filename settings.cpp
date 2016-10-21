@@ -5,6 +5,7 @@
 #include "simplecrypt.h"
 #include <QImage>
 #include <QMap>
+#include <QTime>
 
 QColor errorColor(255, 60, 60);
 QColor queryingColor(80, 170, 80);
@@ -91,6 +92,9 @@ void Settings::SetDefaultSettings()
 
     for(int i = 0; i < intList.size(); i++)
         pMain->GetUi()->playerTable->setColumnWidth(i, intList.at(i));
+
+    qsrand((uint)(QTime::currentTime()).msec());
+    pMain->u16logPort = qrand() % ((65535 + 1) - 49152) + 49152;
 }
 
 void Settings::ReadSettings()
@@ -114,9 +118,16 @@ void Settings::ReadSettings()
 
     bool darkTheme = pSettings->value("darkTheme", false).toBool();
 
+    uint temp = pSettings->value("logPort", pMain->u16logPort).toUInt();
+
+    if(temp <= PORT_MAX && temp >= PORT_MIN)
+    {
+        pMain->u16logPort = temp;
+    }
+
     if(darkTheme)
     {
-        pMain->GetUi()->menuTheme->actions().at(0)->setChecked(true);
+        pMain->GetUi()->menuSettings->actions().at(0)->setChecked(true);
         pMain->darkThemeTriggered();
     }
 
@@ -188,7 +199,9 @@ void Settings::SaveSettings()
 
     pSettings->setValue("playerTableState", pMain->GetUi()->playerTable->horizontalHeader()->saveState());
 
-    pSettings->setValue("darkTheme", pMain->GetUi()->menuTheme->actions().at(0)->isChecked());
+    pSettings->setValue("darkTheme", pMain->GetUi()->menuSettings->actions().at(0)->isChecked());
+
+    pSettings->setValue("logPort", pMain->u16logPort);
 
     pSettings->beginGroup("servers");
 

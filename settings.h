@@ -5,6 +5,9 @@
 #include <QSettings>
 #include <QMAp>
 
+#define PORT_MAX 65535
+#define PORT_MIN 49152
+
 class Settings : public QSettings
 {
 public:

@@ -187,6 +187,8 @@ void MainWindow::RestoreRcon(int index)
     this->ui->rconSave->setChecked(serverList.at(index)->saveRcon);
     this->ui->rconPassword->setText(serverList.at(index)->rconPassword);
     this->ui->commandOutput->setPlainText(serverList.at(index)->rconOutput);
+    this->ui->logOutput->setPlainText(serverList.at(index)->logOutput);
+    this->ui->logOutput->moveCursor(QTextCursor::End);
     this->ui->commandOutput->moveCursor(QTextCursor::End);
 }
 

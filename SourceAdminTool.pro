@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     main_events.cpp \
     main_slots.cpp \
     rcon_slots.cpp \
-    query_slots.cpp
+    query_slots.cpp \
+    loghandler.cpp
 
 HEADERS  += mainwindow.h \
     query.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     customitems.h \
     rcon.h \
     simplecrypt.h \
-    ui_mainwindow.h
+    ui_mainwindow.h \
+    loghandler.h
 
 FORMS    += mainwindow.ui
 
@@ -44,8 +46,18 @@ RESOURCES += \
 win32
 {
     RC_FILE = sourceadmin.rc
+    LIBS += -lws2_32
+    LIBS += -lIPHlpApi
 }
 macx
 {
     ICON = icons/psyduck.icns
 }
+
+unix:!macx|win32: LIBS += -L$$PWD/thirdparty/miniupnpc/libs/ -lminiupnpc
+
+INCLUDEPATH += $$PWD/thirdparty/miniupnpc
+DEPENDPATH += $$PWD/thirdparty/miniupnpc
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/thirdparty/miniupnpc/libs/miniupnpc.lib
+else:unix:!macx|win32-g++: PRE_TARGETDEPS += $$PWD/thirdparty/miniupnpc/libs/libminiupnpc.a

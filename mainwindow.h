@@ -9,6 +9,7 @@
 #include <QTableWidget>
 #include "query.h"
 #include "serverinfo.h"
+#include "loghandler.h"
 
 enum AddServerError
 {
@@ -31,8 +32,10 @@ public:
     void UpdateSelectedItemInfo(bool removeFirst = true, bool updateRules = false);
     Ui::MainWindow *GetUi(){return ui;}
     ~MainWindow();
+    void parseLogLine(QString, ServerInfo *);
     PlayerQuery *pPlayerQuery;
     RulesQuery *pRulesQuery;
+    quint16 u16logPort;
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -45,6 +48,7 @@ public slots:
     void RconAuthReady(ServerInfo *info);
     void RconOutput(ServerInfo *info, QByteArray res);
     void darkThemeTriggered();
+    void showPortEntry();
 
 private slots:
     void addServer();
@@ -55,6 +59,7 @@ private slots:
     void rconSaveToggled(bool);
     void commandOutputUpdated();
     void rconLogin();
+    void getLog();
 
 private:
     Ui::MainWindow *ui;
@@ -66,5 +71,6 @@ private:
     void SetRconEnabled(bool);
     QImage GetVACImage();
     QImage GetLockImage();
+    LogHandler *pLogHandler;
 };
 #endif // MAINWINDOW_H

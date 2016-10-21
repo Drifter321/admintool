@@ -23,8 +23,10 @@ void MainWindow::ConnectSlots()
     this->ui->rconSave->connect(this->ui->rconSave, &QCheckBox::toggled, this, &MainWindow::rconSaveToggled);
     this->ui->commandText->connect(this->ui->commandOutput, &QPlainTextEdit::textChanged, this, &MainWindow::commandOutputUpdated);
     this->ui->rconLogin->connect(this->ui->rconLogin, &QPushButton::released, this, &MainWindow::rconLogin);
+    this->ui->logGetLog->connect(this->ui->logGetLog, &QPushButton::released, this, &MainWindow::getLog);
     this->ui->actionAdd_Server->connect(this->ui->actionAdd_Server, &QAction::triggered, this, &MainWindow::addServer);
     this->ui->actionDark_Theme->connect(this->ui->actionDark_Theme, &QAction::triggered, this, &MainWindow::darkThemeTriggered);
+    this->ui->actionSet_Log_Port->connect(this->ui->actionSet_Log_Port, &QAction::triggered, this, &MainWindow::showPortEntry);
     this->ui->browserTable->connect(this->ui->browserTable, &QTableWidget::itemSelectionChanged, this, &MainWindow::browserTableItemSelected);
 }
 
@@ -35,9 +37,9 @@ void MainWindow::addServer()
     while(true)
     {
         bool ok;
-        QString server = QInputDialog::getText(this, tr("Add Server"), tr("IP:Port"), QLineEdit::Normal,"", &ok);
+        QString server = QInputDialog::getText(this, tr("Add Server"), tr("IP:Port"), QLineEdit::Normal,"", &ok, Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
 
-        if (ok && !server.isEmpty())
+        if(ok && !server.isEmpty())
         {
             AddServerError error = this->CheckServerList(server);
             if(error == AddServerError_None)
@@ -140,4 +142,62 @@ void MainWindow::darkThemeTriggered()
             this->ui->browserTable->setItem(i, 3, lockedItem);
         }
     }
+}
+
+void MainWindow::showPortEntry()
+{
+    bool ok;
+    uint port = QInputDialog::getInt(this, tr("Select Port"), tr("Port Range %1 -> %2").arg(QString::number(PORT_MIN), QString::number(PORT_MAX)), this->u16logPort, PORT_MIN, PORT_MAX, 1, &ok, Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
+
+    if(ok)
+    {
+        this->u16logPort = port;
+        settings->SaveSettings();
+    }
+}
+
+void MainWindow::getLog()
+{
+   int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
+   ServerInfo *info = serverList.at(index-1);
+
+   if(!info)
+       return;//WHAT?!?!
+
+   if(!info->rcon || !info->rcon->isAuthed)
+   {
+        QMessageBox::information(this, "Log Handler Error", "Please authenticate over RCon first.");
+        return;
+   }
+
+   info->rcon->execCommand("log on");
+   info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort));
+   pLogHandler->addServer(serverList.at(index-1));
+}
+
+void MainWindow::parseLogLine(QString line, ServerInfo *info)
+{
+    if(!info)
+        return;
+
+    if(this->ui->browserTable->selectedItems().size() == 0)
+    {
+        this->browserTableItemSelected();
+        return;
+    }
+
+    if(line.length() == 0)
+    {
+        return;
+    }
+
+    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
+    int index = item->text().toInt();
+
+    if(info == serverList.at(index-1))
+    {
+        this->ui->logOutput->insertPlainText(QString("L%1").arg(line));
+        this->ui->logOutput->moveCursor(QTextCursor::End);
+    }
+    info->logOutput.append(QString("L%1").arg(line));
 }

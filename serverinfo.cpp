@@ -5,10 +5,15 @@ ServerInfo::ServerInfo(QString server)
 {
     this->isValid = false;
     this->appId = -1;
+    this->logOutput = "";
     this->rconOutput = "";
     this->rconPassword = "";
     this->saveRcon = false;
     this->rcon = NULL;
+    this->vac = 0;
+    this->version = "";
+    this->os = "";
+    this->tags = "";
 
     QStringList address = server.split(":");
     bool ok;
@@ -30,3 +35,7 @@ bool ServerInfo::isEqual(ServerInfo other) const
     return (this->host == other.host && this->port == other.port);
 }
 
+bool ServerInfo::isEqual(ServerInfo *other) const
+{
+    return (this->host == other->host && this->port == other->port);
+}

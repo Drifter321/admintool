@@ -15,15 +15,21 @@ public:
     }
 
     ServerInfo(QString);
+    bool isEqual(ServerInfo *)const;
     bool isEqual(ServerInfo) const;
     qint8 protocol;
+    QString tags;
+    quint8 vac;
+    QString version;
+    QString os;
     qint32 appId;
     QHostAddress host;
-    int port;
+    quint16 port;
     QString ipPort;
     bool isValid;
     QString rconPassword;
     QString rconOutput;
+    QString logOutput;
     bool saveRcon;
     RconQuery *rcon;
 };

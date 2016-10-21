@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     settings = new Settings(this);
     settings->SetDefaultSettings();
     settings->ReadSettings();
+    pLogHandler = new LogHandler(this);
+    pLogHandler->createBind(u16logPort);
 
     if(this->ui->browserTable->rowCount() > 0)
     {

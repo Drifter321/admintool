@@ -419,6 +419,48 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="logTab">
+        <attribute name="title">
+         <string>Log</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0" rowspan="2" colspan="2">
+          <layout class="QVBoxLayout" name="logLayout">
+           <item>
+            <layout class="QHBoxLayout" name="logtopLayout">
+             <item>
+              <layout class="QVBoxLayout" name="logLeftLayout">
+               <item>
+                <widget class="QPushButton" name="logGetLog">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Get Log</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPlainTextEdit" name="logOutput">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="undoRedoEnabled">
+                <bool>false</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -451,14 +493,15 @@
     </property>
     <addaction name="actionAdd_Server"/>
    </widget>
-   <widget class="QMenu" name="menuTheme">
+   <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>Theme</string>
+     <string>Settings</string>
     </property>
     <addaction name="actionDark_Theme"/>
+    <addaction name="actionSet_Log_Port"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuTheme"/>
+   <addaction name="menuSettings"/>
   </widget>
   <action name="actionAdd_Server">
    <property name="checkable">
@@ -477,6 +520,11 @@
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSet_Log_Port">
+   <property name="text">
+    <string>Set Log Port</string>
    </property>
   </action>
  </widget>

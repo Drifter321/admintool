@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.0
+** Created by: Qt User Interface Compiler version 5.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -37,6 +37,7 @@ class Ui_MainWindow
 public:
     QAction *actionAdd_Server;
     QAction *actionDark_Theme;
+    QAction *actionSet_Log_Port;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -56,9 +57,16 @@ public:
     QPushButton *rconLogin;
     QPlainTextEdit *commandOutput;
     QLineEdit *commandText;
+    QWidget *logTab;
+    QGridLayout *gridLayout_3;
+    QVBoxLayout *logLayout;
+    QHBoxLayout *logtopLayout;
+    QVBoxLayout *logLeftLayout;
+    QPushButton *logGetLog;
+    QPlainTextEdit *logOutput;
     QMenuBar *menuBar;
     QMenu *menuFile;
-    QMenu *menuTheme;
+    QMenu *menuSettings;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -75,6 +83,8 @@ public:
         actionDark_Theme->setObjectName(QStringLiteral("actionDark_Theme"));
         actionDark_Theme->setCheckable(true);
         actionDark_Theme->setIconVisibleInMenu(true);
+        actionSet_Log_Port = new QAction(MainWindow);
+        actionSet_Log_Port->setObjectName(QStringLiteral("actionSet_Log_Port"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -268,6 +278,45 @@ public:
         gridLayout_2->addWidget(commandText, 1, 0, 1, 1);
 
         tabWidget->addTab(rconTab, QString());
+        logTab = new QWidget();
+        logTab->setObjectName(QStringLiteral("logTab"));
+        gridLayout_3 = new QGridLayout(logTab);
+        gridLayout_3->setSpacing(6);
+        gridLayout_3->setContentsMargins(11, 11, 11, 11);
+        gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
+        logLayout = new QVBoxLayout();
+        logLayout->setSpacing(6);
+        logLayout->setObjectName(QStringLiteral("logLayout"));
+        logtopLayout = new QHBoxLayout();
+        logtopLayout->setSpacing(6);
+        logtopLayout->setObjectName(QStringLiteral("logtopLayout"));
+        logLeftLayout = new QVBoxLayout();
+        logLeftLayout->setSpacing(6);
+        logLeftLayout->setObjectName(QStringLiteral("logLeftLayout"));
+        logGetLog = new QPushButton(logTab);
+        logGetLog->setObjectName(QStringLiteral("logGetLog"));
+        logGetLog->setEnabled(true);
+
+        logLeftLayout->addWidget(logGetLog);
+
+
+        logtopLayout->addLayout(logLeftLayout);
+
+        logOutput = new QPlainTextEdit(logTab);
+        logOutput->setObjectName(QStringLiteral("logOutput"));
+        logOutput->setEnabled(true);
+        logOutput->setUndoRedoEnabled(false);
+        logOutput->setReadOnly(true);
+
+        logtopLayout->addWidget(logOutput);
+
+
+        logLayout->addLayout(logtopLayout);
+
+
+        gridLayout_3->addLayout(logLayout, 0, 0, 2, 2);
+
+        tabWidget->addTab(logTab, QString());
         splitter->addWidget(tabWidget);
 
         verticalLayout->addWidget(splitter);
@@ -282,18 +331,19 @@ public:
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuFile->setEnabled(true);
-        menuTheme = new QMenu(menuBar);
-        menuTheme->setObjectName(QStringLiteral("menuTheme"));
+        menuSettings = new QMenu(menuBar);
+        menuSettings->setObjectName(QStringLiteral("menuSettings"));
         MainWindow->setMenuBar(menuBar);
 
         menuBar->addAction(menuFile->menuAction());
-        menuBar->addAction(menuTheme->menuAction());
+        menuBar->addAction(menuSettings->menuAction());
         menuFile->addAction(actionAdd_Server);
-        menuTheme->addAction(actionDark_Theme);
+        menuSettings->addAction(actionDark_Theme);
+        menuSettings->addAction(actionSet_Log_Port);
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -304,6 +354,7 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         actionAdd_Server->setText(QApplication::translate("MainWindow", "Add Server", 0));
         actionDark_Theme->setText(QApplication::translate("MainWindow", "Dark Theme", 0));
+        actionSet_Log_Port->setText(QApplication::translate("MainWindow", "Set Log Port", 0));
         QTableWidgetItem *___qtablewidgetitem = browserTable->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "#", 0));
         QTableWidgetItem *___qtablewidgetitem1 = browserTable->horizontalHeaderItem(4);
@@ -328,8 +379,10 @@ public:
         rconSave->setText(QApplication::translate("MainWindow", "Save Password", 0));
         rconLogin->setText(QApplication::translate("MainWindow", "Login", 0));
         tabWidget->setTabText(tabWidget->indexOf(rconTab), QApplication::translate("MainWindow", "RCon", 0));
+        logGetLog->setText(QApplication::translate("MainWindow", "Get Log", 0));
+        tabWidget->setTabText(tabWidget->indexOf(logTab), QApplication::translate("MainWindow", "Log", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "Servers", 0));
-        menuTheme->setTitle(QApplication::translate("MainWindow", "Theme", 0));
+        menuSettings->setTitle(QApplication::translate("MainWindow", "Settings", 0));
     } // retranslateUi
 
 };

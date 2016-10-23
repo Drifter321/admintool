@@ -28,8 +28,8 @@ public:
     QString ipPort;
     bool isValid;
     QString rconPassword;
-    QString rconOutput;
-    QString logOutput;
+    QStringList rconOutput;
+    QStringList logOutput;
     bool saveRcon;
     RconQuery *rcon;
 };
@@ -37,4 +37,3 @@ public:
 //Q_DECLARE_METATYPE(ServerInfo)
 
 #endif // SERVERINFO
-

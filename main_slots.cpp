@@ -21,7 +21,6 @@ void MainWindow::ConnectSlots()
     this->ui->rconPassword->connect(this->ui->rconPassword, &QLineEdit::returnPressed, this, &MainWindow::rconLogin);
     this->ui->rconPassword->connect(this->ui->rconPassword, &QLineEdit::textChanged, this, &MainWindow::passwordUpdated);
     this->ui->rconSave->connect(this->ui->rconSave, &QCheckBox::toggled, this, &MainWindow::rconSaveToggled);
-    this->ui->commandText->connect(this->ui->commandOutput, &QPlainTextEdit::textChanged, this, &MainWindow::commandOutputUpdated);
     this->ui->rconLogin->connect(this->ui->rconLogin, &QPushButton::released, this, &MainWindow::rconLogin);
     this->ui->logGetLog->connect(this->ui->logGetLog, &QPushButton::released, this, &MainWindow::getLog);
     this->ui->actionAdd_Server->connect(this->ui->actionAdd_Server, &QAction::triggered, this, &MainWindow::addServer);
@@ -199,5 +198,12 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
         this->ui->logOutput->insertPlainText(QString("L%1").arg(line));
         this->ui->logOutput->moveCursor(QTextCursor::End);
     }
-    info->logOutput.append(QString("L%1").arg(line));
+
+    if(!line.isEmpty())
+    {
+        while(info->logOutput.size() > 100)
+            info->logOutput.removeFirst();
+
+        info->logOutput.append(QString("L%1").arg(line));
+    }
 }

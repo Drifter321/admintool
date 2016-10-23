@@ -57,7 +57,6 @@ private slots:
     void processCommand();
     void passwordUpdated(const QString &);
     void rconSaveToggled(bool);
-    void commandOutputUpdated();
     void rconLogin();
     void getLog();
 

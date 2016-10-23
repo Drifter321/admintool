@@ -41,6 +41,7 @@ void MainWindow::processCommand()
             return;
         }
         this->ui->commandOutput->appendPlainText(QString("] %1").arg(this->ui->commandText->text()));
+        info->rconOutput.append(QString("] %1\n").arg(this->ui->commandText->text()));
         this->ui->commandOutput->appendPlainText("");
         this->ui->commandOutput->moveCursor(QTextCursor::End);
         info->rcon->execCommand(this->ui->commandText->text());
@@ -74,20 +75,6 @@ void MainWindow::passwordUpdated(const QString &text)
     int index = item->text().toInt();
 
     serverList.at(index-1)->rconPassword = text;
-}
-
-void MainWindow::commandOutputUpdated()
-{
-    if(this->ui->browserTable->selectedItems().size() == 0)
-    {
-        this->browserTableItemSelected();
-        return;
-    }
-
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
-
-    serverList.at(index-1)->rconOutput = this->ui->commandOutput->toPlainText();
 }
 
 void MainWindow::rconLogin()
@@ -169,8 +156,12 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
         this->ui->commandOutput->insertPlainText(result);
         this->ui->commandOutput->moveCursor(QTextCursor::End);
     }
-    else if(info)
+
+    if(info && !result.isEmpty())
     {
+        while(info->rconOutput.size() > 100)
+            info->rconOutput.removeFirst();
+
         info->rconOutput.append(result);
     }
 }
@@ -186,8 +177,8 @@ void MainWindow::RestoreRcon(int index)
 {
     this->ui->rconSave->setChecked(serverList.at(index)->saveRcon);
     this->ui->rconPassword->setText(serverList.at(index)->rconPassword);
-    this->ui->commandOutput->setPlainText(serverList.at(index)->rconOutput);
-    this->ui->logOutput->setPlainText(serverList.at(index)->logOutput);
+    this->ui->commandOutput->setPlainText(serverList.at(index)->rconOutput.join(""));
+    this->ui->logOutput->setPlainText(serverList.at(index)->logOutput.join(""));
     this->ui->logOutput->moveCursor(QTextCursor::End);
     this->ui->commandOutput->moveCursor(QTextCursor::End);
 }

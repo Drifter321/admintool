@@ -5,8 +5,6 @@ ServerInfo::ServerInfo(QString server)
 {
     this->isValid = false;
     this->appId = -1;
-    this->logOutput = "";
-    this->rconOutput = "";
     this->rconPassword = "";
     this->saveRcon = false;
     this->rcon = NULL;

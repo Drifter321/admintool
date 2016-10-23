@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     main_slots.cpp \
     rcon_slots.cpp \
     query_slots.cpp \
-    loghandler.cpp
+    loghandler.cpp \
+    loghandler_slots.cpp
 
 HEADERS  += mainwindow.h \
     query.h \

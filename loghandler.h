@@ -4,6 +4,7 @@
 #include "serverinfo.h"
 #include <QUdpSocket>
 #include <QThread>
+#include <QNetworkAccessManager>
 
 class Worker;
 
@@ -28,6 +29,7 @@ signals:
 private slots:
     void socketReadyRead();
     void socketDisconnected();
+    void apiFinished(QNetworkReply *);
 
 public slots:
     void UPnPReady();
@@ -39,6 +41,8 @@ private:
     MainWindow *pMain;
     QThread workerThread;
     Worker *worker;
+    QNetworkAccessManager *manager;
+
 };
 
 #endif // LOGHANDLER_H

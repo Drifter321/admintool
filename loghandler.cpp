@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "worker.h"
 #include <QMessageBox>
+#include <QNetworkReply>
 
 #define MINIUPNP_STATICLIB
 #include <miniupnpc.h>
@@ -14,6 +15,7 @@
 LogHandler::LogHandler(MainWindow *main)
 {
     this->logPort = 0;
+    this->manager = NULL;
     this->logsocket = NULL;
     this->createSocket();
     this->pMain = main;
@@ -129,7 +131,38 @@ void LogHandler::createBind(quint16 port)
 
 void LogHandler::UPnPReady()
 {
-    QMessageBox::information(this->pMain, "Log Handler", QString("Listening on: %1:%2").arg(this->externalIP.toString(), this->szPort));
+    if(!this->externalIP.isNull())
+    {
+        if(this->manager)
+        {
+            delete this->manager;
+            this->manager = NULL;
+        }
+        QMessageBox::information(this->pMain, "Log Handler", QString("Listening on: %1:%2").arg(this->externalIP.toString(), this->szPort));
+    }
+    else if(!this->manager)
+    {
+        this->manager = new QNetworkAccessManager(this);
+        connect(this->manager, &QNetworkAccessManager::finished, this, &LogHandler::apiFinished);
+        this->manager->get(QNetworkRequest(QUrl("http://api.ipify.org/")));
+    }
+    else
+    {
+        delete this->manager;
+        this->manager = NULL;
+        QMessageBox::critical(this->pMain, "Log Handler", QString("Failed to retrieve external IP."));
+    }
+}
+
+void LogHandler::apiFinished(QNetworkReply *reply)
+{
+    if(!reply->error())
+    {
+        QString external = reply->readAll();
+        this->externalIP = QHostAddress(external);
+    }
+    reply->deleteLater();
+    emit UPnPReady();
 }
 
 #ifdef WIN32

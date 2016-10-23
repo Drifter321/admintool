@@ -66,7 +66,7 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
     //Check if it is a chat event, display and save if so
     QStringList captures = chatRegex.match(logLine).capturedTexts();
 
-    if(captures.length() == 7 && captures.at(3) != "CONSOLE")//We have 6, 0 = whole line. Ignore console say messages.
+    if(captures.length() == 7 && captures.at(3) != "Console")//We have 6, 0 = whole line. Ignore console say messages.
     {
         QString start = "";
         if(captures.at(5) == "say_team")

@@ -21,3 +21,7 @@ Third Party
 Refrences
 ---------
 - [Valve Developer Wiki](https://developer.valvesoftware.com/wiki/Main_Page)
+
+Credits
+-------
+- [psychonic](https://github.com/psychonic): Helping with log parsing.

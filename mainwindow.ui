@@ -516,6 +516,7 @@
     </property>
     <addaction name="actionDark_Theme"/>
     <addaction name="actionSet_Log_Port"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -542,6 +543,11 @@
   <action name="actionSet_Log_Port">
    <property name="text">
     <string>Set Log Port</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

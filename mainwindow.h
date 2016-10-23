@@ -49,6 +49,7 @@ public slots:
     void RconOutput(ServerInfo *info, QByteArray res);
     void darkThemeTriggered();
     void showPortEntry();
+    void showAbout();
 
 private slots:
     void addServer();

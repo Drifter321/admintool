@@ -38,6 +38,7 @@ public:
     QAction *actionAdd_Server;
     QAction *actionDark_Theme;
     QAction *actionSet_Log_Port;
+    QAction *actionAbout;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -88,6 +89,8 @@ public:
         actionDark_Theme->setIconVisibleInMenu(true);
         actionSet_Log_Port = new QAction(MainWindow);
         actionSet_Log_Port->setObjectName(QStringLiteral("actionSet_Log_Port"));
+        actionAbout = new QAction(MainWindow);
+        actionAbout->setObjectName(QStringLiteral("actionAbout"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -357,6 +360,7 @@ public:
         menuFile->addAction(actionAdd_Server);
         menuSettings->addAction(actionDark_Theme);
         menuSettings->addAction(actionSet_Log_Port);
+        menuSettings->addAction(actionAbout);
 
         retranslateUi(MainWindow);
 
@@ -372,6 +376,7 @@ public:
         actionAdd_Server->setText(QApplication::translate("MainWindow", "Add Server", 0));
         actionDark_Theme->setText(QApplication::translate("MainWindow", "Dark Theme", 0));
         actionSet_Log_Port->setText(QApplication::translate("MainWindow", "Set Log Port", 0));
+        actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
         QTableWidgetItem *___qtablewidgetitem = browserTable->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "#", 0));
         QTableWidgetItem *___qtablewidgetitem1 = browserTable->horizontalHeaderItem(4);

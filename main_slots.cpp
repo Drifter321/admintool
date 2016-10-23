@@ -26,6 +26,7 @@ void MainWindow::ConnectSlots()
     this->ui->actionAdd_Server->connect(this->ui->actionAdd_Server, &QAction::triggered, this, &MainWindow::addServer);
     this->ui->actionDark_Theme->connect(this->ui->actionDark_Theme, &QAction::triggered, this, &MainWindow::darkThemeTriggered);
     this->ui->actionSet_Log_Port->connect(this->ui->actionSet_Log_Port, &QAction::triggered, this, &MainWindow::showPortEntry);
+    this->ui->actionAbout->connect(this->ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     this->ui->browserTable->connect(this->ui->browserTable, &QTableWidget::itemSelectionChanged, this, &MainWindow::browserTableItemSelected);
 }
 
@@ -153,4 +154,11 @@ void MainWindow::showPortEntry()
         this->u16logPort = port;
         settings->SaveSettings();
     }
+}
+
+void MainWindow::showAbout()
+{
+    QMessageBox message(this);
+    message.setText("Version: 1.0.1\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
+    message.exec();
 }

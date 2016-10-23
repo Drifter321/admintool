@@ -150,7 +150,7 @@ void LogHandler::UPnPReady()
     {
         delete this->manager;
         this->manager = NULL;
-        QMessageBox::critical(this->pMain, "Log Handler", QString("Failed to retrieve external IP."));
+        QMessageBox::critical(this->pMain, "Log Handler Error", QString("Failed to retrieve external IP."));
     }
 }
 

@@ -168,6 +168,10 @@ void MainWindow::getLog()
         QMessageBox::information(this, "Log Handler Error", "Please authenticate over RCon first.");
         return;
     }
+    else if(this->pLogHandler->externalIP.isNUll())
+    {
+        QMessageBox::critical(this, "Log Handler Error", "Failed to get external ip. Logging can not be enabled.");
+    }
 
     info->rcon->execCommand("log on");
     info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort));

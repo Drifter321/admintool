@@ -461,6 +461,23 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="chatTab">
+        <attribute name="title">
+         <string>Chat</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QPlainTextEdit" name="chatOutput">
+           <property name="undoRedoEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>

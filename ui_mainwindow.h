@@ -64,6 +64,9 @@ public:
     QVBoxLayout *logLeftLayout;
     QPushButton *logGetLog;
     QPlainTextEdit *logOutput;
+    QWidget *chatTab;
+    QGridLayout *gridLayout;
+    QPlainTextEdit *chatOutput;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuSettings;
@@ -317,6 +320,20 @@ public:
         gridLayout_3->addLayout(logLayout, 0, 0, 2, 2);
 
         tabWidget->addTab(logTab, QString());
+        chatTab = new QWidget();
+        chatTab->setObjectName(QStringLiteral("chatTab"));
+        gridLayout = new QGridLayout(chatTab);
+        gridLayout->setSpacing(6);
+        gridLayout->setContentsMargins(11, 11, 11, 11);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        chatOutput = new QPlainTextEdit(chatTab);
+        chatOutput->setObjectName(QStringLiteral("chatOutput"));
+        chatOutput->setUndoRedoEnabled(false);
+        chatOutput->setReadOnly(true);
+
+        gridLayout->addWidget(chatOutput, 0, 0, 1, 1);
+
+        tabWidget->addTab(chatTab, QString());
         splitter->addWidget(tabWidget);
 
         verticalLayout->addWidget(splitter);
@@ -381,6 +398,7 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(rconTab), QApplication::translate("MainWindow", "RCon", 0));
         logGetLog->setText(QApplication::translate("MainWindow", "Get Log", 0));
         tabWidget->setTabText(tabWidget->indexOf(logTab), QApplication::translate("MainWindow", "Log", 0));
+        tabWidget->setTabText(tabWidget->indexOf(chatTab), QApplication::translate("MainWindow", "Chat", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "Servers", 0));
         menuSettings->setTitle(QApplication::translate("MainWindow", "Settings", 0));
     } // retranslateUi

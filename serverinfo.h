@@ -30,6 +30,7 @@ public:
     QString rconPassword;
     QStringList rconOutput;
     QStringList logOutput;
+    QStringList chatOutput;
     bool saveRcon;
     RconQuery *rcon;
 };

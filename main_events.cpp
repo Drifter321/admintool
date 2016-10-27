@@ -66,6 +66,19 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
                 serverList.removeAt(index-1);
                 settings->SaveSettings();
+                if(this->ui->browserTable->selectedItems().size() == 0)
+                {
+                   //Clear rules and players
+                    while(this->ui->rulesTable->rowCount() > 0)
+                    {
+                        this->ui->rulesTable->removeRow(0);
+                    }
+
+                    while(this->ui->playerTable->rowCount() > 0)
+                    {
+                        this->ui->playerTable->removeRow(0);
+                    }
+                }
                 return true;
             }
         }

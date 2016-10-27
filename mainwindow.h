@@ -42,7 +42,7 @@ protected:
     bool eventFilter(QObject *object, QEvent *event);
 
 public slots:
-    void ServerInfoReady(ServerInfo *, InfoReply *, QTableWidgetItem *);
+    void ServerInfoReady(InfoReply *, QTableWidgetItem *);
     void PlayerInfoReady(QList<PlayerInfo> *, QTableWidgetItem *);
     void RulesInfoReady(QList<RulesInfo> *, QTableWidgetItem *);
     void RconAuthReady(ServerInfo *info);

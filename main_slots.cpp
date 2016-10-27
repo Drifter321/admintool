@@ -62,7 +62,7 @@ void MainWindow::addServer()
                 this->ui->browserTable->setItem(row, 4, item);
 
                 InfoQuery *infoQuery = new InfoQuery(this);
-                infoQuery->query(info, id);
+                infoQuery->query(&info->host, info->port, id);
                 break;
             }
             else if(error == AddServerError_AlreadyExists)//Valid ip but exists.
@@ -159,6 +159,6 @@ void MainWindow::showPortEntry()
 void MainWindow::showAbout()
 {
     QMessageBox message(this);
-    message.setText("Version: 1.0.1\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
+    message.setText("Version: 1.0.2\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
     message.exec();
 }

@@ -161,7 +161,7 @@ void Settings::ReadSettings()
             pMain->GetUi()->browserTable->setItem(row, 4, item);
 
             InfoQuery *infoQuery = new InfoQuery(pMain);
-            infoQuery->query(info, id);
+            infoQuery->query(&info->host, info->port, id);
 
             if(list.size() == 2)
             {

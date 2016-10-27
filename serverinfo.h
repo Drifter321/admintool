@@ -17,6 +17,7 @@ public:
     ServerInfo(QString);
     bool isEqual(ServerInfo *)const;
     bool isEqual(ServerInfo) const;
+    bool haveInfo;
     qint8 protocol;
     QString tags;
     quint8 vac;

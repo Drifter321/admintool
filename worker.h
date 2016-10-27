@@ -16,13 +16,13 @@ class Worker : public QThread
     Q_OBJECT
 
 public slots:
-    void getServerInfo(ServerInfo *, QTableWidgetItem *item);
-    void getPlayerInfo(ServerInfo *, QTableWidgetItem *item);
-    void getRulesInfo(ServerInfo *, QTableWidgetItem *item);
+    void getServerInfo(QHostAddress *host, quint16 port, QTableWidgetItem *item);
+    void getPlayerInfo(QHostAddress *host, quint16 port, QTableWidgetItem *item);
+    void getRulesInfo(QHostAddress *host, quint16 port, QTableWidgetItem *item);
     void setupUPnP(LogHandler *);
 
 signals:
-    void serverInfoReady(ServerInfo *info, InfoReply *reply, QTableWidgetItem *item);
+    void serverInfoReady(InfoReply *reply, QTableWidgetItem *item);
     void playerInfoReady(QList<PlayerInfo> *, QTableWidgetItem *item);
     void rulesInfoReady(QList<RulesInfo> *, QTableWidgetItem *item);
     void UPnPReady();

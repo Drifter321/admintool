@@ -12,6 +12,7 @@ ServerInfo::ServerInfo(QString server)
     this->version = "";
     this->os = "";
     this->tags = "";
+    this->haveInfo = false;
 
     QStringList address = server.split(":");
     bool ok;

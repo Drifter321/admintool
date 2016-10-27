@@ -28,7 +28,7 @@ class Worker;
 class InfoReply
 {
 public:
-    InfoReply(QByteArray, ServerInfo *);
+    InfoReply(QByteArray);
     QString hostname;
     QString map;
     QString mod;
@@ -42,6 +42,9 @@ public:
     bool visibility;
     bool vac;
     bool success;
+    QString tags;
+    QString version;
+    qint8 protocol;
 };
 
 class PlayerInfo
@@ -73,7 +76,7 @@ public:
         workerThread.wait();
     }
 signals:
-    void query(ServerInfo *, QTableWidgetItem *item);
+    void query(QHostAddress *, quint16, QTableWidgetItem *item);
 };
 
 class PlayerQuery : public QObject
@@ -88,7 +91,7 @@ private:
     MainWindow *pMain;
 
 signals:
-    void query(ServerInfo *, QTableWidgetItem *);
+    void query(QHostAddress *, quint16, QTableWidgetItem *);
 };
 
 class RulesQuery : public QObject
@@ -103,12 +106,12 @@ private:
     MainWindow *pMain;
 
 signals:
-    void query(ServerInfo *, QTableWidgetItem *);
+    void query(QHostAddress *, quint16, QTableWidgetItem *);
 };
 
-QList<PlayerInfo> *GetPlayerReply(ServerInfo *);
-InfoReply *GetInfoReply(ServerInfo *);
-QList<RulesInfo> *GetRulesReply(ServerInfo *);
+QList<PlayerInfo> *GetPlayerReply(QHostAddress, quint16);
+InfoReply *GetInfoReply(QHostAddress, quint16);
+QList<RulesInfo> *GetRulesReply(QHostAddress, quint16);
 QString SecondsToDisplayTime(float time);
 QString GetStringFromStream(QDataStream &stream);
 #endif // INFOQUERY

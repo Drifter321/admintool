@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 
+QStringList blueTeams = {"BLU", "CT"};
+QStringList redTeams = {"RED", "TERRORIST"};
 extern QList<ServerInfo *> serverList;
 QRegularExpression chatRegex("^L\\d{2}\\/\\d{2}\\/\\d{4} - \\d{2}:\\d{2}:\\d{2}: \"(.+)<(\\d+)><([^>]+)><([^>]*)>\"(?: (say(?:_team)?) \"(.*)\")?.*?$");
 
@@ -66,17 +68,39 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
     //Check if it is a chat event, display and save if so
     QStringList captures = chatRegex.match(logLine).capturedTexts();
 
-    if(captures.length() == 7 && captures.at(3) != "Console")//We have 6, 0 = whole line. Ignore console say messages.
+    if(captures.length() == 7)//We have 6, 0 = whole line. Ignore console say messages.
     {
-        QString start = "";
-        if(captures.at(5) == "say_team")
-            start = QString("(TEAM %1) ").arg(captures.at(4));
+        QString chatLine;
+        if(captures.at(3) != "Console")
+        {
+            QString start = "<font>";
+            if(captures.at(5) == "say_team")
+            {
+                QString team = captures.at(4);
+                if(blueTeams.contains(team))
+                {
+                    start = QString("<font style='color:#32a0f0;'>(%1 TEAM) ").arg(captures.at(4));
+                }
+                else if(redTeams.contains(team))
+                {
+                    start = QString("<font style='color:#ff333a;'>(%1 TEAM) ").arg(captures.at(4));
+                }
+                else
+                {
+                    start = QString("<font>(%1 TEAM) ").arg(captures.at(4));
+                }
+            }
 
-        QString chatLine = QString("%1%2<%3> : %4\n").arg(start, captures.at(1), captures.at(3), captures.at(6));
+            chatLine = QString("%1%2&lt;%3&gt; : %4</font><br>").arg(start, captures.at(1).toHtmlEscaped(), captures.at(3), captures.at(6).toHtmlEscaped());
+        }
+        else
+        {
+           chatLine = QString("&lt;%1&gt;&lt;%1&gt; : %2<br>").arg(captures.at(3), captures.at(6));
+        }
 
         if(info == serverList.at(index-1))
         {
-            this->ui->chatOutput->insertPlainText(chatLine);
+            this->ui->chatOutput->insertHtml(chatLine);
             this->ui->chatOutput->moveCursor(QTextCursor::End);
         }
 
@@ -84,5 +108,33 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
             info->chatOutput.removeFirst();
 
         info->chatOutput.append(chatLine);
+    }
+}
+
+void MainWindow::sendChat()
+{
+    if(this->ui->browserTable->selectedItems().size() == 0)
+    {
+        this->browserTableItemSelected();
+        return;
+    }
+
+    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
+    int index = item->text().toInt();
+
+    ServerInfo *info = serverList.at(index-1);
+
+    if(info->rcon == NULL || !info->rcon->isAuthed)
+    {
+        QMessageBox message(this);
+        message.setText("Please authenticate first.");
+        message.exec();
+        return;
+    }
+
+    if(this->ui->sendChat->text().length() != 0)
+    {
+        info->rcon->execCommand(QString("say %1").arg(this->ui->sendChat->text()));
+        this->ui->sendChat->setText("");
     }
 }

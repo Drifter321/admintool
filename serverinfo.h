@@ -24,6 +24,11 @@ public:
     QString version;
     QString os;
     qint32 appId;
+    QString serverName;
+    QString currentMap;
+    QString playerCount;
+    QString gameName;
+    QString type;
     QHostAddress host;
     quint16 port;
     QString ipPort;

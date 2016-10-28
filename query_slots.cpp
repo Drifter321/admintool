@@ -66,6 +66,10 @@ void MainWindow::UpdateSelectedItemInfo(bool removeFirst, bool updateRules)
         {
             this->ui->playerTable->removeRow(0);
         }
+        while(this->ui->infoTable->rowCount() > 0)
+        {
+            this->ui->infoTable->removeRow(0);
+        }
         if(updateRules)
         {
             while(this->ui->rulesTable->rowCount() > 0)
@@ -127,6 +131,11 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         info->tags = reply->tags;
         info->protocol = reply->protocol;
         info->version = reply->version;
+        info->currentMap = reply->map;
+        info->gameName = reply->gamedesc;
+        info->type = reply->type;
+        info->serverName = reply->hostname;
+        info->playerCount = QString("%1/%2 (%3)").arg(QString::number(reply->players), QString::number(reply->maxplayers), QString::number(reply->bots));
         info->haveInfo = true;
 
         QTableWidgetItem *mod = new QTableWidgetItem();
@@ -168,8 +177,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         else
             playerItem->setTextColor(queryingColor);
 
-        playerItem->setText(QString("%1/%2 (%3)").arg(QString::number(reply->players), QString::number(reply->maxplayers), QString::number(reply->bots)));
-
+        playerItem->setText(info->playerCount);
         this->ui->browserTable->setItem(row, 6, playerItem);
 
         this->ui->browserTable->setSortingEnabled(true);
@@ -263,11 +271,73 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
 
     this->ui->rulesTable->setSortingEnabled(false);
 
+    QString nextmap;
+    QString ff;
+    QString timelimit;
+
+    QStringList mods;
+
     for(int i = 0; i < list->size(); i++)
     {
         this->ui->rulesTable->insertRow(i);
         this->ui->rulesTable->setItem(i, 0, new QTableWidgetItem(list->at(i).name));
         this->ui->rulesTable->setItem(i, 1, new QTableWidgetItem(list->at(i).value));
+
+        if(list->at(i).name == "mp_friendlyfire")
+            ff = list->at(i).value.toInt() ? "On":"Off";
+        if(list->at(i).name == "mp_timelimit")
+            timelimit = list->at(i).value;
+        if(list->at(i).name == "sm_nextmap")
+            nextmap = list->at(i).value;
+        if(list->at(i).name == "sourcemod_version")
+            mods.append(QString("Sourcemod v%1").arg(list->at(i).value));
+        if(list->at(i).name == "metamod_version")
+            mods.prepend(QString("MetaMod v%1").arg(list->at(i).value));
+    }
+
+    //Add info list items, gg
+    while(this->ui->infoTable->rowCount() > 0)
+    {
+        this->ui->infoTable->removeRow(0);
+    }
+    if(info->haveInfo)
+    {
+        this->ui->infoTable->insertRow(0);
+        this->ui->infoTable->setItem(0, 0, new QTableWidgetItem("Server Name"));
+        this->ui->infoTable->setItem(0, 1, new QTableWidgetItem(info->serverName));
+
+        this->ui->infoTable->insertRow(1);
+        this->ui->infoTable->setItem(1, 0, new QTableWidgetItem("Game"));
+        this->ui->infoTable->setItem(1, 1, new QTableWidgetItem(QString("%1 (%2)").arg(info->gameName, QString::number(info->appId))));
+
+        this->ui->infoTable->insertRow(2);
+        this->ui->infoTable->setItem(2, 0, new QTableWidgetItem("Players"));
+        this->ui->infoTable->setItem(2, 1, new QTableWidgetItem(info->playerCount));
+
+        this->ui->infoTable->insertRow(3);
+        this->ui->infoTable->setItem(3, 0, new QTableWidgetItem("Map"));
+        this->ui->infoTable->setItem(3, 1, new QTableWidgetItem(QString("%1 (Nextmap : %2)").arg(info->currentMap, nextmap)));
+
+        this->ui->infoTable->insertRow(4);
+        this->ui->infoTable->setItem(4, 0, new QTableWidgetItem("Timelimit"));
+        this->ui->infoTable->setItem(4, 1, new QTableWidgetItem(timelimit));
+
+        this->ui->infoTable->insertRow(5);
+        this->ui->infoTable->setItem(5, 0, new QTableWidgetItem("Friendly Fire"));
+        this->ui->infoTable->setItem(5, 1, new QTableWidgetItem(ff));
+
+        this->ui->infoTable->insertRow(6);
+        this->ui->infoTable->setItem(6, 0, new QTableWidgetItem("Version"));
+        //This line is ugly, but im way too lazy.
+        this->ui->infoTable->setItem(6, 1, new QTableWidgetItem(QString("v%1 (%2, %3, Protocol %4)").arg(info->version, info->os == "l" ? "Linux" : info->os == "m" ? "Mac" : "Windows", info->type == "d" ? "Dedicated" : "Local", QString::number(info->protocol))));
+
+        this->ui->infoTable->insertRow(7);
+        this->ui->infoTable->setItem(7, 0, new QTableWidgetItem("Addons"));
+        this->ui->infoTable->setItem(7, 1, new QTableWidgetItem(mods.join("  ")));
+
+        this->ui->infoTable->insertRow(8);
+        this->ui->infoTable->setItem(8, 0, new QTableWidgetItem("AntiCheat"));
+        this->ui->infoTable->setItem(8, 1, new QTableWidgetItem(info->vac ? "VAC" : ""));
     }
 
     if(list)

@@ -27,6 +27,7 @@
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -40,9 +41,11 @@ public:
     QAction *actionSet_Log_Port;
     QAction *actionAbout;
     QWidget *centralWidget;
-    QVBoxLayout *verticalLayout;
+    QGridLayout *gridLayout_4;
     QSplitter *splitter;
+    QSplitter *browserSplitter;
     QTableWidget *browserTable;
+    QTableWidget *infoTable;
     QSplitter *rulesSplitter;
     QTableWidget *rulesTable;
     QTableWidget *playerTable;
@@ -56,18 +59,16 @@ public:
     QLineEdit *rconPassword;
     QCheckBox *rconSave;
     QPushButton *rconLogin;
+    QPushButton *logGetLog;
     QPlainTextEdit *commandOutput;
     QLineEdit *commandText;
     QWidget *logTab;
     QGridLayout *gridLayout_3;
-    QVBoxLayout *logLayout;
-    QHBoxLayout *logtopLayout;
-    QVBoxLayout *logLeftLayout;
-    QPushButton *logGetLog;
     QPlainTextEdit *logOutput;
     QWidget *chatTab;
     QGridLayout *gridLayout;
-    QPlainTextEdit *chatOutput;
+    QLineEdit *sendChat;
+    QTextEdit *chatOutput;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuSettings;
@@ -93,15 +94,25 @@ public:
         actionAbout->setObjectName(QStringLiteral("actionAbout"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        verticalLayout = new QVBoxLayout(centralWidget);
-        verticalLayout->setSpacing(6);
-        verticalLayout->setContentsMargins(11, 11, 11, 11);
-        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        gridLayout_4 = new QGridLayout(centralWidget);
+        gridLayout_4->setSpacing(6);
+        gridLayout_4->setContentsMargins(11, 11, 11, 11);
+        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
         splitter = new QSplitter(centralWidget);
         splitter->setObjectName(QStringLiteral("splitter"));
         splitter->setOrientation(Qt::Vertical);
-        splitter->setHandleWidth(5);
-        browserTable = new QTableWidget(splitter);
+        browserSplitter = new QSplitter(splitter);
+        browserSplitter->setObjectName(QStringLiteral("browserSplitter"));
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(browserSplitter->sizePolicy().hasHeightForWidth());
+        browserSplitter->setSizePolicy(sizePolicy);
+        browserSplitter->setFrameShape(QFrame::NoFrame);
+        browserSplitter->setFrameShadow(QFrame::Plain);
+        browserSplitter->setOrientation(Qt::Horizontal);
+        browserSplitter->setHandleWidth(5);
+        browserTable = new QTableWidget(browserSplitter);
         if (browserTable->columnCount() < 7)
             browserTable->setColumnCount(7);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
@@ -137,13 +148,38 @@ public:
         browserTable->setSortingEnabled(true);
         browserTable->setWordWrap(false);
         browserTable->setColumnCount(7);
-        splitter->addWidget(browserTable);
+        browserSplitter->addWidget(browserTable);
         browserTable->horizontalHeader()->setHighlightSections(false);
         browserTable->horizontalHeader()->setStretchLastSection(false);
         browserTable->verticalHeader()->setVisible(false);
         browserTable->verticalHeader()->setDefaultSectionSize(20);
         browserTable->verticalHeader()->setHighlightSections(false);
         browserTable->verticalHeader()->setMinimumSectionSize(20);
+        infoTable = new QTableWidget(browserSplitter);
+        if (infoTable->columnCount() < 2)
+            infoTable->setColumnCount(2);
+        QTableWidgetItem *__qtablewidgetitem7 = new QTableWidgetItem();
+        infoTable->setHorizontalHeaderItem(0, __qtablewidgetitem7);
+        QTableWidgetItem *__qtablewidgetitem8 = new QTableWidgetItem();
+        infoTable->setHorizontalHeaderItem(1, __qtablewidgetitem8);
+        infoTable->setObjectName(QStringLiteral("infoTable"));
+        infoTable->setEnabled(true);
+        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(infoTable->sizePolicy().hasHeightForWidth());
+        infoTable->setSizePolicy(sizePolicy1);
+        infoTable->setFocusPolicy(Qt::NoFocus);
+        infoTable->setLayoutDirection(Qt::LeftToRight);
+        infoTable->setProperty("showDropIndicator", QVariant(false));
+        infoTable->setAlternatingRowColors(true);
+        infoTable->setShowGrid(false);
+        browserSplitter->addWidget(infoTable);
+        infoTable->horizontalHeader()->setVisible(false);
+        infoTable->horizontalHeader()->setProperty("showSortIndicator", QVariant(false));
+        infoTable->horizontalHeader()->setStretchLastSection(true);
+        infoTable->verticalHeader()->setVisible(false);
+        splitter->addWidget(browserSplitter);
         rulesSplitter = new QSplitter(splitter);
         rulesSplitter->setObjectName(QStringLiteral("rulesSplitter"));
         rulesSplitter->setBaseSize(QSize(0, 250));
@@ -152,10 +188,10 @@ public:
         rulesTable = new QTableWidget(rulesSplitter);
         if (rulesTable->columnCount() < 2)
             rulesTable->setColumnCount(2);
-        QTableWidgetItem *__qtablewidgetitem7 = new QTableWidgetItem();
-        rulesTable->setHorizontalHeaderItem(0, __qtablewidgetitem7);
-        QTableWidgetItem *__qtablewidgetitem8 = new QTableWidgetItem();
-        rulesTable->setHorizontalHeaderItem(1, __qtablewidgetitem8);
+        QTableWidgetItem *__qtablewidgetitem9 = new QTableWidgetItem();
+        rulesTable->setHorizontalHeaderItem(0, __qtablewidgetitem9);
+        QTableWidgetItem *__qtablewidgetitem10 = new QTableWidgetItem();
+        rulesTable->setHorizontalHeaderItem(1, __qtablewidgetitem10);
         rulesTable->setObjectName(QStringLiteral("rulesTable"));
         rulesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         rulesTable->setProperty("showDropIndicator", QVariant(false));
@@ -175,14 +211,14 @@ public:
         playerTable = new QTableWidget(rulesSplitter);
         if (playerTable->columnCount() < 4)
             playerTable->setColumnCount(4);
-        QTableWidgetItem *__qtablewidgetitem9 = new QTableWidgetItem();
-        playerTable->setHorizontalHeaderItem(0, __qtablewidgetitem9);
-        QTableWidgetItem *__qtablewidgetitem10 = new QTableWidgetItem();
-        playerTable->setHorizontalHeaderItem(1, __qtablewidgetitem10);
         QTableWidgetItem *__qtablewidgetitem11 = new QTableWidgetItem();
-        playerTable->setHorizontalHeaderItem(2, __qtablewidgetitem11);
+        playerTable->setHorizontalHeaderItem(0, __qtablewidgetitem11);
         QTableWidgetItem *__qtablewidgetitem12 = new QTableWidgetItem();
-        playerTable->setHorizontalHeaderItem(3, __qtablewidgetitem12);
+        playerTable->setHorizontalHeaderItem(1, __qtablewidgetitem12);
+        QTableWidgetItem *__qtablewidgetitem13 = new QTableWidgetItem();
+        playerTable->setHorizontalHeaderItem(2, __qtablewidgetitem13);
+        QTableWidgetItem *__qtablewidgetitem14 = new QTableWidgetItem();
+        playerTable->setHorizontalHeaderItem(3, __qtablewidgetitem14);
         playerTable->setObjectName(QStringLiteral("playerTable"));
         playerTable->setMinimumSize(QSize(100, 100));
         playerTable->setBaseSize(QSize(0, 0));
@@ -227,11 +263,11 @@ public:
         rconLabel = new QLabel(rconTab);
         rconLabel->setObjectName(QStringLiteral("rconLabel"));
         rconLabel->setEnabled(true);
-        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(rconLabel->sizePolicy().hasHeightForWidth());
-        rconLabel->setSizePolicy(sizePolicy);
+        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(rconLabel->sizePolicy().hasHeightForWidth());
+        rconLabel->setSizePolicy(sizePolicy2);
         rconLabel->setBaseSize(QSize(300, 20));
 
         rconLeft->addWidget(rconLabel);
@@ -239,8 +275,8 @@ public:
         rconPassword = new QLineEdit(rconTab);
         rconPassword->setObjectName(QStringLiteral("rconPassword"));
         rconPassword->setEnabled(true);
-        sizePolicy.setHeightForWidth(rconPassword->sizePolicy().hasHeightForWidth());
-        rconPassword->setSizePolicy(sizePolicy);
+        sizePolicy2.setHeightForWidth(rconPassword->sizePolicy().hasHeightForWidth());
+        rconPassword->setSizePolicy(sizePolicy2);
         rconPassword->setBaseSize(QSize(300, 20));
         rconPassword->setEchoMode(QLineEdit::Password);
 
@@ -249,8 +285,8 @@ public:
         rconSave = new QCheckBox(rconTab);
         rconSave->setObjectName(QStringLiteral("rconSave"));
         rconSave->setEnabled(true);
-        sizePolicy.setHeightForWidth(rconSave->sizePolicy().hasHeightForWidth());
-        rconSave->setSizePolicy(sizePolicy);
+        sizePolicy2.setHeightForWidth(rconSave->sizePolicy().hasHeightForWidth());
+        rconSave->setSizePolicy(sizePolicy2);
 
         rconLeft->addWidget(rconSave);
 
@@ -259,6 +295,11 @@ public:
         rconLogin->setEnabled(true);
 
         rconLeft->addWidget(rconLogin);
+
+        logGetLog = new QPushButton(rconTab);
+        logGetLog->setObjectName(QStringLiteral("logGetLog"));
+
+        rconLeft->addWidget(logGetLog);
 
 
         rconTopLayout->addLayout(rconLeft);
@@ -279,7 +320,7 @@ public:
 
         commandText = new QLineEdit(rconTab);
         commandText->setObjectName(QStringLiteral("commandText"));
-        commandText->setEnabled(false);
+        commandText->setEnabled(true);
 
         gridLayout_2->addWidget(commandText, 1, 0, 1, 1);
 
@@ -290,37 +331,13 @@ public:
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
-        logLayout = new QVBoxLayout();
-        logLayout->setSpacing(6);
-        logLayout->setObjectName(QStringLiteral("logLayout"));
-        logtopLayout = new QHBoxLayout();
-        logtopLayout->setSpacing(6);
-        logtopLayout->setObjectName(QStringLiteral("logtopLayout"));
-        logLeftLayout = new QVBoxLayout();
-        logLeftLayout->setSpacing(6);
-        logLeftLayout->setObjectName(QStringLiteral("logLeftLayout"));
-        logGetLog = new QPushButton(logTab);
-        logGetLog->setObjectName(QStringLiteral("logGetLog"));
-        logGetLog->setEnabled(true);
-
-        logLeftLayout->addWidget(logGetLog);
-
-
-        logtopLayout->addLayout(logLeftLayout);
-
         logOutput = new QPlainTextEdit(logTab);
         logOutput->setObjectName(QStringLiteral("logOutput"));
         logOutput->setEnabled(true);
         logOutput->setUndoRedoEnabled(false);
         logOutput->setReadOnly(true);
 
-        logtopLayout->addWidget(logOutput);
-
-
-        logLayout->addLayout(logtopLayout);
-
-
-        gridLayout_3->addLayout(logLayout, 0, 0, 2, 2);
+        gridLayout_3->addWidget(logOutput, 0, 0, 1, 1);
 
         tabWidget->addTab(logTab, QString());
         chatTab = new QWidget();
@@ -329,17 +346,20 @@ public:
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
-        chatOutput = new QPlainTextEdit(chatTab);
+        sendChat = new QLineEdit(chatTab);
+        sendChat->setObjectName(QStringLiteral("sendChat"));
+
+        gridLayout->addWidget(sendChat, 1, 0, 1, 1);
+
+        chatOutput = new QTextEdit(chatTab);
         chatOutput->setObjectName(QStringLiteral("chatOutput"));
-        chatOutput->setUndoRedoEnabled(false);
-        chatOutput->setReadOnly(true);
 
         gridLayout->addWidget(chatOutput, 0, 0, 1, 1);
 
         tabWidget->addTab(chatTab, QString());
         splitter->addWidget(tabWidget);
 
-        verticalLayout->addWidget(splitter);
+        gridLayout_4->addWidget(splitter, 0, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
@@ -385,23 +405,27 @@ public:
         ___qtablewidgetitem2->setText(QApplication::translate("MainWindow", "Map", 0));
         QTableWidgetItem *___qtablewidgetitem3 = browserTable->horizontalHeaderItem(6);
         ___qtablewidgetitem3->setText(QApplication::translate("MainWindow", "Players", 0));
-        QTableWidgetItem *___qtablewidgetitem4 = rulesTable->horizontalHeaderItem(0);
-        ___qtablewidgetitem4->setText(QApplication::translate("MainWindow", "Rule", 0));
-        QTableWidgetItem *___qtablewidgetitem5 = rulesTable->horizontalHeaderItem(1);
+        QTableWidgetItem *___qtablewidgetitem4 = infoTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem4->setText(QApplication::translate("MainWindow", "New Column", 0));
+        QTableWidgetItem *___qtablewidgetitem5 = infoTable->horizontalHeaderItem(1);
         ___qtablewidgetitem5->setText(QApplication::translate("MainWindow", "Value", 0));
-        QTableWidgetItem *___qtablewidgetitem6 = playerTable->horizontalHeaderItem(0);
-        ___qtablewidgetitem6->setText(QApplication::translate("MainWindow", "#", 0));
-        QTableWidgetItem *___qtablewidgetitem7 = playerTable->horizontalHeaderItem(1);
-        ___qtablewidgetitem7->setText(QApplication::translate("MainWindow", "Player Name", 0));
-        QTableWidgetItem *___qtablewidgetitem8 = playerTable->horizontalHeaderItem(2);
-        ___qtablewidgetitem8->setText(QApplication::translate("MainWindow", "Frags", 0));
-        QTableWidgetItem *___qtablewidgetitem9 = playerTable->horizontalHeaderItem(3);
-        ___qtablewidgetitem9->setText(QApplication::translate("MainWindow", "Time", 0));
+        QTableWidgetItem *___qtablewidgetitem6 = rulesTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem6->setText(QApplication::translate("MainWindow", "Rule", 0));
+        QTableWidgetItem *___qtablewidgetitem7 = rulesTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem7->setText(QApplication::translate("MainWindow", "Value", 0));
+        QTableWidgetItem *___qtablewidgetitem8 = playerTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem8->setText(QApplication::translate("MainWindow", "#", 0));
+        QTableWidgetItem *___qtablewidgetitem9 = playerTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem9->setText(QApplication::translate("MainWindow", "Player Name", 0));
+        QTableWidgetItem *___qtablewidgetitem10 = playerTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem10->setText(QApplication::translate("MainWindow", "Frags", 0));
+        QTableWidgetItem *___qtablewidgetitem11 = playerTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem11->setText(QApplication::translate("MainWindow", "Time", 0));
         rconLabel->setText(QApplication::translate("MainWindow", "RCon Passowrd", 0));
         rconSave->setText(QApplication::translate("MainWindow", "Save Password", 0));
         rconLogin->setText(QApplication::translate("MainWindow", "Login", 0));
-        tabWidget->setTabText(tabWidget->indexOf(rconTab), QApplication::translate("MainWindow", "RCon", 0));
         logGetLog->setText(QApplication::translate("MainWindow", "Get Log", 0));
+        tabWidget->setTabText(tabWidget->indexOf(rconTab), QApplication::translate("MainWindow", "RCon", 0));
         tabWidget->setTabText(tabWidget->indexOf(logTab), QApplication::translate("MainWindow", "Log", 0));
         tabWidget->setTabText(tabWidget->indexOf(chatTab), QApplication::translate("MainWindow", "Chat", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "Servers", 0));

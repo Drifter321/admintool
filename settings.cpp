@@ -58,6 +58,13 @@ void Settings::SetDefaultSettings()
 
     intList.clear();
 
+    intList.append(qRound(pMain->GetUi()->splitter->width()*.80));
+    intList.append(qRound(pMain->GetUi()->splitter->width()*.20));
+
+    pMain->GetUi()->browserSplitter->setSizes(intList);
+
+    intList.clear();
+
     intList.append(50);
     intList.append(25);
     intList.append(25);
@@ -109,6 +116,8 @@ void Settings::ReadSettings()
     pMain->GetUi()->splitter->restoreState(pSettings->value("splitterState", pMain->GetUi()->splitter->saveState()).toByteArray());
 
     pMain->GetUi()->rulesSplitter->restoreState(pSettings->value("rulesSplitterState", pMain->GetUi()->rulesSplitter->saveState()).toByteArray());
+
+    pMain->GetUi()->browserSplitter->restoreState(pSettings->value("browserSplitterState", pMain->GetUi()->browserSplitter->saveState()).toByteArray());
 
     pMain->GetUi()->browserTable->horizontalHeader()->restoreState(pSettings->value("browserTableState", pMain->GetUi()->browserTable->horizontalHeader()->saveState()).toByteArray());
 
@@ -192,6 +201,8 @@ void Settings::SaveSettings()
     pSettings->setValue("splitterState", pMain->GetUi()->splitter->saveState());
 
     pSettings->setValue("rulesSplitterState", pMain->GetUi()->rulesSplitter->saveState());
+
+    pSettings->setValue("browserSplitterState", pMain->GetUi()->browserSplitter->saveState());
 
     pSettings->setValue("browserTableState", pMain->GetUi()->browserTable->horizontalHeader()->saveState());
 

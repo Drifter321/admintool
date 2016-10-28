@@ -78,6 +78,15 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
                     {
                         this->ui->playerTable->removeRow(0);
                     }
+
+                    while(this->ui->infoTable->rowCount() > 0)
+                    {
+                        this->ui->infoTable->removeRow(0);
+                    }
+                    this->ui->chatOutput->setHtml("");
+                    this->ui->commandOutput->setPlainText("");
+                    this->ui->rconPassword->setText("");
+                    this->ui->rconSave->setChecked(false);
                 }
                 return true;
             }

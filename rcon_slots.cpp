@@ -179,7 +179,7 @@ void MainWindow::RestoreRcon(int index)
     this->ui->rconPassword->setText(serverList.at(index)->rconPassword);
     this->ui->commandOutput->setPlainText(serverList.at(index)->rconOutput.join(""));
     this->ui->logOutput->setPlainText(serverList.at(index)->logOutput.join(""));
-    this->ui->chatOutput->setPlainText(serverList.at(index)->chatOutput.join(""));
+    this->ui->chatOutput->setHtml(serverList.at(index)->chatOutput.join(""));
     this->ui->logOutput->moveCursor(QTextCursor::End);
     this->ui->commandOutput->moveCursor(QTextCursor::End);
     this->ui->chatOutput->moveCursor(QTextCursor::End);
@@ -191,4 +191,9 @@ void MainWindow::SetRconEnabled(bool enabled)
     this->ui->rconPassword->setEnabled(enabled);
     this->ui->commandOutput->setEnabled(enabled);
     this->ui->commandText->setEnabled(enabled);
+    this->ui->rconLogin->setEnabled(enabled);
+    this->ui->logGetLog->setEnabled(enabled);
+    this->ui->logOutput->setEnabled(enabled);
+    this->ui->chatOutput->setEnabled(enabled);
+    this->ui->sendChat->setEnabled(enabled);
 }

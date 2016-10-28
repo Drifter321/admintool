@@ -18,6 +18,7 @@ extern QColor queryingColor;
 void MainWindow::ConnectSlots()
 {
     this->ui->commandText->connect(this->ui->commandText, &QLineEdit::returnPressed, this, &MainWindow::processCommand);
+    this->ui->commandText->connect(this->ui->sendChat, &QLineEdit::returnPressed, this, &MainWindow::sendChat);
     this->ui->rconPassword->connect(this->ui->rconPassword, &QLineEdit::returnPressed, this, &MainWindow::rconLogin);
     this->ui->rconPassword->connect(this->ui->rconPassword, &QLineEdit::textChanged, this, &MainWindow::passwordUpdated);
     this->ui->rconSave->connect(this->ui->rconSave, &QCheckBox::toggled, this, &MainWindow::rconSaveToggled);
@@ -159,6 +160,6 @@ void MainWindow::showPortEntry()
 void MainWindow::showAbout()
 {
     QMessageBox message(this);
-    message.setText("Version: 1.0.2\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
+    message.setText("Version: 1.0.3\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
     message.exec();
 }

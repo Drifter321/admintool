@@ -56,6 +56,7 @@ private slots:
     void browserTableItemSelected();
     void TimedUpdate();
     void processCommand();
+    void sendChat();
     void passwordUpdated(const QString &);
     void rconSaveToggled(bool);
     void rconLogin();

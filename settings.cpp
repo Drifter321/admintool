@@ -166,6 +166,7 @@ void Settings::ReadSettings()
 
             item->setTextColor(queryingColor);
             item->setText(QString("Querying server %1...").arg(info->ipPort));
+            item->setToolTip(info->ipPort);
             pMain->GetUi()->browserTable->setItem(row, 0, id);
             pMain->GetUi()->browserTable->setItem(row, 4, item);
 

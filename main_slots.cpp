@@ -59,6 +59,7 @@ void MainWindow::addServer()
 
                 item->setTextColor(queryingColor);
                 item->setText(QString("Querying server %1...").arg(server));
+                item->setToolTip(server);
                 this->ui->browserTable->setItem(row, 0, id);
                 this->ui->browserTable->setItem(row, 4, item);
 

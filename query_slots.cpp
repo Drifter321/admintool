@@ -164,7 +164,9 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
             this->ui->browserTable->setItem(row, 3, lockedItem);
         }
 
-        this->ui->browserTable->setItem(row, 4, new QTableWidgetItem(reply->hostname));
+        QTableWidgetItem *hostname = new QTableWidgetItem(reply->hostname);
+        hostname->setToolTip(info->ipPort);
+        this->ui->browserTable->setItem(row, 4,hostname);
         QTableWidgetItem *mapItem = new QTableWidgetItem(reply->map);
         mapItem->setTextColor(errorColor);
         this->ui->browserTable->setItem(row, 5, mapItem);
@@ -189,6 +191,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
 
         item->setTextColor(errorColor);
         item->setText(QString("Failed to query %1, retrying in %2 seconds").arg(info->ipPort, QString::number(UPDATE_TIME)));
+        item->setToolTip(info->ipPort);
         this->ui->browserTable->setItem(row, 4, item);
 
         if(reply)
@@ -303,41 +306,45 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
     if(info->haveInfo)
     {
         this->ui->infoTable->insertRow(0);
-        this->ui->infoTable->setItem(0, 0, new QTableWidgetItem("Server Name"));
-        this->ui->infoTable->setItem(0, 1, new QTableWidgetItem(info->serverName));
+        this->ui->infoTable->setItem(0, 0, new QTableWidgetItem("Server IP"));
+        this->ui->infoTable->setItem(0, 1, new QTableWidgetItem(info->ipPort));
 
         this->ui->infoTable->insertRow(1);
-        this->ui->infoTable->setItem(1, 0, new QTableWidgetItem("Game"));
-        this->ui->infoTable->setItem(1, 1, new QTableWidgetItem(QString("%1 (%2)").arg(info->gameName, QString::number(info->appId))));
+        this->ui->infoTable->setItem(1, 0, new QTableWidgetItem("Server Name"));
+        this->ui->infoTable->setItem(1, 1, new QTableWidgetItem(info->serverName));
 
         this->ui->infoTable->insertRow(2);
-        this->ui->infoTable->setItem(2, 0, new QTableWidgetItem("Players"));
-        this->ui->infoTable->setItem(2, 1, new QTableWidgetItem(info->playerCount));
+        this->ui->infoTable->setItem(2, 0, new QTableWidgetItem("Game"));
+        this->ui->infoTable->setItem(2, 1, new QTableWidgetItem(QString("%1 (%2)").arg(info->gameName, QString::number(info->appId))));
 
         this->ui->infoTable->insertRow(3);
-        this->ui->infoTable->setItem(3, 0, new QTableWidgetItem("Map"));
-        this->ui->infoTable->setItem(3, 1, new QTableWidgetItem(QString("%1 (Nextmap : %2)").arg(info->currentMap, nextmap)));
+        this->ui->infoTable->setItem(3, 0, new QTableWidgetItem("Players"));
+        this->ui->infoTable->setItem(3, 1, new QTableWidgetItem(info->playerCount));
 
         this->ui->infoTable->insertRow(4);
-        this->ui->infoTable->setItem(4, 0, new QTableWidgetItem("Timelimit"));
-        this->ui->infoTable->setItem(4, 1, new QTableWidgetItem(timelimit));
+        this->ui->infoTable->setItem(4, 0, new QTableWidgetItem("Map"));
+        this->ui->infoTable->setItem(4, 1, new QTableWidgetItem(QString("%1 (Nextmap : %2)").arg(info->currentMap, nextmap)));
 
         this->ui->infoTable->insertRow(5);
-        this->ui->infoTable->setItem(5, 0, new QTableWidgetItem("Friendly Fire"));
-        this->ui->infoTable->setItem(5, 1, new QTableWidgetItem(ff));
+        this->ui->infoTable->setItem(5, 0, new QTableWidgetItem("Timelimit"));
+        this->ui->infoTable->setItem(5, 1, new QTableWidgetItem(timelimit));
 
         this->ui->infoTable->insertRow(6);
-        this->ui->infoTable->setItem(6, 0, new QTableWidgetItem("Version"));
-        //This line is ugly, but im way too lazy.
-        this->ui->infoTable->setItem(6, 1, new QTableWidgetItem(QString("v%1 (%2, %3, Protocol %4)").arg(info->version, info->os == "l" ? "Linux" : info->os == "m" ? "Mac" : "Windows", info->type == "d" ? "Dedicated" : "Local", QString::number(info->protocol))));
+        this->ui->infoTable->setItem(6, 0, new QTableWidgetItem("Friendly Fire"));
+        this->ui->infoTable->setItem(6, 1, new QTableWidgetItem(ff));
 
         this->ui->infoTable->insertRow(7);
-        this->ui->infoTable->setItem(7, 0, new QTableWidgetItem("Addons"));
-        this->ui->infoTable->setItem(7, 1, new QTableWidgetItem(mods.join("  ")));
+        this->ui->infoTable->setItem(7, 0, new QTableWidgetItem("Version"));
+        //This line is ugly, but im way too lazy.
+        this->ui->infoTable->setItem(7, 1, new QTableWidgetItem(QString("v%1 (%2, %3, Protocol %4)").arg(info->version, info->os == "l" ? "Linux" : info->os == "m" ? "Mac" : "Windows", info->type == "d" ? "Dedicated" : "Local", QString::number(info->protocol))));
 
         this->ui->infoTable->insertRow(8);
-        this->ui->infoTable->setItem(8, 0, new QTableWidgetItem("AntiCheat"));
-        this->ui->infoTable->setItem(8, 1, new QTableWidgetItem(info->vac ? "VAC" : ""));
+        this->ui->infoTable->setItem(8, 0, new QTableWidgetItem("Addons"));
+        this->ui->infoTable->setItem(8, 1, new QTableWidgetItem(mods.join("  ")));
+
+        this->ui->infoTable->insertRow(9);
+        this->ui->infoTable->setItem(9, 0, new QTableWidgetItem("AntiCheat"));
+        this->ui->infoTable->setItem(9, 1, new QTableWidgetItem(info->vac ? "VAC" : ""));
     }
 
     if(list)

@@ -164,3 +164,21 @@ void MainWindow::showAbout()
     message.setText("Version: 1.0.3\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
     message.exec();
 }
+
+void MainWindow::AddRconHistory(QString chat)
+{
+    while(this->commandHistory.size() > 30)
+        this->commandHistory.removeLast();
+
+    this->commandHistory.prepend(chat);
+    this->commandIter->toFront();
+}
+
+void MainWindow::AddChatHistory(QString txt)
+{
+    while(this->sayHistory.size() > 30)
+        this->sayHistory.removeLast();
+
+    this->sayHistory.prepend(txt);
+    this->sayIter->toFront();
+}

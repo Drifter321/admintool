@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QHostAddress>
 #include <QTableWidget>
+#include <QMutableListIterator>
 #include "query.h"
 #include "serverinfo.h"
 #include "loghandler.h"
@@ -50,6 +51,8 @@ public slots:
     void darkThemeTriggered();
     void showPortEntry();
     void showAbout();
+    void AddRconHistory(QString cmd);
+    void AddChatHistory(QString txt);
 
 private slots:
     void addServer();
@@ -73,5 +76,9 @@ private:
     QImage GetVACImage();
     QImage GetLockImage();
     LogHandler *pLogHandler;
+    QList<QString> commandHistory;
+    QList<QString> sayHistory;
+    QMutableListIterator<QString> *commandIter;
+    QMutableListIterator<QString> *sayIter;
 };
 #endif // MAINWINDOW_H

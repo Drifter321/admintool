@@ -9,6 +9,8 @@ extern QList<ServerInfo *> serverList;
 void MainWindow::HookEvents()
 {
     this->ui->browserTable->installEventFilter(this);
+    this->ui->commandText->installEventFilter(this);
+    this->ui->sendChat->installEventFilter(this);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -19,7 +21,51 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
-    if(object == this->ui->browserTable && this->ui->browserTable->selectedItems().size() && event->type() == QEvent::KeyPress)
+    if((object == this->ui->commandText || object == this->ui->sendChat) && event->type() == QEvent::KeyPress)
+    {
+        Qt::Key key = (Qt::Key)(((QKeyEvent *)event)->key());
+        if(key == Qt::Key_Up)
+        {
+            if(object == this->ui->commandText && this->commandHistory.size() > 0)
+            {
+                if(!this->commandIter->hasNext())
+                {
+                    this->commandIter->toFront();
+                }
+                this->ui->commandText->setText(this->commandIter->next());
+            }
+            else if(object == this->ui->sendChat && this->sayHistory.size() > 0)
+            {
+                if(!this->sayIter->hasNext())
+                {
+                    this->sayIter->toFront();
+                }
+                this->ui->sendChat->setText(this->sayIter->next());
+            }
+            return true;
+        }
+        else if(key == Qt::Key_Down)
+        {
+            if(object == this->ui->commandText && this->commandHistory.size() > 0)
+            {
+                if(!this->commandIter->hasPrevious())
+                {
+                    this->commandIter->toBack();
+                }
+                this->ui->commandText->setText(this->commandIter->previous());
+            }
+            else if(object == this->ui->sendChat && this->sayHistory.size() > 0)
+            {
+                if(!this->sayIter->hasPrevious())
+                {
+                    this->sayIter->toBack();
+                }
+                this->ui->sendChat->setText(this->sayIter->previous());
+            }
+            return true;
+        }
+    }
+    else if(object == this->ui->browserTable && this->ui->browserTable->selectedItems().size() && event->type() == QEvent::KeyPress)
     {
         Qt::Key key = (Qt::Key)(((QKeyEvent *)event)->key());
         if(key == Qt::Key_Delete)

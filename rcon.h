@@ -27,11 +27,12 @@ public:
     }
     bool isAuthed;
     void auth();
-    void execCommand(QString command);
+    void execCommand(QString command, bool history = true);
 
 signals:
     void rconOutput(ServerInfo *, QByteArray);
     void rconAuth(ServerInfo *);
+    void rconHistory(QString);
 private slots:
     void socketReadyRead();
     void socketDisconnected();

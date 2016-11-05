@@ -14,6 +14,7 @@ RconQuery::RconQuery(MainWindow *main, ServerInfo *info)
     connect(this->socket, &QTcpSocket::disconnected, this, &RconQuery::socketDisconnected);
     connect(this, &RconQuery::rconAuth, main, &MainWindow::RconAuthReady);
     connect(this, &RconQuery::rconOutput, main, &MainWindow::RconOutput);
+    connect(this, &RconQuery::rconHistory, main, &MainWindow::AddRconHistory);
 }
 
 void RconQuery::socketDisconnected()
@@ -101,7 +102,7 @@ void RconQuery::auth()
     this->socket->write(query);
 }
 
-void RconQuery::execCommand(QString command)
+void RconQuery::execCommand(QString command, bool history)
 {
     if(!this->isAuthed)
     {
@@ -111,6 +112,9 @@ void RconQuery::execCommand(QString command)
 
     if(command.length() == 0)
         return;
+
+    if(history)
+        emit rconHistory(command);
 
     QByteArray query;
     QDataStream data(&query, QIODevice::ReadWrite);

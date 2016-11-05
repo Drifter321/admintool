@@ -27,8 +27,8 @@ void MainWindow::getLog()
         QMessageBox::critical(this, "Log Handler Error", "Failed to get external ip. Logging can not be enabled.");
     }
 
-    info->rcon->execCommand("log on");
-    info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort));
+    info->rcon->execCommand("log on", false);
+    info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort), false);
     pLogHandler->addServer(serverList.at(index-1));
 }
 
@@ -134,7 +134,8 @@ void MainWindow::sendChat()
 
     if(this->ui->sendChat->text().length() != 0)
     {
-        info->rcon->execCommand(QString("say %1").arg(this->ui->sendChat->text()));
+        this->AddChatHistory(this->ui->sendChat->text());
+        info->rcon->execCommand(QString("say %1").arg(this->ui->sendChat->text()), false);
         this->ui->sendChat->setText("");
     }
 }

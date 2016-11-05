@@ -14,7 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
     pPlayerQuery = NULL;
     pRulesQuery = NULL;
     ui->setupUi(this);
-    this->setWindowTitle("Source Admin Tool");
+    setWindowTitle("Source Admin Tool");
+    commandIter = new QMutableListIterator<QString>(this->commandHistory);
+    sayIter = new QMutableListIterator<QString>(this->sayHistory);
 
     this->SetRconEnabled(false);
     settings = new Settings(this);
@@ -47,6 +49,8 @@ MainWindow::~MainWindow()
     serverList.clear();
     delete ui;
     delete pLogHandler;
+    delete sayIter;
+    delete commandIter;
 }
 
 AddServerError MainWindow::CheckServerList(QString server)

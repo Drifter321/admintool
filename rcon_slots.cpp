@@ -131,7 +131,7 @@ void MainWindow::RconAuthReady(ServerInfo *info)
     }
     else if(info == serverList.at(index-1))
     {
-        info->rcon->execCommand("echo Welcome user!");
+        info->rcon->execCommand("echo Welcome user!", false);
     }
 }
 

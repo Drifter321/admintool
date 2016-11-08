@@ -56,6 +56,7 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
     //Show and save the log line in the log tab
     if(info == serverList.at(index-1))
     {
+        this->ui->logOutput->moveCursor(QTextCursor::End);
         this->ui->logOutput->insertPlainText(logLine);
         this->ui->logOutput->moveCursor(QTextCursor::End);
     }

@@ -138,7 +138,11 @@ void LogHandler::UPnPReady()
             delete this->manager;
             this->manager = NULL;
         }
-        QMessageBox::information(this->pMain, "Log Handler", QString("Listening on: %1:%2").arg(this->externalIP.toString(), this->szPort));
+        if(pMain->showLoggingInfo)
+        {
+            QMessageBox::information(this->pMain, "Log Handler", QString("Listening on: %1:%2").arg(this->externalIP.toString(), this->szPort));
+            pMain->showLoggingInfo = false;
+        }
     }
     else if(!this->manager)
     {

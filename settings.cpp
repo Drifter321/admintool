@@ -102,6 +102,8 @@ void Settings::SetDefaultSettings()
 
     qsrand((uint)(QTime::currentTime()).msec());
     pMain->u16logPort = qrand() % ((PORT_MAX + 1) - PORT_MIN) + PORT_MIN;
+
+    pMain->showLoggingInfo = true;
 }
 
 void Settings::ReadSettings()
@@ -126,6 +128,8 @@ void Settings::ReadSettings()
     pMain->GetUi()->rulesTable->horizontalHeader()->restoreState(pSettings->value("rulesTableState", pMain->GetUi()->rulesTable->horizontalHeader()->saveState()).toByteArray());
 
     bool darkTheme = pSettings->value("darkTheme", false).toBool();
+
+    pMain->showLoggingInfo = pSettings->value("showLoggingInfo", true).toBool();
 
     uint temp = pSettings->value("logPort", pMain->u16logPort).toUInt();
 
@@ -212,6 +216,8 @@ void Settings::SaveSettings()
     pSettings->setValue("playerTableState", pMain->GetUi()->playerTable->horizontalHeader()->saveState());
 
     pSettings->setValue("darkTheme", pMain->GetUi()->menuSettings->actions().at(0)->isChecked());
+
+    pSettings->setValue("showLoggingInfo", pMain->showLoggingInfo);
 
     pSettings->setValue("logPort", pMain->u16logPort);
 

@@ -37,6 +37,7 @@ public:
     PlayerQuery *pPlayerQuery;
     RulesQuery *pRulesQuery;
     quint16 u16logPort;
+    bool showLoggingInfo;
 
 protected:
     void closeEvent(QCloseEvent *event);

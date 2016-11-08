@@ -33,6 +33,7 @@ void MainWindow::processCommand()
         if(this->ui->commandText->text() == "clear")
         {
             this->ui->commandOutput->clear();
+            this->ui->commandOutput->moveCursor(QTextCursor::End);
             this->ui->commandOutput->appendPlainText(QString("] %1").arg(this->ui->commandText->text()));
             this->ui->commandOutput->moveCursor(QTextCursor::End);
             info->rcon->execCommand(this->ui->commandText->text());
@@ -42,6 +43,7 @@ void MainWindow::processCommand()
         }
         this->ui->commandOutput->appendPlainText(QString("] %1").arg(this->ui->commandText->text()));
         info->rconOutput.append(QString("] %1\n").arg(this->ui->commandText->text()));
+        this->ui->commandOutput->moveCursor(QTextCursor::End);
         this->ui->commandOutput->appendPlainText("");
         this->ui->commandOutput->moveCursor(QTextCursor::End);
         info->rcon->execCommand(this->ui->commandText->text());
@@ -153,6 +155,7 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
 
     if(info == serverList.at(index-1))
     {
+        this->ui->commandOutput->moveCursor(QTextCursor::End);
         this->ui->commandOutput->insertPlainText(result);
         this->ui->commandOutput->moveCursor(QTextCursor::End);
     }

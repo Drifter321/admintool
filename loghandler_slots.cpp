@@ -101,6 +101,7 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
 
         if(info == serverList.at(index-1))
         {
+            this->ui->chatOutput->moveCursor(QTextCursor::End);
             this->ui->chatOutput->insertHtml(chatLine);
             this->ui->chatOutput->moveCursor(QTextCursor::End);
         }

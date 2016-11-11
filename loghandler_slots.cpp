@@ -4,10 +4,13 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 
+extern QList<ServerInfo *> serverList;
+
 QStringList blueTeams = {"BLU", "CT"};
 QStringList redTeams = {"RED", "TERRORIST"};
-extern QList<ServerInfo *> serverList;
+
 QRegularExpression chatRegex("^L\\d{2}\\/\\d{2}\\/\\d{4} - \\d{2}:\\d{2}:\\d{2}: \"(.+)<(\\d+)><([^>]+)><([^>]*)>\"(?: (say(?:_team)?) \"(.*)\")?.*?$");
+QRegularExpression actionRegex("^L\\d{2}\\/\\d{2}\\/\\d{4} - \\d{2}:\\d{2}:\\d{2}: \"(.+)<(\\d+)><([^>]+)><([^>]*)>\".*?\"(.+)<(\\d+)><([^>]+)><([^>]*)>\".*?$");
 
 void MainWindow::getLog()
 {
@@ -67,49 +70,67 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
     info->logOutput.append(logLine);
 
     //Check if it is a chat event, display and save if so
-    QStringList captures = chatRegex.match(logLine).capturedTexts();
+    QStringList captures = actionRegex.match(logLine).capturedTexts();
 
-    if(captures.length() == 7)//We have 6, 0 = whole line. Ignore console say messages.
+    if(captures.length() == 9) //Player action 2 players
     {
-        QString chatLine;
-        if(captures.at(3) != "Console")
+        info->logHashTable.insert(captures.at(1), PlayerLogInfo(captures.at(2).toUInt(), captures.at(3)));
+        info->logHashTable.insert(captures.at(5), PlayerLogInfo(captures.at(6).toUInt(), captures.at(7)));
+    }
+    else
+    {
+        captures = chatRegex.match(logLine).capturedTexts();
+
+        if(captures.length() == 7)//We have 6, 0 = whole line. Ignore console say messages.
         {
-            QString start = "<font>";
-            if(captures.at(5) == "say_team")
+            QString chatLine;
+            if(captures.at(3) != "Console")
             {
-                QString team = captures.at(4);
-                if(blueTeams.contains(team))
+                QString start = "<font>";
+                if(captures.at(5) == "say_team")
                 {
-                    start = QString("<font style='color:#32a0f0;'>(%1 TEAM) ").arg(captures.at(4));
+                    QString team = captures.at(4);
+                    if(blueTeams.contains(team))
+                    {
+                        start = QString("<font style='color:#32a0f0;'>(%1 TEAM) ").arg(captures.at(4));
+                    }
+                    else if(redTeams.contains(team))
+                    {
+                        start = QString("<font style='color:#ff333a;'>(%1 TEAM) ").arg(captures.at(4));
+                    }
+                    else
+                    {
+                        start = QString("<font>(%1 TEAM) ").arg(captures.at(4));
+                    }
                 }
-                else if(redTeams.contains(team))
-                {
-                    start = QString("<font style='color:#ff333a;'>(%1 TEAM) ").arg(captures.at(4));
-                }
-                else
-                {
-                    start = QString("<font>(%1 TEAM) ").arg(captures.at(4));
-                }
+
+                chatLine = QString("%1%2&lt;%3&gt; : %4</font><br>").arg(start, captures.at(1).toHtmlEscaped(), captures.at(3), captures.at(6).toHtmlEscaped());
+            }
+            else
+            {
+               chatLine = QString("&lt;%1&gt;&lt;%1&gt; : %2<br>").arg(captures.at(3), captures.at(6));
             }
 
-            chatLine = QString("%1%2&lt;%3&gt; : %4</font><br>").arg(start, captures.at(1).toHtmlEscaped(), captures.at(3), captures.at(6).toHtmlEscaped());
+            if(info == serverList.at(index-1))
+            {
+                this->ui->chatOutput->moveCursor(QTextCursor::End);
+                this->ui->chatOutput->insertHtml(chatLine);
+                this->ui->chatOutput->moveCursor(QTextCursor::End);
+            }
+
+            while(info->chatOutput.size() > 100)
+                info->chatOutput.removeFirst();
+
+            info->chatOutput.append(chatLine);
         }
-        else
+
+        if(captures.length() >= 5)
         {
-           chatLine = QString("&lt;%1&gt;&lt;%1&gt; : %2<br>").arg(captures.at(3), captures.at(6));
+            if(captures.at(3) != "Console")
+            {
+                info->logHashTable.insert(captures.at(1), PlayerLogInfo(captures.at(2).toUInt(), captures.at(3)));
+            }
         }
-
-        if(info == serverList.at(index-1))
-        {
-            this->ui->chatOutput->moveCursor(QTextCursor::End);
-            this->ui->chatOutput->insertHtml(chatLine);
-            this->ui->chatOutput->moveCursor(QTextCursor::End);
-        }
-
-        while(info->chatOutput.size() > 100)
-            info->chatOutput.removeFirst();
-
-        info->chatOutput.append(chatLine);
     }
 }
 

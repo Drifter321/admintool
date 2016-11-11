@@ -209,8 +209,8 @@ public:
         rulesTable->verticalHeader()->setHighlightSections(false);
         rulesTable->verticalHeader()->setMinimumSectionSize(20);
         playerTable = new QTableWidget(rulesSplitter);
-        if (playerTable->columnCount() < 4)
-            playerTable->setColumnCount(4);
+        if (playerTable->columnCount() < 5)
+            playerTable->setColumnCount(5);
         QTableWidgetItem *__qtablewidgetitem11 = new QTableWidgetItem();
         playerTable->setHorizontalHeaderItem(0, __qtablewidgetitem11);
         QTableWidgetItem *__qtablewidgetitem12 = new QTableWidgetItem();
@@ -219,6 +219,8 @@ public:
         playerTable->setHorizontalHeaderItem(2, __qtablewidgetitem13);
         QTableWidgetItem *__qtablewidgetitem14 = new QTableWidgetItem();
         playerTable->setHorizontalHeaderItem(3, __qtablewidgetitem14);
+        QTableWidgetItem *__qtablewidgetitem15 = new QTableWidgetItem();
+        playerTable->setHorizontalHeaderItem(4, __qtablewidgetitem15);
         playerTable->setObjectName(QStringLiteral("playerTable"));
         playerTable->setMinimumSize(QSize(100, 100));
         playerTable->setBaseSize(QSize(0, 0));
@@ -231,7 +233,7 @@ public:
         playerTable->setShowGrid(false);
         playerTable->setSortingEnabled(true);
         playerTable->setWordWrap(false);
-        playerTable->setColumnCount(4);
+        playerTable->setColumnCount(5);
         rulesSplitter->addWidget(playerTable);
         playerTable->horizontalHeader()->setHighlightSections(false);
         playerTable->horizontalHeader()->setStretchLastSection(false);
@@ -418,9 +420,11 @@ public:
         QTableWidgetItem *___qtablewidgetitem9 = playerTable->horizontalHeaderItem(1);
         ___qtablewidgetitem9->setText(QApplication::translate("MainWindow", "Player Name", 0));
         QTableWidgetItem *___qtablewidgetitem10 = playerTable->horizontalHeaderItem(2);
-        ___qtablewidgetitem10->setText(QApplication::translate("MainWindow", "Frags", 0));
+        ___qtablewidgetitem10->setText(QApplication::translate("MainWindow", "Score", 0));
         QTableWidgetItem *___qtablewidgetitem11 = playerTable->horizontalHeaderItem(3);
         ___qtablewidgetitem11->setText(QApplication::translate("MainWindow", "Time", 0));
+        QTableWidgetItem *___qtablewidgetitem12 = playerTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem12->setText(QApplication::translate("MainWindow", "Steam ID", 0));
         rconLabel->setText(QApplication::translate("MainWindow", "RCon Passowrd", 0));
         rconSave->setText(QApplication::translate("MainWindow", "Save Password", 0));
         rconLogin->setText(QApplication::translate("MainWindow", "Login", 0));

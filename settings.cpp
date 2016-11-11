@@ -96,6 +96,7 @@ void Settings::SetDefaultSettings()
     intList.append(225);
     intList.append(100);
     intList.append(150);
+    intList.append(200);
 
     for(int i = 0; i < intList.size(); i++)
         pMain->GetUi()->playerTable->setColumnWidth(i, intList.at(i));

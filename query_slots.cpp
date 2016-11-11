@@ -27,6 +27,8 @@ void MainWindow::TimedUpdate()
 
             InfoQuery *infoQuery = new InfoQuery(this);
 
+            serverList.at(index-1)->cleanHashTable();
+
             infoQuery->query(&serverList.at(index-1)->host, serverList.at(index-1)->port, id);
         }
         if(run % 60 == 0)
@@ -211,6 +213,10 @@ void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *inde
         return;
     }
 
+    int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
+
+    ServerInfo *info = serverList.at(index-1);
+
     while(this->ui->playerTable->rowCount() > 0)
     {
         this->ui->playerTable->removeRow(0);
@@ -235,6 +241,15 @@ void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *inde
         time->updateTime(list->at(i).time);
 
         this->ui->playerTable->setItem(i, 3, time);
+
+        QString steamID = "";
+
+        if(info->logHashTable.contains(list->at(i).name))
+        {
+            steamID = (info->logHashTable.value(list->at(i).name).steamID);
+        }
+
+        this->ui->playerTable->setItem(i, 4, new QTableWidgetItem(steamID));
     }
 
     if(list)

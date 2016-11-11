@@ -320,7 +320,7 @@
          <bool>false</bool>
         </property>
         <property name="columnCount">
-         <number>4</number>
+         <number>5</number>
         </property>
         <attribute name="horizontalHeaderHighlightSections">
          <bool>false</bool>
@@ -352,12 +352,17 @@
         </column>
         <column>
          <property name="text">
-          <string>Frags</string>
+          <string>Score</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>Time</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Steam ID</string>
          </property>
         </column>
        </widget>

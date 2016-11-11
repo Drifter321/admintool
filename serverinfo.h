@@ -3,9 +3,35 @@
 
 #include <QMainWindow>
 #include <QHostAddress>
+#include <QHash>
+#include <QDateTime>
 #include "rcon.h"
 
-struct ServerInfo
+class PlayerLogInfo
+{
+public:
+    PlayerLogInfo()
+    {
+        time = QDateTime::currentMSecsSinceEpoch();
+        steamID = "";
+        userid = 0;
+    }
+
+    PlayerLogInfo(quint32 id, QString steam)
+    {
+        time = QDateTime::currentMSecsSinceEpoch();
+        steamID = steam;
+        userid = id;
+    }
+
+    qint64 time;
+    QString steamID;
+    quint32 userid;
+};
+
+
+
+class ServerInfo
 {
 public:
     ~ServerInfo()
@@ -17,6 +43,8 @@ public:
     ServerInfo(QString);
     bool isEqual(ServerInfo *)const;
     bool isEqual(ServerInfo) const;
+    void cleanHashTable();
+public:
     bool haveInfo;
     qint8 protocol;
     QString tags;
@@ -39,6 +67,7 @@ public:
     QStringList chatOutput;
     bool saveRcon;
     RconQuery *rcon;
+    QHash<QString, PlayerLogInfo> logHashTable;
 };
 
 //Q_DECLARE_METATYPE(ServerInfo)

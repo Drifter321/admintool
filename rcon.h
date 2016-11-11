@@ -11,7 +11,7 @@
 #define RCON_EXEC_RESPONSE 0
 
 
-struct ServerInfo;
+class ServerInfo;
 class MainWindow;
 
 const qint32 rconID = 0x7001;

@@ -38,3 +38,16 @@ bool ServerInfo::isEqual(ServerInfo *other) const
 {
     return (this->host == other->host && this->port == other->port);
 }
+
+void ServerInfo::cleanHashTable()
+{
+    QList<QString> keys = this->logHashTable.keys();
+    for(int i = 0; i < keys.length(); i++)
+    {
+        PlayerLogInfo info = this->logHashTable.value(keys.at(i));
+        if(info.time+(1000*60*30) < QDateTime::currentMSecsSinceEpoch())//remove the key if its older than 30 minutes
+        {
+            this->logHashTable.remove(keys.at(i));
+        }
+    }
+}

@@ -10,9 +10,9 @@ void PlayerTimeTableItem::setTime()
 {
     QString res;
 
-    int days = this->time / 60 / 60 / 24;
-    int hours = qRound((this->time / 60 / 60)) % 24;
-    int minutes = qRound((this->time / 60)) % 60;
+    int days = qRound(this->time) / 60 / 60 / 24;
+    int hours = qRound(this->time) / 60 / 60 % 24;
+    int minutes = qRound(this->time) / 60 % 60;
     int seconds = qRound(this->time) % 60;
 
     if(days)

@@ -49,8 +49,7 @@ void LogHandler::socketDisconnected()
 
 void LogHandler::socketReadyRead()
 {
-    QByteArray datagram;
-    datagram.resize(this->logsocket->pendingDatagramSize());
+    QByteArray datagram(this->logsocket->pendingDatagramSize(), Qt::Uninitialized);
 
     QHostAddress sender;
     quint16 senderPort;
@@ -66,9 +65,11 @@ void LogHandler::socketReadyRead()
             break;
         }
     }
-    int idx = QString(datagram).indexOf(" ");
+    int idx = datagram.indexOf(" ");
 
-    pMain->parseLogLine(QString(datagram).remove(0, idx+1), info);
+    QString logLine = QString::fromLocal8Bit((datagram.remove(0, idx+1)).data());;
+
+    pMain->parseLogLine(logLine, info);
 }
 
 void LogHandler::addServer(ServerInfo *info)

@@ -67,7 +67,7 @@ void LogHandler::socketReadyRead()
     }
     int idx = datagram.indexOf(" ");
 
-    QString logLine = QString::fromLocal8Bit((datagram.remove(0, idx+1)).data());;
+    QString logLine = QString(datagram.remove(0, idx+1));
 
     pMain->parseLogLine(logLine, info);
 }

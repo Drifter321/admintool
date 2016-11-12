@@ -156,7 +156,7 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
     if(info == serverList.at(index-1))
     {
         this->ui->commandOutput->moveCursor(QTextCursor::End);
-        this->ui->commandOutput->insertPlainText(QString::fromLocal8Bit(result));
+        this->ui->commandOutput->insertPlainText(result);
         this->ui->commandOutput->moveCursor(QTextCursor::End);
     }
 
@@ -165,7 +165,7 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
         while(info->rconOutput.size() > 100)
             info->rconOutput.removeFirst();
 
-        info->rconOutput.append(QString::fromLocal8Bit(result));
+        info->rconOutput.append(result);
     }
 }
 

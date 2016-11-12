@@ -96,7 +96,7 @@ void RconQuery::auth()
     data << size;
     data << rconID;
     data << RCON_AUTH;
-    data.writeRawData(this->server->rconPassword.toLatin1().data(), this->server->rconPassword.length()+1);
+    data.writeRawData(this->server->rconPassword.toUtf8().data(), this->server->rconPassword.toUtf8().length()+1);
     data << qint8(0x00);
 
     this->socket->write(query);
@@ -125,7 +125,7 @@ void RconQuery::execCommand(QString command, bool history)
     data << size;
     data << rconID;
     data << RCON_EXEC_COMMAND;
-    data.writeRawData(command.toLatin1().data(), command.length()+1);
+    data.writeRawData(command.toUtf8().data(), command.toUtf8().length()+1);
     data << qint8(0x00);
 
     this->socket->write(query);

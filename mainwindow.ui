@@ -107,7 +107,7 @@
          <bool>false</bool>
         </property>
         <property name="columnCount">
-         <number>7</number>
+         <number>8</number>
         </property>
         <attribute name="horizontalHeaderHighlightSections">
          <bool>false</bool>
@@ -160,6 +160,11 @@
         <column>
          <property name="text">
           <string>Players</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Ping</string>
          </property>
         </column>
        </widget>
@@ -409,7 +414,7 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string>RCon Passowrd</string>
+                  <string>RCon Password</string>
                  </property>
                 </widget>
                </item>

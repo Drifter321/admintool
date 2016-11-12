@@ -1,6 +1,7 @@
 #include "query.h"
 #include "worker.h"
 #include "mainwindow.h"
+#include <QDateTime>
 
 QString GetStringFromStream(QDataStream &stream)
 {
@@ -150,7 +151,7 @@ QByteArray SendUDPQuery(QByteArray query, QHostAddress host, quint16 port)
     return QByteArray();
 }
 
-InfoReply::InfoReply(QByteArray response)
+InfoReply::InfoReply(QByteArray response, qint64 ping)
 {
     QDataStream data(response);
 
@@ -169,7 +170,7 @@ InfoReply::InfoReply(QByteArray response)
     if(header == -1 && check == A2S_INFO_CHECK)
     {
         this->success = true;
-
+        this->ping = ping;
         data >> this->protocol;
         this->hostname = GetStringFromStream(data);
         this->map = GetStringFromStream(data);
@@ -244,11 +245,21 @@ InfoReply *GetInfoReply(QHostAddress host, quint16 port)
     data << A2S_HEADER << (qint8)A2S_INFO;
     data.writeRawData(A2S_INFO_STRING, strlen(A2S_INFO_STRING)+1);
 
+    qint64 ping = QDateTime::currentMSecsSinceEpoch();
     QByteArray response = SendUDPQuery(query, host, port);
+    ping = QDateTime::currentMSecsSinceEpoch()-ping;
+    if(ping > 2000)
+    {
+        ping = ping - 2000;
+    }
+    if(ping > 2000)
+    {
+        ping = 2000;
+    }
 
     if(response.size() > 5)
     {
-        return new InfoReply(response);
+        return new InfoReply(response, ping);
     }
     return NULL;
 }

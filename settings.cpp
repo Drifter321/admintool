@@ -72,6 +72,7 @@ void Settings::SetDefaultSettings()
     intList.append(600);
     intList.append(150);
     intList.append(100);
+    intList.append(70);
 
     for(int i = 0; i < intList.size(); i++)
         pMain->GetUi()->browserTable->setColumnWidth(i, intList.at(i));

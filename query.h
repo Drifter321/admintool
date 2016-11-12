@@ -28,7 +28,7 @@ class Worker;
 class InfoReply
 {
 public:
-    InfoReply(QByteArray);
+    InfoReply(QByteArray, qint64);
     QString hostname;
     QString map;
     QString mod;
@@ -45,6 +45,7 @@ public:
     QString tags;
     QString version;
     qint8 protocol;
+    qint64 ping;
 };
 
 class PlayerInfo

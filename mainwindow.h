@@ -31,6 +31,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     AddServerError CheckServerList(QString server);
     void UpdateSelectedItemInfo(bool removeFirst = true, bool updateRules = false);
+    void MainWindow::SetTableItemAndDelete(int row, int col, QTableWidgetItem *item);
     Ui::MainWindow *GetUi(){return ui;}
     ~MainWindow();
     void parseLogLine(QString, ServerInfo *);

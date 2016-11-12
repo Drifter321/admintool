@@ -91,6 +91,18 @@ void MainWindow::UpdateSelectedItemInfo(bool removeFirst, bool updateRules)
     }
 }
 
+void MainWindow::SetTableItemAndDelete(int row, int col, QTableWidgetItem *item)
+{
+    QTableWidgetItem *current = this->ui->browserTable->item(row, col);
+
+    if(current)
+    {
+        delete current;
+    }
+
+    this->ui->browserTable->setItem(row, col, item);
+}
+
 //QUERY INFO READY
 void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
 {
@@ -150,20 +162,20 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
 
         this->ui->browserTable->setSortingEnabled(false);
 
-        this->ui->browserTable->setItem(row, 1, mod);
+        this->SetTableItemAndDelete(row, 1, mod);
 
         if(reply->vac)
         {
             QTableWidgetItem *vacItem = new QTableWidgetItem();
             vacItem->setData(Qt::DecorationRole, this->GetVACImage());
-            this->ui->browserTable->setItem(row, 2, vacItem);
+            this->SetTableItemAndDelete(row, 2, vacItem);
         }
 
         if(reply->visibility)
         {
             QTableWidgetItem *lockedItem = new QTableWidgetItem();
             lockedItem->setData(Qt::DecorationRole, this->GetLockImage());
-            this->ui->browserTable->setItem(row, 3, lockedItem);
+            this->SetTableItemAndDelete(row, 3, lockedItem);
         }
 
         QTableWidgetItem *hostname = new QTableWidgetItem(reply->hostname);
@@ -171,7 +183,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         this->ui->browserTable->setItem(row, 4,hostname);
         QTableWidgetItem *mapItem = new QTableWidgetItem(reply->map);
         mapItem->setTextColor(errorColor);
-        this->ui->browserTable->setItem(row, 5, mapItem);
+        this->SetTableItemAndDelete(row, 5, mapItem);
 
         PlayerTableItem *playerItem = new PlayerTableItem();
         playerItem->players = reply->players;
@@ -182,7 +194,16 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
             playerItem->setTextColor(queryingColor);
 
         playerItem->setText(info->playerCount);
-        this->ui->browserTable->setItem(row, 6, playerItem);
+        this->SetTableItemAndDelete(row, 6, playerItem);
+
+        QTableWidgetItem *pingItem = new QTableWidgetItem(QString::number(reply->ping));
+
+        if(reply->ping > 200)
+            pingItem->setTextColor(errorColor);
+        else
+            pingItem->setTextColor(queryingColor);
+
+        this->SetTableItemAndDelete(row, 7, pingItem);
 
         this->ui->browserTable->setSortingEnabled(true);
         delete reply;
@@ -194,7 +215,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         item->setTextColor(errorColor);
         item->setText(QString("Failed to query %1, retrying in %2 seconds").arg(info->ipPort, QString::number(UPDATE_TIME)));
         item->setToolTip(info->ipPort);
-        this->ui->browserTable->setItem(row, 4, item);
+        this->SetTableItemAndDelete(row, 4, item);
 
         if(reply)
             delete reply;

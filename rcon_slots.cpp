@@ -3,6 +3,7 @@
 #include "rcon.h"
 #include "settings.h"
 #include <QMessageBox>
+#include <QScrollBar>
 
 extern QList<ServerInfo *> serverList;
 
@@ -30,6 +31,9 @@ void MainWindow::processCommand()
 
     if(this->ui->commandText->text().length() != 0)
     {
+        int sliderPos = this->ui->commandOutput->verticalScrollBar()->sliderPosition();
+        bool shouldAutoScroll = sliderPos == this->ui->commandOutput->verticalScrollBar()->maximum();
+
         if(this->ui->commandText->text() == "clear")
         {
             this->ui->commandOutput->clear();
@@ -48,6 +52,11 @@ void MainWindow::processCommand()
         this->ui->commandOutput->moveCursor(QTextCursor::End);
         info->rcon->execCommand(this->ui->commandText->text());
         this->ui->commandText->setText("");
+
+        if(!shouldAutoScroll)
+            this->ui->commandOutput->verticalScrollBar()->setSliderPosition(sliderPos);
+        else
+           this->ui->commandOutput->verticalScrollBar()->setSliderPosition(this->ui->commandOutput->verticalScrollBar()->maximum());
     }
 }
 
@@ -155,9 +164,17 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
 
     if(info == serverList.at(index-1))
     {
+        int sliderPos = this->ui->commandOutput->verticalScrollBar()->sliderPosition();
+        bool shouldAutoScroll = sliderPos == this->ui->commandOutput->verticalScrollBar()->maximum();
+
         this->ui->commandOutput->moveCursor(QTextCursor::End);
         this->ui->commandOutput->insertPlainText(result);
         this->ui->commandOutput->moveCursor(QTextCursor::End);
+
+        if(!shouldAutoScroll)
+            this->ui->commandOutput->verticalScrollBar()->setSliderPosition(sliderPos);
+        else
+           this->ui->commandOutput->verticalScrollBar()->setSliderPosition(this->ui->commandOutput->verticalScrollBar()->maximum());
     }
 
     if(info && !result.isEmpty())

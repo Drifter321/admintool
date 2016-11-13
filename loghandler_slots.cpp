@@ -3,6 +3,7 @@
 #include "serverinfo.h"
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QScrollBar>
 
 extern QList<ServerInfo *> serverList;
 
@@ -59,9 +60,17 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
     //Show and save the log line in the log tab
     if(info == serverList.at(index-1))
     {
+        int sliderPos = this->ui->logOutput->verticalScrollBar()->sliderPosition();
+        bool shouldAutoScroll = sliderPos == this->ui->logOutput->verticalScrollBar()->maximum();
+
         this->ui->logOutput->moveCursor(QTextCursor::End);
         this->ui->logOutput->insertPlainText(logLine);
         this->ui->logOutput->moveCursor(QTextCursor::End);
+
+        if(!shouldAutoScroll)
+            this->ui->logOutput->verticalScrollBar()->setSliderPosition(sliderPos);
+        else
+           this->ui->logOutput->verticalScrollBar()->setSliderPosition(this->ui->logOutput->verticalScrollBar()->maximum());
     }
 
     while(info->logOutput.size() > 100)
@@ -113,9 +122,17 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
 
             if(info == serverList.at(index-1))
             {
+                int sliderPos = this->ui->chatOutput->verticalScrollBar()->sliderPosition();
+                bool shouldAutoScroll = sliderPos == this->ui->chatOutput->verticalScrollBar()->maximum();
+
                 this->ui->chatOutput->moveCursor(QTextCursor::End);
                 this->ui->chatOutput->insertHtml(chatLine);
                 this->ui->chatOutput->moveCursor(QTextCursor::End);
+
+                if(!shouldAutoScroll)
+                    this->ui->chatOutput->verticalScrollBar()->setSliderPosition(sliderPos);
+                else
+                   this->ui->chatOutput->verticalScrollBar()->setSliderPosition(this->ui->chatOutput->verticalScrollBar()->maximum());
             }
 
             while(info->chatOutput.size() > 100)

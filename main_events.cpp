@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include <QMessageBox>
+#include <QClipboard>
 
 extern Settings *settings;
 extern QList<ServerInfo *> serverList;
@@ -11,6 +12,7 @@ void MainWindow::HookEvents()
     this->ui->browserTable->installEventFilter(this);
     this->ui->commandText->installEventFilter(this);
     this->ui->sendChat->installEventFilter(this);
+    this->ui->playerTable->installEventFilter(this);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -136,6 +138,40 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
                 }
                 return true;
             }
+        }
+    }
+    else if(object == this->ui->playerTable && this->ui->playerTable->selectedItems().size() && event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *key_event = (QKeyEvent *)event;
+
+        if(key_event->matches(QKeySequence::Copy))
+        {
+            QClipboard *clipboard = QApplication::clipboard();
+
+            QTableWidgetItem *item;
+            QString copy;
+
+            int row = -1;
+
+            foreach(item, this->ui->playerTable->selectedItems())
+            {
+                if(row == -1)
+                {
+                    row = item->row();
+                }
+                else if(item->row() == row)
+                {
+                    copy.append('\t');
+                }
+                else
+                {
+                    copy.append('\n');
+                    row = item->row();
+                }
+                copy.append(item->text());
+            }
+            clipboard->setText(copy);
+            return true;
         }
     }
     return QMainWindow::eventFilter(object, event);

@@ -230,7 +230,7 @@ public:
         playerTable->setProperty("showDropIndicator", QVariant(false));
         playerTable->setDragDropOverwriteMode(false);
         playerTable->setAlternatingRowColors(false);
-        playerTable->setSelectionMode(QAbstractItemView::SingleSelection);
+        playerTable->setSelectionMode(QAbstractItemView::ContiguousSelection);
         playerTable->setSelectionBehavior(QAbstractItemView::SelectRows);
         playerTable->setShowGrid(false);
         playerTable->setSortingEnabled(true);

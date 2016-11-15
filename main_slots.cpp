@@ -161,7 +161,7 @@ void MainWindow::showPortEntry()
 void MainWindow::showAbout()
 {
     QMessageBox message(this);
-    message.setText("Version: 1.0.6\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
+    message.setText("Version: 1.0.7\nCreated by Dr!fter @ https://github.com/Drifter321\nUsing miniupnpc @ https://github.com/miniupnp/miniupnp");
     message.exec();
 }
 

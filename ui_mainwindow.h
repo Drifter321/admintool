@@ -171,10 +171,14 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(infoTable->sizePolicy().hasHeightForWidth());
         infoTable->setSizePolicy(sizePolicy1);
-        infoTable->setFocusPolicy(Qt::NoFocus);
+        infoTable->setFocusPolicy(Qt::StrongFocus);
         infoTable->setLayoutDirection(Qt::LeftToRight);
+        infoTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         infoTable->setProperty("showDropIndicator", QVariant(false));
+        infoTable->setDragDropOverwriteMode(false);
         infoTable->setAlternatingRowColors(true);
+        infoTable->setSelectionMode(QAbstractItemView::ContiguousSelection);
+        infoTable->setSelectionBehavior(QAbstractItemView::SelectRows);
         infoTable->setShowGrid(false);
         browserSplitter->addWidget(infoTable);
         infoTable->horizontalHeader()->setVisible(false);
@@ -198,7 +202,7 @@ public:
         rulesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         rulesTable->setProperty("showDropIndicator", QVariant(false));
         rulesTable->setDragDropOverwriteMode(false);
-        rulesTable->setSelectionMode(QAbstractItemView::SingleSelection);
+        rulesTable->setSelectionMode(QAbstractItemView::ContiguousSelection);
         rulesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
         rulesTable->setShowGrid(false);
         rulesTable->setSortingEnabled(true);

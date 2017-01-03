@@ -13,6 +13,8 @@ void MainWindow::HookEvents()
     this->ui->commandText->installEventFilter(this);
     this->ui->sendChat->installEventFilter(this);
     this->ui->playerTable->installEventFilter(this);
+    this->ui->infoTable->installEventFilter(this);
+    this->ui->rulesTable->installEventFilter(this);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -140,12 +142,30 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
             }
         }
     }
-    else if(object == this->ui->playerTable && this->ui->playerTable->selectedItems().size() && event->type() == QEvent::KeyPress)
+    else if((object == this->ui->playerTable || object == this->ui->infoTable || object == this->ui->rulesTable) && event->type() == QEvent::KeyPress)
     {
         QKeyEvent *key_event = (QKeyEvent *)event;
 
         if(key_event->matches(QKeySequence::Copy))
         {
+            QList<QTableWidgetItem *>selectedItems;
+
+            if(object == this->ui->playerTable)
+            {
+                selectedItems = this->ui->playerTable->selectedItems();
+            }
+            else if(object == this->ui->infoTable)
+            {
+               selectedItems = this->ui->infoTable->selectedItems();
+            }
+            else if(object == this->ui->rulesTable)
+            {
+                selectedItems = this->ui->rulesTable->selectedItems();
+            }
+
+            if(selectedItems.size() == 0)
+                return QMainWindow::eventFilter(object, event);
+
             QClipboard *clipboard = QApplication::clipboard();
 
             QTableWidgetItem *item;
@@ -153,7 +173,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
             int row = -1;
 
-            foreach(item, this->ui->playerTable->selectedItems())
+            foreach(item, selectedItems)
             {
                 if(row == -1)
                 {

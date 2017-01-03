@@ -48,7 +48,7 @@ public slots:
     void ServerInfoReady(InfoReply *, QTableWidgetItem *);
     void PlayerInfoReady(QList<PlayerInfo> *, QTableWidgetItem *);
     void RulesInfoReady(QList<RulesInfo> *, QTableWidgetItem *);
-    void RconAuthReady(ServerInfo *info);
+    void RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds);
     void RconOutput(ServerInfo *info, QByteArray res);
     void darkThemeTriggered();
     void showPortEntry();
@@ -77,6 +77,8 @@ private:
     void SetRconEnabled(bool);
     QImage GetVACImage();
     QImage GetLockImage();
+    void runCommand(ServerInfo *, QString);
+    void rconLoginQueued(QList<QueuedCommand>);
     LogHandler *pLogHandler;
     QList<QString> commandHistory;
     QList<QString> sayHistory;

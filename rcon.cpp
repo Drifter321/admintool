@@ -57,7 +57,8 @@ void RconQuery::socketReadyRead()
                 this->isAuthed = true;
             }
             stream.skipRawData(size-sizeof(qint32)*2);
-            emit rconAuth(this->server);
+            emit rconAuth(this->server, this->queuedList);
+            this->queuedList.clear();
         }
         else if(type == RCON_EXEC_RESPONSE && id == rconID)
         {

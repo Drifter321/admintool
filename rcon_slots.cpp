@@ -7,29 +7,9 @@
 
 extern QList<ServerInfo *> serverList;
 
-//RCON HANDLING
-void MainWindow::processCommand()
+void MainWindow::runCommand(ServerInfo *info, QString command)
 {
-    if(this->ui->browserTable->selectedItems().size() == 0)
-    {
-        this->browserTableItemSelected();
-        return;
-    }
-
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
-
-    ServerInfo *info = serverList.at(index-1);
-
-    if(info->rcon == NULL || !info->rcon->isAuthed)
-    {
-        QMessageBox message(this);
-        message.setText("Please authenticate first.");
-        message.exec();
-        return;
-    }
-
-    if(this->ui->commandText->text().length() != 0)
+    if(command.length() != 0)
     {
         int sliderPos = this->ui->commandOutput->verticalScrollBar()->sliderPosition();
         bool shouldAutoScroll = sliderPos == this->ui->commandOutput->verticalScrollBar()->maximum();
@@ -58,6 +38,31 @@ void MainWindow::processCommand()
         else
            this->ui->commandOutput->verticalScrollBar()->setSliderPosition(this->ui->commandOutput->verticalScrollBar()->maximum());
     }
+}
+
+//RCON HANDLING
+void MainWindow::processCommand()
+{
+    if(this->ui->browserTable->selectedItems().size() == 0)
+    {
+        this->browserTableItemSelected();
+        return;
+    }
+
+    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
+    int index = item->text().toInt();
+
+    ServerInfo *info = serverList.at(index-1);
+
+    if(info->rcon == NULL || !info->rcon->isAuthed)
+    {
+        QList<QueuedCommand>cmds;
+        cmds.append(QueuedCommand(this->ui->commandText->text(), true));
+        this->rconLoginQueued(cmds);
+        return;
+    }
+
+    this->runCommand(info, this->ui->commandText->text());
 }
 
 void MainWindow::rconSaveToggled(bool checked)
@@ -122,7 +127,43 @@ void MainWindow::rconLogin()
     info->rcon->auth();
 }
 
-void MainWindow::RconAuthReady(ServerInfo *info)
+void MainWindow::rconLoginQueued(QList<QueuedCommand>queuedcmds)
+{
+    if(this->ui->browserTable->selectedItems().size() == 0)
+    {
+        this->browserTableItemSelected();
+        return;
+    }
+
+    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
+    int index = item->text().toInt();
+
+    ServerInfo *info = serverList.at(index-1);
+
+    if(info->rcon == NULL)
+    {
+        info->rcon = new RconQuery(this, info);
+    }
+    else if(info->rcon->isAuthed)
+    {
+        QMessageBox message(this);
+        message.setText("Already authenticated");
+        message.exec();
+        return;
+    }
+    if(info->rconPassword == 0)
+    {
+        QMessageBox message(this);
+        message.setText("Please enter a password");
+        message.exec();
+        return;
+    }
+    info->rcon->queuedList = queuedcmds;
+    this->rconLogin();
+
+}
+
+void MainWindow::RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds)
 {
     if(this->ui->browserTable->selectedItems().size() == 0)
     {
@@ -143,6 +184,14 @@ void MainWindow::RconAuthReady(ServerInfo *info)
     else if(info == serverList.at(index-1))
     {
         info->rcon->execCommand("echo Welcome user!", false);
+        QueuedCommand queuedcmd;
+        foreach(queuedcmd, queuedcmds)
+        {
+            if(!queuedcmd.showHistory)
+                info->rcon->execCommand(queuedcmd.command, false);
+            else
+                this->runCommand(info, queuedcmd.command);
+        }
     }
 }
 
@@ -184,6 +233,14 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
 
         info->rconOutput.append(result);
     }
+}
+
+void MainWindow::showRconClicked(bool checked)
+{
+    if(checked)
+        ui->rconPassword->setEchoMode(QLineEdit::Normal);
+    else
+        ui->rconPassword->setEchoMode(QLineEdit::Password);
 }
 
 void MainWindow::SetRconSignals(bool block)

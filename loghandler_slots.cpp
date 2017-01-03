@@ -21,14 +21,18 @@ void MainWindow::getLog()
     if(!info)
         return;//WHAT?!?!
 
-    if(!info->rcon || !info->rcon->isAuthed)
-    {
-        QMessageBox::information(this, "Log Handler Error", "Please authenticate over RCon first.");
-        return;
-    }
-    else if(this->pLogHandler->externalIP.isNull())
+    if(this->pLogHandler->externalIP.isNull())
     {
         QMessageBox::critical(this, "Log Handler Error", "Failed to get external ip. Logging can not be enabled.");
+        return;
+    }
+    else if(!info->rcon || !info->rcon->isAuthed)
+    {
+        QList<QueuedCommand>cmds;
+        cmds.append(QueuedCommand("log on", false));
+        cmds.append(QueuedCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort), false));
+        this->rconLoginQueued(cmds);
+        return;
     }
 
     info->rcon->execCommand("log on", false);

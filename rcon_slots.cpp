@@ -181,16 +181,25 @@ void MainWindow::RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds)
         message.exec();
         return;
     }
-    else if(info == serverList.at(index-1))
+    else
     {
         info->rcon->execCommand("echo Welcome user!", false);
         QueuedCommand queuedcmd;
         foreach(queuedcmd, queuedcmds)
         {
-            if(!queuedcmd.showHistory)
+            if(!queuedcmd.showHistory)//Get log
+            {
                 info->rcon->execCommand(queuedcmd.command, false);
-            else
-                this->runCommand(info, queuedcmd.command);
+                pLogHandler->addServer(info);
+            }
+            else //command
+            {
+                if(info == serverList.at(index-1))//If current server print the stuff
+                    this->runCommand(info, queuedcmd.command);
+                else //Not current store it only.
+                    info->rconOutput.append(QString("] %1\n").arg(queuedcmd.command));
+                    info->rcon->execCommand(queuedcmd.command, true);
+            }
         }
     }
 }

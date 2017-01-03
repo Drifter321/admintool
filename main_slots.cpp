@@ -29,6 +29,7 @@ void MainWindow::ConnectSlots()
     this->ui->actionSet_Log_Port->connect(this->ui->actionSet_Log_Port, &QAction::triggered, this, &MainWindow::showPortEntry);
     this->ui->actionAbout->connect(this->ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     this->ui->browserTable->connect(this->ui->browserTable, &QTableWidget::itemSelectionChanged, this, &MainWindow::browserTableItemSelected);
+    this->ui->rconShow->connect(this->ui->rconShow, &QCheckBox::clicked, this, &MainWindow::showRconClicked);
 }
 
 

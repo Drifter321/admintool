@@ -469,6 +469,13 @@
                 </widget>
                </item>
                <item>
+                <widget class="QCheckBox" name="rconShow">
+                 <property name="text">
+                  <string>Show Password</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QPushButton" name="rconLogin">
                  <property name="enabled">
                   <bool>true</bool>

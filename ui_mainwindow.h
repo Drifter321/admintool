@@ -58,6 +58,7 @@ public:
     QLabel *rconLabel;
     QLineEdit *rconPassword;
     QCheckBox *rconSave;
+    QCheckBox *rconShow;
     QPushButton *rconLogin;
     QPushButton *logGetLog;
     QPlainTextEdit *commandOutput;
@@ -298,6 +299,11 @@ public:
 
         rconLeft->addWidget(rconSave);
 
+        rconShow = new QCheckBox(rconTab);
+        rconShow->setObjectName(QStringLiteral("rconShow"));
+
+        rconLeft->addWidget(rconShow);
+
         rconLogin = new QPushButton(rconTab);
         rconLogin->setObjectName(QStringLiteral("rconLogin"));
         rconLogin->setEnabled(true);
@@ -435,6 +441,7 @@ public:
         ___qtablewidgetitem13->setText(QApplication::translate("MainWindow", "Steam ID", 0));
         rconLabel->setText(QApplication::translate("MainWindow", "RCon Password", 0));
         rconSave->setText(QApplication::translate("MainWindow", "Save Password", 0));
+        rconShow->setText(QApplication::translate("MainWindow", "Show Password", 0));
         rconLogin->setText(QApplication::translate("MainWindow", "Login", 0));
         logGetLog->setText(QApplication::translate("MainWindow", "Get Log", 0));
         tabWidget->setTabText(tabWidget->indexOf(rconTab), QApplication::translate("MainWindow", "RCon", 0));

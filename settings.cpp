@@ -106,6 +106,8 @@ void Settings::SetDefaultSettings()
     pMain->u16logPort = qrand() % ((PORT_MAX + 1) - PORT_MIN) + PORT_MIN;
 
     pMain->showLoggingInfo = true;
+
+    pMain->GetUi()->rconShow->setChecked(false);
 }
 
 void Settings::ReadSettings()
@@ -130,6 +132,12 @@ void Settings::ReadSettings()
     pMain->GetUi()->rulesTable->horizontalHeader()->restoreState(pSettings->value("rulesTableState", pMain->GetUi()->rulesTable->horizontalHeader()->saveState()).toByteArray());
 
     bool darkTheme = pSettings->value("darkTheme", false).toBool();
+
+    if(pSettings->value("showRCONpass", false).toBool())
+    {
+        pMain->GetUi()->rconShow->setChecked(true);
+        pMain->GetUi()->rconPassword->setEchoMode(QLineEdit::Normal);
+    }
 
     pMain->showLoggingInfo = pSettings->value("showLoggingInfo", true).toBool();
 
@@ -222,6 +230,8 @@ void Settings::SaveSettings()
     pSettings->setValue("showLoggingInfo", pMain->showLoggingInfo);
 
     pSettings->setValue("logPort", pMain->u16logPort);
+
+    pSettings->setValue("showRCONpass", pMain->GetUi()->rconShow->isChecked());
 
     pSettings->beginGroup("servers");
 

@@ -66,6 +66,7 @@ private slots:
     void rconSaveToggled(bool);
     void rconLogin();
     void getLog();
+    void showRconClicked(bool checked);
 
 private:
     Ui::MainWindow *ui;

@@ -231,6 +231,7 @@ public:
         playerTable->setObjectName(QStringLiteral("playerTable"));
         playerTable->setMinimumSize(QSize(100, 100));
         playerTable->setBaseSize(QSize(0, 0));
+        playerTable->setContextMenuPolicy(Qt::CustomContextMenu);
         playerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         playerTable->setProperty("showDropIndicator", QVariant(false));
         playerTable->setDragDropOverwriteMode(false);

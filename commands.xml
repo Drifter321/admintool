@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<Commands>
+	<Option>
+		<Command>kick "%1"</Command>
+		<DisplayName>Kick By Name</DisplayName>
+		<ParamType>Name</ParamType>
+	</Option>
+	<Option>
+		<Command>sm_kick "#%1" %2</Command>
+		<DisplayName>Kick By ID</DisplayName>
+		<ParamType>SteamID</ParamType>
+		<SubOptions>
+			<TitleName>Reason</TitleName>
+			<Default>sm_kick "#%1"</Default>
+			<CommandGroup>
+				<Display>I dont like you</Display>
+				<ParamValue>I dont like you</ParamValue>
+			</CommandGroup>
+			<CommandGroup>
+				<Display>Get Rekt</Display>
+				<ParamValue>Get Rekt</ParamValue>
+			</CommandGroup>
+		</SubOptions>
+	</Option>
+	<Option>
+		<Command>banid %2 %1 kick;writeid;</Command>
+		<DisplayName>Ban</DisplayName>
+		<ParamType>SteamID</ParamType>
+		<SubOptions>
+			<TitleName>Duration</TitleName>
+			<CommandGroup>
+				<Display>Permanently</Display>
+				<ParamValue>0</ParamValue>
+			</CommandGroup>
+			<CommandGroup>
+				<Display>1 Hour</Display>
+				<ParamValue>60</ParamValue>
+			</CommandGroup>
+		</SubOptions>
+	</Option>
+	<Option>
+		<Command>sm_slap "#%1" %2</Command>
+		<DisplayName>Slap</DisplayName>
+		<ParamType>SteamID</ParamType>
+		<SubOptions>
+			<TitleName>Damage</TitleName>
+			<Default>sm_slap "#%1" 0</Default>
+			<CommandGroup>
+				<Display>1 damage</Display>
+				<ParamValue>1</ParamValue>
+			</CommandGroup>
+			<CommandGroup>
+				<Display>5 damage</Display>
+				<ParamValue>5</ParamValue>
+			</CommandGroup>
+			<CommandGroup>
+				<Display>10 damage</Display>
+				<ParamValue>10</ParamValue>
+			</CommandGroup>
+		</SubOptions>
+	</Option>
+</Commands>

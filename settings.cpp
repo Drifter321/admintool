@@ -6,12 +6,14 @@
 #include <QImage>
 #include <QMap>
 #include <QTime>
+#include <QXmlStreamReader>
 
 QColor errorColor(255, 60, 60);
 QColor queryingColor(80, 170, 80);
 QMap<int, QString> appIDMap;
 Settings *settings;
 QList<ServerInfo *> serverList;
+QList<ContextMenuItem> contextMenuItems;
 
 Settings::Settings(MainWindow *main)
 {
@@ -257,4 +259,99 @@ void Settings::SaveSettings()
     }
 
     pSettings->endGroup();
+}
+
+void Settings::GetCtxCommands()
+{
+    QFile file("commands.xml");
+
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QXmlStreamReader xml;
+    xml.setDevice(&file);
+
+    QString name;
+
+    ContextMenuItem menuitem;
+
+    while(!xml.atEnd())
+    {
+        name = xml.name().toString();
+        if(xml.isStartElement())
+        {
+            if(name == "Command")
+            {
+                menuitem.cmd = xml.readElementText();
+            }
+            else if(name == "DisplayName")
+            {
+                menuitem.display = xml.readElementText();
+            }
+            else if(name == "ParamType")
+            {
+                QString elem = xml.readElementText();
+                if(elem == "SteamID")
+                {
+                    menuitem.type = ContextTypeSteamID;
+                }
+                else if(elem == "Name")
+                {
+                    menuitem.type = ContextTypeName;
+                }
+                else
+                {
+                    menuitem.type = ContextTypeNone;
+                }
+            }
+
+            //If it is a group handle it in a loop
+            if(name == "SubOptions")
+            {
+                xml.readNext();
+                name = xml.name().toString();
+
+                while(name != "SubOptions" && !xml.isEndElement())
+                {
+                    if(name == "TitleName")
+                    {
+                        menuitem.subTitle = xml.readElementText();
+                    }
+                    else if(name == "Default")
+                    {
+                        menuitem.defaultSub = xml.readElementText();
+                    }
+                    else if(name == "CommandGroup")
+                    {
+                        xml.readNext();
+                        name = xml.name().toString();
+                        CtxSubItem subItem;
+
+                        while(name != "CommandGroup" && !xml.isEndElement())
+                        {
+                           if(name == "Display")
+                           {
+                               subItem.display = xml.readElementText();
+                           }
+                           else if(name == "ParamValue")
+                           {
+                               subItem.val = xml.readElementText();
+                           }
+                           xml.readNext();
+                           name = xml.name().toString();
+                        }
+                        menuitem.subItems.append(subItem);
+                    }
+                    xml.readNext();
+                    name = xml.name().toString();
+                }
+            }
+        }
+        else if(xml.isEndElement() && name == "Option")
+        {
+            contextMenuItems.append(menuitem);
+            menuitem.clear();
+        }
+        xml.readNext();
+    }
 }

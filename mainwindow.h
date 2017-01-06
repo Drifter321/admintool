@@ -19,6 +19,38 @@ enum AddServerError
     AddServerError_AlreadyExists
 };
 
+enum ContextTypes
+{
+    ContextTypeNone,
+    ContextTypeSteamID,
+    ContextTypeName
+};
+
+struct CtxSubItem
+{
+    QString display;
+    QString val;
+};
+
+struct ContextMenuItem
+{
+    QString display;
+    QString cmd;
+    ContextTypes type;
+    QString subTitle;
+    QString defaultSub;
+    QList<CtxSubItem> subItems;
+    void clear()
+    {
+        type = ContextTypeNone;
+        display = QString();
+        cmd = QString();
+        subTitle = QString();
+        defaultSub = QString();
+        subItems.clear();
+    }
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -67,6 +99,10 @@ private slots:
     void rconLogin();
     void getLog();
     void showRconClicked(bool checked);
+    void customPlayerContextMenu(const QPoint &pos);
+    void hideContextMenu();
+    void playerContextMenuAction(const QString &cmd);
+
 
 private:
     Ui::MainWindow *ui;

@@ -17,6 +17,7 @@ public:
     void ReadSettings();
     void SaveSettings();
     void GetAppIDListMap();
+    void GetCtxCommands();
     QSettings *pSettings;
 private:
     QSettings *pAppIds;

@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     settings = new Settings(this);
     settings->SetDefaultSettings();
     settings->ReadSettings();
+    settings->GetCtxCommands();
     pLogHandler = new LogHandler(this);
     pLogHandler->createBind(u16logPort);
 

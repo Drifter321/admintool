@@ -7,6 +7,10 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QPalette>
+#include <QSignalMapper>
+
+#define STEAMID_COLUMN 4
+#define NAME_COLUMN 1
 
 extern QPalette defaultPalette;
 extern QMap<int, QString> appIDMap;
@@ -14,6 +18,7 @@ extern Settings *settings;
 extern QList<ServerInfo *> serverList;
 extern QColor errorColor;
 extern QColor queryingColor;
+extern QList<ContextMenuItem> contextMenuItems;
 
 void MainWindow::ConnectSlots()
 {
@@ -30,8 +35,131 @@ void MainWindow::ConnectSlots()
     this->ui->actionAbout->connect(this->ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     this->ui->browserTable->connect(this->ui->browserTable, &QTableWidget::itemSelectionChanged, this, &MainWindow::browserTableItemSelected);
     this->ui->rconShow->connect(this->ui->rconShow, &QCheckBox::clicked, this, &MainWindow::showRconClicked);
+    this->ui->playerTable->connect(this->ui->playerTable, &QTableWidget::customContextMenuRequested, this, &MainWindow::customPlayerContextMenu);
 }
 
+QString CreateCommand(QString command, QString subValue, ContextTypes type, QString name, QString SteamID)
+{
+    QString target = "";
+
+    if(type == ContextTypeSteamID)
+    {
+        target = SteamID;
+    }
+    else if(type == ContextTypeName)
+    {
+        target = name;
+    }
+
+    if(!subValue.isEmpty())
+    {
+        if(target.isEmpty())
+            return command.arg(subValue);
+        else
+            return command.arg(target, subValue);
+    }
+    else
+    {
+        if(target.isEmpty())
+            return command;
+        else
+            return command.arg(target);
+    }
+}
+
+void MainWindow::customPlayerContextMenu(const QPoint &pos)
+{
+    int row = this->ui->playerTable->rowAt(pos.y());
+
+    if(row != -1)
+    {
+        QPoint globalpos = this->ui->playerTable->mapToGlobal(pos);
+        QString name = this->ui->playerTable->item(row, NAME_COLUMN)->text();
+        QString steamid = this->ui->playerTable->item(row, STEAMID_COLUMN)->text();
+
+        QMenu *pContextMenu = new QMenu(this);
+
+        QSignalMapper* signalMapper = new QSignalMapper(pContextMenu);
+
+        ContextMenuItem ctxItem;
+
+        foreach(ctxItem, contextMenuItems)
+        {
+            if((ctxItem.type == ContextTypeSteamID && steamid.isEmpty()) || (ctxItem.type == ContextTypeName && name.isEmpty()))
+                continue;
+
+            if(ctxItem.subItems.length() > 0)
+            {
+                QMenu *submenu = new QMenu(ctxItem.display, pContextMenu);
+                submenu->addSection(ctxItem.subTitle);
+
+                if(!ctxItem.defaultSub.isNull())
+                {
+                    QAction *pAction = new QAction("Default", submenu);
+
+                    pAction->connect(pAction, &QAction::triggered, signalMapper, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
+                    signalMapper->setMapping(pAction, CreateCommand(ctxItem.defaultSub, "", ctxItem.type, name, steamid));
+
+                    submenu->addAction(pAction);
+                }
+
+                CtxSubItem ctxSubItem;
+
+                foreach(ctxSubItem, ctxItem.subItems)
+                {
+                    QAction *pAction = new QAction(ctxSubItem.display, submenu);
+
+                    pAction->connect(pAction, &QAction::triggered, signalMapper, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
+                    signalMapper->setMapping(pAction, CreateCommand(ctxItem.cmd, ctxSubItem.val, ctxItem.type, name, steamid));
+
+                    submenu->addAction(pAction);
+                }
+                pContextMenu->addMenu(submenu);
+            }
+            else
+            {
+                QAction *pAction = new QAction(ctxItem.display, pContextMenu);
+
+                pAction->connect(pAction, &QAction::triggered, signalMapper, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
+                signalMapper->setMapping(pAction, CreateCommand(ctxItem.cmd, "", ctxItem.type, name, steamid));
+
+                pContextMenu->addAction(pAction);
+            }
+        }
+
+        signalMapper->connect(signalMapper, static_cast<void(QSignalMapper::*)(const QString &)>(&QSignalMapper::mapped), this, &MainWindow::playerContextMenuAction);
+        pContextMenu->connect(pContextMenu, &QMenu::aboutToHide, this, &MainWindow::hideContextMenu);
+        pContextMenu->exec(globalpos);
+    }
+}
+void MainWindow::hideContextMenu()
+{
+    QObject* obj = sender();
+    obj->deleteLater();
+}
+
+void MainWindow::playerContextMenuAction(const QString &cmd)
+{
+    if(this->ui->browserTable->selectedItems().size() == 0)
+    {
+        this->browserTableItemSelected();
+        return;
+    }
+
+    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
+    int index = item->text().toInt();
+
+    ServerInfo *info = serverList.at(index-1);
+
+    if(info->rcon == NULL || !info->rcon->isAuthed)
+    {
+        QList<QueuedCommand>cmds;
+        cmds.append(QueuedCommand(cmd, QueuedCommandType::ContextCommand));
+        this->rconLoginQueued(cmds);
+        return;
+    }
+    info->rcon->execCommand(cmd, false);
+}
 
 void MainWindow::addServer()
 {

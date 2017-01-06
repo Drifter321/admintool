@@ -10,17 +10,24 @@
 #define RCON_EXEC_COMMAND 2
 #define RCON_EXEC_RESPONSE 0
 
+enum QueuedCommandType
+{
+    GetLogCommand, //Runs command without history, adds a log listener.
+    ConsoleCommand,//Runs commands with history
+    ContextCommand //Runs commands without history
+};
+
 class QueuedCommand
 {
 public:
-    QueuedCommand(QString cmd, bool hist)
+    QueuedCommand(QString cmd, QueuedCommandType cmdType)
     {
         this->command = cmd;
-        this->showHistory = hist;
+        this->commandType = cmdType;
     }
-    QueuedCommand(){this->command = "", this->showHistory = false;}
+    QueuedCommand(){this->command = "", this->commandType = ContextCommand;}
     QString command;
-    bool showHistory;
+    QueuedCommandType commandType;
 };
 
 class ServerInfo;

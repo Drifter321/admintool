@@ -6,7 +6,7 @@
 		<ParamType>Name</ParamType>
 	</Option>
 	<Option>
-		<Command>sm_kick "#%1" %2</Command>
+		<Command>sm_kick "#%1" "%2"</Command>
 		<DisplayName>Kick By ID</DisplayName>
 		<ParamType>SteamID</ParamType>
 		<SubOptions>

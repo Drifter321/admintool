@@ -57,7 +57,7 @@ void MainWindow::processCommand()
     if(info->rcon == NULL || !info->rcon->isAuthed)
     {
         QList<QueuedCommand>cmds;
-        cmds.append(QueuedCommand(this->ui->commandText->text(), true));
+        cmds.append(QueuedCommand(this->ui->commandText->text(), QueuedCommandType::ConsoleCommand));
         this->rconLoginQueued(cmds);
         return;
     }
@@ -187,10 +187,14 @@ void MainWindow::RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds)
         QueuedCommand queuedcmd;
         foreach(queuedcmd, queuedcmds)
         {
-            if(!queuedcmd.showHistory)//Get log
+            if(queuedcmd.commandType == QueuedCommandType::GetLogCommand)//Get log
             {
                 info->rcon->execCommand(queuedcmd.command, false);
                 pLogHandler->addServer(info);
+            }
+            else if(queuedcmd.commandType == QueuedCommandType::ContextCommand)
+            {
+                info->rcon->execCommand(queuedcmd.command, false);
             }
             else //command
             {

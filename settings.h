@@ -3,7 +3,7 @@
 
 #include "mainwindow.h"
 #include <QSettings>
-#include <QMAp>
+#include <QMap>
 
 #define PORT_MAX 65535
 #define PORT_MIN 49152

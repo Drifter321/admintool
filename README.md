@@ -18,7 +18,7 @@ Third Party
 -----------
 - [miniUPnP](https://github.com/miniupnp/miniupnp): Used for port mapping on UPnP enabled devices (primarily miniupnpc).
 
-Refrences
+References
 ---------
 - [Valve Developer Wiki](https://developer.valvesoftware.com/wiki/Main_Page)
 

@@ -204,7 +204,26 @@ InfoReply::InfoReply(QByteArray response, qint64 ping)
         }
         if(edf & 0x10)
         {
-            data.skipRawData(sizeof(qint64));
+            quint64 temp;
+            data >> temp;
+
+            quint32 accountID = (temp & 0xFFFFFFFF);
+            quint64 accountInst = (temp >> 32) & 0xFFFFF;
+            quint64 accountType = (temp >> 52) & 0xF;
+            quint8 accountUni = (temp >> 56) & 0xFF;
+
+            if(accountType == 4 || accountType == 3)
+            {
+                if(accountType == 4)
+                {
+                    this->serverID = QString("[A:%1:%2:%3]").arg(QString::number(accountUni), QString::number(accountID), QString::number(accountInst));
+                }
+                else
+                {
+                    this->serverID = QString("[G:%1:%2]").arg(QString::number(accountUni), QString::number(accountID));
+                }
+            }
+
         }
         if(edf & 0x40)
         {

@@ -46,6 +46,7 @@ public:
     QString version;
     qint8 protocol;
     qint64 ping;
+    QString serverID;
 };
 
 class PlayerInfo

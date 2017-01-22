@@ -151,6 +151,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         info->serverName = reply->hostname;
         info->playerCount = QString("%1/%2 (%3)").arg(QString::number(reply->players), QString::number(reply->maxplayers), QString::number(reply->bots));
         info->haveInfo = true;
+        info->serverID = reply->serverID;
 
         QTableWidgetItem *mod = new QTableWidgetItem();
 
@@ -381,6 +382,13 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
         this->ui->infoTable->insertRow(9);
         this->ui->infoTable->setItem(9, 0, new QTableWidgetItem("AntiCheat"));
         this->ui->infoTable->setItem(9, 1, new QTableWidgetItem(info->vac ? "VAC" : ""));
+
+        if(!info->serverID.isEmpty())
+        {
+            this->ui->infoTable->insertRow(10);
+            this->ui->infoTable->setItem(10, 0, new QTableWidgetItem("Gameserver Steam ID"));
+            this->ui->infoTable->setItem(10, 1, new QTableWidgetItem(info->serverID));
+        }
     }
 
     if(list)

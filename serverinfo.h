@@ -57,6 +57,7 @@ public:
     QString playerCount;
     QString gameName;
     QString type;
+    QString serverID;
     QHostAddress host;
     quint16 port;
     QString ipPort;

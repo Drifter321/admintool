@@ -143,6 +143,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         info->appId = reply->appId;
         info->os = reply->os;
         info->tags = reply->tags;
+        info->rawServerId = reply->rawServerId;
         info->protocol = reply->protocol;
         info->version = reply->version;
         info->currentMap = reply->map;
@@ -302,6 +303,11 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
         list->append(RulesInfo("version", info->version));
         list->append(RulesInfo("appID", QString::number(info->appId)));
         list->append(RulesInfo("os", info->os));
+
+        if(info->rawServerId != 0)
+        {
+           list->append(RulesInfo("steamID64", QString::number(info->rawServerId)));
+        }
     }
 
     while(this->ui->rulesTable->rowCount() > 0)

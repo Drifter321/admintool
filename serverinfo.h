@@ -60,6 +60,7 @@ public:
     QString serverID;
     QHostAddress host;
     quint16 port;
+    quint64 rawServerId;
     QString ipPort;
     bool isValid;
     QString rconPassword;

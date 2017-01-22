@@ -163,6 +163,7 @@ InfoReply::InfoReply(QByteArray response, qint64 ping)
 
     this->success = false;
     this->appId = -1;
+    this->rawServerId = 0;
 
     data >> header;
     data >> check;
@@ -204,13 +205,12 @@ InfoReply::InfoReply(QByteArray response, qint64 ping)
         }
         if(edf & 0x10)
         {
-            quint64 temp;
-            data >> temp;
+            data >> this->rawServerId;
 
-            quint32 accountID = (temp & 0xFFFFFFFF);
-            quint64 accountInst = (temp >> 32) & 0xFFFFF;
-            quint64 accountType = (temp >> 52) & 0xF;
-            quint8 accountUni = (temp >> 56) & 0xFF;
+            quint32 accountID = (this->rawServerId & 0xFFFFFFFF);
+            quint64 accountInst = (this->rawServerId >> 32) & 0xFFFFF;
+            quint64 accountType = (this->rawServerId >> 52) & 0xF;
+            quint8 accountUni = (this->rawServerId >> 56) & 0xFF;
 
             if(accountType == 4 || accountType == 3)
             {

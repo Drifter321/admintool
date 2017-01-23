@@ -199,10 +199,15 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
                 this->ui->infoTable->setRowHeight(row, 50);
                 QPixmap pixmap(this->ui->infoTable->width()-10, 50);
                 pixmap.fill(QColor("transparent"));
+
                 QPainter painter(&pixmap);
-                QPen pen = painter.pen();
-                pen.setColor(Qt::red);
-                painter.setPen(pen);
+
+                painter.setPen(QPen(Qt::transparent));
+                QLinearGradient lgrad(QPoint(0, 0), QPoint(0,50));
+                lgrad.setColorAt(0.0, Qt::red);
+                lgrad.setColorAt(1.0, Qt::green);
+                painter.setBrush(lgrad);
+
                 for(int i = 0; i < info->pingList.length(); i++)
                 {
                     if(i > this->ui->infoTable->width()-10)
@@ -216,7 +221,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
                     if(h >= 50)
                         h = 50;
 
-                    painter.drawLine((1*i)+10, 50, (1*i)+10, 50-h);
+                    painter.drawRect((1*i)+10, 50-h, 1, h);
                 }
                 QLabel *label = new QLabel(this);
                 label->setPixmap(pixmap);

@@ -26,6 +26,24 @@ enum ContextTypes
     ContextTypeName
 };
 
+struct InfoTableItem
+{
+    InfoTableItem()
+    {
+        display =  "";
+        val = "";
+    }
+
+    InfoTableItem(QString name, QString value)
+    {
+        display = name;
+        val = value;
+    }
+
+    QString display;
+    QString val;
+};
+
 struct CtxSubItem
 {
     QString display;
@@ -108,6 +126,7 @@ private:
     Ui::MainWindow *ui;
     QTimer *updateTimer;
     void ConnectSlots();
+    void UpdateInfoTable(ServerInfo *info, bool current = true, QList<RulesInfo> *list = NULL);
     void HookEvents();
     void SetRconSignals(bool block);
     void RestoreRcon(int index);

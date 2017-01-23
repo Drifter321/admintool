@@ -186,6 +186,7 @@ public:
         infoTable->horizontalHeader()->setProperty("showSortIndicator", QVariant(false));
         infoTable->horizontalHeader()->setStretchLastSection(true);
         infoTable->verticalHeader()->setVisible(false);
+        infoTable->verticalHeader()->setDefaultSectionSize(25);
         splitter->addWidget(browserSplitter);
         rulesSplitter = new QSplitter(splitter);
         rulesSplitter->setObjectName(QStringLiteral("rulesSplitter"));

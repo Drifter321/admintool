@@ -54,6 +54,10 @@ public:
     qint32 appId;
     QString serverName;
     QString currentMap;
+    QString nextMap;
+    QString ff;
+    QString timelimit;
+    QStringList mods;
     QString playerCount;
     QString gameName;
     QString type;
@@ -70,6 +74,7 @@ public:
     bool saveRcon;
     RconQuery *rcon;
     QHash<QString, PlayerLogInfo> logHashTable;
+    QList<int> pingList;
 };
 
 //Q_DECLARE_METATYPE(ServerInfo)

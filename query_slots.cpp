@@ -6,6 +6,8 @@
 #include "serverinfo.h"
 #include "settings.h"
 
+#include <QPainter>
+
 extern QMap<int, QString> appIDMap;
 extern QList<ServerInfo *> serverList;
 extern QColor errorColor;
@@ -89,6 +91,7 @@ void MainWindow::UpdateSelectedItemInfo(bool removeFirst, bool updateRules)
         pRulesQuery = new RulesQuery(this);
         pRulesQuery->query(&serverList.at(index-1)->host, serverList.at(index-1)->port, item);
     }
+    this->UpdateInfoTable(serverList.at(index-1));
 }
 
 void MainWindow::SetTableItemAndDelete(int row, int col, QTableWidgetItem *item)
@@ -101,6 +104,135 @@ void MainWindow::SetTableItemAndDelete(int row, int col, QTableWidgetItem *item)
     }
 
     this->ui->browserTable->setItem(row, col, item);
+}
+
+void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo> *list)
+{
+    QString mapString;
+    QString gameString;
+
+    if(list)
+    {
+        info->nextMap.clear();
+        info->ff.clear();
+        info->timelimit.clear();
+        info->mods.clear();
+
+        for(int i = 0; i < list->size(); i++)
+        {
+            this->ui->rulesTable->insertRow(i);
+            this->ui->rulesTable->setItem(i, 0, new QTableWidgetItem(list->at(i).name));
+            this->ui->rulesTable->setItem(i, 1, new QTableWidgetItem(list->at(i).value));
+
+            if(list->at(i).name == "mp_friendlyfire")
+                info->ff = list->at(i).value.toInt() ? "On":"Off";
+            if(list->at(i).name == "mp_timelimit")
+                info->timelimit = list->at(i).value;
+            if(list->at(i).name == "sm_nextmap")
+                info->nextMap = list->at(i).value;
+            if(list->at(i).name == "sourcemod_version")
+                info->mods.append(QString("SourceMod v%1").arg(list->at(i).value));
+            if(list->at(i).name == "metamod_version")
+                info->mods.prepend(QString("MetaMod v%1").arg(list->at(i).value));
+        }
+    }
+
+    //Add info list items, gg
+    while(this->ui->infoTable->rowCount() > 0 && current)
+    {
+        this->ui->infoTable->removeRow(0);
+    }
+
+    if(info->haveInfo && current)
+    {
+        if(!info->currentMap.isEmpty() && !info->nextMap.isEmpty())
+        {
+            mapString = QString("%1 (Nextmap : %2)").arg(info->currentMap, info->nextMap);
+        }
+        else if(!info->currentMap.isEmpty())
+        {
+            mapString = info->currentMap;
+        }
+
+        if(!info->gameName.isEmpty() && info->appId != -1)
+        {
+            gameString = QString("%1 (%2)").arg(info->gameName, QString::number(info->appId));
+        }
+        else if(!info->gameName.isEmpty())
+        {
+            gameString = info->gameName;
+        }
+
+        QList<InfoTableItem> items;
+        items.append(InfoTableItem("Server IP", info->ipPort));
+        items.append(InfoTableItem("PingGraph", ""));//Not used but place holder
+        items.append(InfoTableItem("Server Name", info->serverName));
+        items.append(InfoTableItem("Game", gameString));
+        items.append(InfoTableItem("Players", info->playerCount));
+        items.append(InfoTableItem("Map", mapString));
+        items.append(InfoTableItem("Timelimit", info->timelimit));
+        //This line is ugly, but im way too lazy.
+        items.append(InfoTableItem("Version", QString("v%1 (%2, %3, Protocol %4)").arg(info->version, info->os == "l" ? "Linux" : info->os == "m" ? "Mac" : "Windows", info->type == "d" ? "Dedicated" : "Local", QString::number(info->protocol))));
+
+        QString modString;
+
+        if(info->mods.length() > 0)
+        {
+            modString = info->mods.join("  ");
+        }
+
+        items.append(InfoTableItem("Addons", modString));
+        items.append(InfoTableItem("AntiCheat", info->vac ? "VAC" : ""));
+        items.append(InfoTableItem("Steam ID", info->serverID));
+
+        quint8 row = 0;
+        InfoTableItem item;
+
+        for(int i = 0; i < items.length(); i++)
+        {
+            item = items.at(i);
+
+            if(i == 1)//Ping graph
+            {
+                this->ui->infoTable->insertRow(row);
+                this->ui->infoTable->setSpan(row, 0, 1, 2);
+                this->ui->infoTable->setRowHeight(row, 50);
+                QPixmap pixmap(this->ui->infoTable->width()-10, 50);
+                pixmap.fill(QColor("transparent"));
+                QPainter painter(&pixmap);
+                QPen pen = painter.pen();
+                pen.setColor(Qt::red);
+                painter.setPen(pen);
+                for(int i = 0; i < info->pingList.length(); i++)
+                {
+                    if(i > this->ui->infoTable->width()-10)
+                        break;
+
+                    int h = qRound(((float)info->pingList.at(i)/300.0)*50);
+
+                    if(h <= 1)
+                        h = 2;
+
+                    if(h >= 50)
+                        h = 50;
+
+                    painter.drawLine((1*i)+10, 50, (1*i)+10, 50-h);
+                }
+                QLabel *label = new QLabel(this);
+                label->setPixmap(pixmap);
+                this->ui->infoTable->setCellWidget(row, 0, label);
+                row++;
+            }
+            else if(!item.val.isEmpty())
+            {
+                this->ui->infoTable->insertRow(row);
+                this->ui->infoTable->setItem(row, 0, new QTableWidgetItem(item.display));
+                this->ui->infoTable->setItem(row, 1, new QTableWidgetItem(item.val));
+                row++;
+            }
+        }
+        items.clear();
+    }
 }
 
 //QUERY INFO READY
@@ -150,7 +282,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         info->gameName = reply->gamedesc;
         info->type = reply->type;
         info->serverName = reply->hostname;
-        info->playerCount = QString("%1/%2 (%3)").arg(QString::number(reply->players), QString::number(reply->maxplayers), QString::number(reply->bots));
+        info->playerCount = QString("%1 (%3)/%2").arg(QString::number(reply->players), QString::number(reply->maxplayers), QString::number(reply->bots));
         info->haveInfo = true;
         info->serverID = reply->serverID;
 
@@ -198,7 +330,20 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         playerItem->setText(info->playerCount);
         this->SetTableItemAndDelete(row, 6, playerItem);
 
-        QTableWidgetItem *pingItem = new QTableWidgetItem(QString::number(reply->ping));
+        while(info->pingList.length() >= 1000)
+        {
+            info->pingList.removeFirst();
+        }
+
+        info->pingList.append(reply->ping);
+
+        quint64 totalPing = 0;
+        for(int i = 0; i < info->pingList.length(); i++)
+        {
+            totalPing += info->pingList.at(i);
+        }
+
+        QTableWidgetItem *pingItem = new QTableWidgetItem(QString("%1, Ø%2").arg(QString::number(reply->ping), QString::number(totalPing/info->pingList.length())));
 
         if(reply->ping > 200)
             pingItem->setTextColor(errorColor);
@@ -222,6 +367,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         if(reply)
             delete reply;
     }
+    this->UpdateInfoTable(info, (row == this->ui->browserTable->currentRow()));
 }
 
 void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *indexCell)
@@ -294,6 +440,7 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
 
         return;
     }
+
     int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
 
     ServerInfo *info = serverList.at(index-1);
@@ -317,85 +464,7 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
 
     this->ui->rulesTable->setSortingEnabled(false);
 
-    QString nextmap;
-    QString ff;
-    QString timelimit;
-
-    QStringList mods;
-
-    for(int i = 0; i < list->size(); i++)
-    {
-        this->ui->rulesTable->insertRow(i);
-        this->ui->rulesTable->setItem(i, 0, new QTableWidgetItem(list->at(i).name));
-        this->ui->rulesTable->setItem(i, 1, new QTableWidgetItem(list->at(i).value));
-
-        if(list->at(i).name == "mp_friendlyfire")
-            ff = list->at(i).value.toInt() ? "On":"Off";
-        if(list->at(i).name == "mp_timelimit")
-            timelimit = list->at(i).value;
-        if(list->at(i).name == "sm_nextmap")
-            nextmap = list->at(i).value;
-        if(list->at(i).name == "sourcemod_version")
-            mods.append(QString("Sourcemod v%1").arg(list->at(i).value));
-        if(list->at(i).name == "metamod_version")
-            mods.prepend(QString("MetaMod v%1").arg(list->at(i).value));
-    }
-
-    //Add info list items, gg
-    while(this->ui->infoTable->rowCount() > 0)
-    {
-        this->ui->infoTable->removeRow(0);
-    }
-    if(info->haveInfo)
-    {
-        this->ui->infoTable->insertRow(0);
-        this->ui->infoTable->setItem(0, 0, new QTableWidgetItem("Server IP"));
-        this->ui->infoTable->setItem(0, 1, new QTableWidgetItem(info->ipPort));
-
-        this->ui->infoTable->insertRow(1);
-        this->ui->infoTable->setItem(1, 0, new QTableWidgetItem("Server Name"));
-        this->ui->infoTable->setItem(1, 1, new QTableWidgetItem(info->serverName));
-
-        this->ui->infoTable->insertRow(2);
-        this->ui->infoTable->setItem(2, 0, new QTableWidgetItem("Game"));
-        this->ui->infoTable->setItem(2, 1, new QTableWidgetItem(QString("%1 (%2)").arg(info->gameName, QString::number(info->appId))));
-
-        this->ui->infoTable->insertRow(3);
-        this->ui->infoTable->setItem(3, 0, new QTableWidgetItem("Players"));
-        this->ui->infoTable->setItem(3, 1, new QTableWidgetItem(info->playerCount));
-
-        this->ui->infoTable->insertRow(4);
-        this->ui->infoTable->setItem(4, 0, new QTableWidgetItem("Map"));
-        this->ui->infoTable->setItem(4, 1, new QTableWidgetItem(QString("%1 (Nextmap : %2)").arg(info->currentMap, nextmap)));
-
-        this->ui->infoTable->insertRow(5);
-        this->ui->infoTable->setItem(5, 0, new QTableWidgetItem("Timelimit"));
-        this->ui->infoTable->setItem(5, 1, new QTableWidgetItem(timelimit));
-
-        this->ui->infoTable->insertRow(6);
-        this->ui->infoTable->setItem(6, 0, new QTableWidgetItem("Friendly Fire"));
-        this->ui->infoTable->setItem(6, 1, new QTableWidgetItem(ff));
-
-        this->ui->infoTable->insertRow(7);
-        this->ui->infoTable->setItem(7, 0, new QTableWidgetItem("Version"));
-        //This line is ugly, but im way too lazy.
-        this->ui->infoTable->setItem(7, 1, new QTableWidgetItem(QString("v%1 (%2, %3, Protocol %4)").arg(info->version, info->os == "l" ? "Linux" : info->os == "m" ? "Mac" : "Windows", info->type == "d" ? "Dedicated" : "Local", QString::number(info->protocol))));
-
-        this->ui->infoTable->insertRow(8);
-        this->ui->infoTable->setItem(8, 0, new QTableWidgetItem("Addons"));
-        this->ui->infoTable->setItem(8, 1, new QTableWidgetItem(mods.join("  ")));
-
-        this->ui->infoTable->insertRow(9);
-        this->ui->infoTable->setItem(9, 0, new QTableWidgetItem("AntiCheat"));
-        this->ui->infoTable->setItem(9, 1, new QTableWidgetItem(info->vac ? "VAC" : ""));
-
-        if(!info->serverID.isEmpty())
-        {
-            this->ui->infoTable->insertRow(10);
-            this->ui->infoTable->setItem(10, 0, new QTableWidgetItem("Gameserver Steam ID"));
-            this->ui->infoTable->setItem(10, 1, new QTableWidgetItem(info->serverID));
-        }
-    }
+    this->UpdateInfoTable(info, true, list);
 
     if(list)
     {

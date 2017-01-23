@@ -274,6 +274,31 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         return;
     }
 
+    if(reply)
+    {
+        while(info->pingList.length() >= 1000)
+        {
+            info->pingList.removeFirst();
+        }
+
+        info->pingList.append(reply->ping);
+
+        quint64 totalPing = 0;
+        for(int i = 0; i < info->pingList.length(); i++)
+        {
+            totalPing += info->pingList.at(i);
+        }
+
+        QTableWidgetItem *pingItem = new QTableWidgetItem(QString("%1, Ø%2").arg(QString::number(reply->ping), QString::number(totalPing/info->pingList.length())));
+
+        if(reply->ping > 200)
+            pingItem->setTextColor(errorColor);
+        else
+            pingItem->setTextColor(queryingColor);
+
+        this->SetTableItemAndDelete(row, 7, pingItem);
+    }
+
     if(reply && reply->success)
     {
         info->vac = reply->vac;
@@ -320,6 +345,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         QTableWidgetItem *hostname = new QTableWidgetItem(reply->hostname);
         hostname->setToolTip(info->ipPort);
         this->ui->browserTable->setItem(row, 4,hostname);
+
         QTableWidgetItem *mapItem = new QTableWidgetItem(reply->map);
         mapItem->setTextColor(errorColor);
         this->SetTableItemAndDelete(row, 5, mapItem);
@@ -334,28 +360,6 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
 
         playerItem->setText(info->playerCount);
         this->SetTableItemAndDelete(row, 6, playerItem);
-
-        while(info->pingList.length() >= 1000)
-        {
-            info->pingList.removeFirst();
-        }
-
-        info->pingList.append(reply->ping);
-
-        quint64 totalPing = 0;
-        for(int i = 0; i < info->pingList.length(); i++)
-        {
-            totalPing += info->pingList.at(i);
-        }
-
-        QTableWidgetItem *pingItem = new QTableWidgetItem(QString("%1, Ø%2").arg(QString::number(reply->ping), QString::number(totalPing/info->pingList.length())));
-
-        if(reply->ping > 200)
-            pingItem->setTextColor(errorColor);
-        else
-            pingItem->setTextColor(queryingColor);
-
-        this->SetTableItemAndDelete(row, 7, pingItem);
 
         this->ui->browserTable->setSortingEnabled(true);
         delete reply;

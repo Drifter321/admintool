@@ -153,93 +153,96 @@ QByteArray SendUDPQuery(QByteArray query, QHostAddress host, quint16 port)
 
 InfoReply::InfoReply(QByteArray response, qint64 ping)
 {
-    QDataStream data(response);
-
-    data.setFloatingPointPrecision(QDataStream::SinglePrecision);
-    data.setByteOrder(QDataStream::LittleEndian);
-
-    qint32 header;
-    qint8 check;
-
     this->success = false;
     this->appId = -1;
     this->rawServerId = 0;
+    this->ping = ping;
 
-    data >> header;
-    data >> check;
-
-    if(header == -1 && check == A2S_INFO_CHECK)
+    if(response.size() > 5)
     {
-        this->success = true;
-        this->ping = ping;
-        data >> this->protocol;
-        this->hostname = GetStringFromStream(data);
-        this->map = GetStringFromStream(data);
-        this->mod = GetStringFromStream(data);
-        this->gamedesc = GetStringFromStream(data);
-        qint16 id;
-        data >> id;
-        this->appId = id;
-        data >> this->players;
-        data >> this->maxplayers;
-        data >> this->bots;
-        data.device()->getChar(&(this->type));
-        data.device()->getChar(&(this->os));
-        data >> this->visibility;
-        data >> this->vac;
+        QDataStream data(response);
 
-        //The ship stuff...
-        if(this->appId == 2400)
+        data.setFloatingPointPrecision(QDataStream::SinglePrecision);
+        data.setByteOrder(QDataStream::LittleEndian);
+
+        qint32 header;
+        qint8 check;
+
+        data >> header;
+        data >> check;
+
+        if(header == -1 && check == A2S_INFO_CHECK)
         {
-            data.skipRawData(sizeof(qint8)*3);
-        }
+            this->success = true;
+            data >> this->protocol;
+            this->hostname = GetStringFromStream(data);
+            this->map = GetStringFromStream(data);
+            this->mod = GetStringFromStream(data);
+            this->gamedesc = GetStringFromStream(data);
+            qint16 id;
+            data >> id;
+            this->appId = id;
+            data >> this->players;
+            data >> this->maxplayers;
+            data >> this->bots;
+            data.device()->getChar(&(this->type));
+            data.device()->getChar(&(this->os));
+            data >> this->visibility;
+            data >> this->vac;
 
-        this->version = GetStringFromStream(data);//Version
-
-        qint8 edf;
-        data >> edf;
-
-        if(edf & 0x80)
-        {
-            data.skipRawData(sizeof(qint16));
-        }
-        if(edf & 0x10)
-        {
-            data >> this->rawServerId;
-
-            quint32 accountID = (this->rawServerId & 0xFFFFFFFF);
-            quint64 accountInst = (this->rawServerId >> 32) & 0xFFFFF;
-            quint64 accountType = (this->rawServerId >> 52) & 0xF;
-            quint8 accountUni = (this->rawServerId >> 56) & 0xFF;
-
-            if(accountType == 4 || accountType == 3)
+            //The ship stuff...
+            if(this->appId == 2400)
             {
-                if(accountType == 4)
-                {
-                    this->serverID = QString("[A:%1:%2:%3]").arg(QString::number(accountUni), QString::number(accountID), QString::number(accountInst));
-                }
-                else
-                {
-                    this->serverID = QString("[G:%1:%2]").arg(QString::number(accountUni), QString::number(accountID));
-                }
+                data.skipRawData(sizeof(qint8)*3);
             }
 
-        }
-        if(edf & 0x40)
-        {
-            data.skipRawData(sizeof(qint16));
-            GetStringFromStream(data);
-        }
-        if(edf & 0x20)
-        {
-            this->tags = GetStringFromStream(data);
-        }
-        if(edf & 0x01)
-        {
-            qint64 temp;
-            data >> temp;
+            this->version = GetStringFromStream(data);//Version
 
-            this->appId = temp & ((1 << 24) - 1);
+            qint8 edf;
+            data >> edf;
+
+            if(edf & 0x80)
+            {
+                data.skipRawData(sizeof(qint16));
+            }
+            if(edf & 0x10)
+            {
+                data >> this->rawServerId;
+
+                quint32 accountID = (this->rawServerId & 0xFFFFFFFF);
+                quint64 accountInst = (this->rawServerId >> 32) & 0xFFFFF;
+                quint64 accountType = (this->rawServerId >> 52) & 0xF;
+                quint8 accountUni = (this->rawServerId >> 56) & 0xFF;
+
+                if(accountType == 4 || accountType == 3)
+                {
+                    if(accountType == 4)
+                    {
+                        this->serverID = QString("[A:%1:%2:%3]").arg(QString::number(accountUni), QString::number(accountID), QString::number(accountInst));
+                    }
+                    else
+                    {
+                        this->serverID = QString("[G:%1:%2]").arg(QString::number(accountUni), QString::number(accountID));
+                    }
+                }
+
+            }
+            if(edf & 0x40)
+            {
+                data.skipRawData(sizeof(qint16));
+                GetStringFromStream(data);
+            }
+            if(edf & 0x20)
+            {
+                this->tags = GetStringFromStream(data);
+            }
+            if(edf & 0x01)
+            {
+                qint64 temp;
+                data >> temp;
+
+                this->appId = temp & ((1 << 24) - 1);
+            }
         }
     }
 }
@@ -276,11 +279,7 @@ InfoReply *GetInfoReply(QHostAddress host, quint16 port)
         ping = 2000;
     }
 
-    if(response.size() > 5)
-    {
-        return new InfoReply(response, ping);
-    }
-    return NULL;
+    return new InfoReply(response, ping);
 }
 
 PlayerQuery::PlayerQuery(MainWindow *main)

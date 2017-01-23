@@ -197,7 +197,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
                 this->ui->infoTable->insertRow(row);
                 this->ui->infoTable->setSpan(row, 0, 1, 2);
                 this->ui->infoTable->setRowHeight(row, 50);
-                QPixmap pixmap(this->ui->infoTable->width()-10, 50);
+                QPixmap pixmap(this->ui->infoTable->width(), 50);
                 pixmap.fill(QColor("transparent"));
 
                 QPainter painter(&pixmap);
@@ -210,7 +210,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
 
                 for(int i = 0; i < info->pingList.length(); i++)
                 {
-                    if(i > this->ui->infoTable->width()-10)
+                    if(i > this->ui->infoTable->width())
                         break;
 
                     int h = qRound(((float)info->pingList.at(i)/300.0)*50);
@@ -221,7 +221,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
                     if(h >= 50)
                         h = 50;
 
-                    painter.drawRect((1*i)+10, 50-h, 1, h);
+                    painter.drawRect((1*i), 50-h, 1, h);
                 }
                 QLabel *label = new QLabel(this);
                 label->setPixmap(pixmap);

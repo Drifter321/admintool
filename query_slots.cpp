@@ -198,7 +198,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
                 this->ui->infoTable->setSpan(row, 0, 1, 2);
                 this->ui->infoTable->setRowHeight(row, 50);
                 QPixmap pixmap(this->ui->infoTable->width(), 50);
-                pixmap.fill(QColor("transparent"));
+                pixmap.fill(Qt::transparent);
 
                 QPainter painter(&pixmap);
 

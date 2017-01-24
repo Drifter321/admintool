@@ -220,7 +220,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
                     if(h >= 50)
                         h = 50;
 
-                    painter.drawRect((1*i), 50-h, 1, h);
+                    painter.drawRect((1*(i-idx)), 50-h, 1, h);
                 }
                 QLabel *label = new QLabel(this);
                 label->setPixmap(pixmap);

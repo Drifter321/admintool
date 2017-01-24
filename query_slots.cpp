@@ -208,11 +208,10 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
                 lgrad.setColorAt(1.0, Qt::green);
                 painter.setBrush(lgrad);
 
-                for(int i = 0; i < info->pingList.length(); i++)
-                {
-                    if(i > this->ui->infoTable->width())
-                        break;
+                int idx = (info->pingList.length() - this->ui->infoTable->width()) > 0 ? info->pingList.length() - this->ui->infoTable->width() : 0;
 
+                for(int i = idx; i < info->pingList.length(); i++)
+                {
                     int h = qRound(((float)info->pingList.at(i)/300.0)*50);
 
                     if(h <= 1)

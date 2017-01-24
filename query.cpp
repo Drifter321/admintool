@@ -265,7 +265,7 @@ InfoReply *GetInfoReply(QHostAddress host, quint16 port)
     QDataStream data(&query, QIODevice::ReadWrite);
 
     data << A2S_HEADER << (qint8)A2S_INFO;
-    data.writeRawData(A2S_INFO_STRING, strlen(A2S_INFO_STRING)+1);
+    data.writeRawData(A2S_INFO_STRING, sizeof(A2S_INFO_STRING));
 
     qint64 ping = QDateTime::currentMSecsSinceEpoch();
     QByteArray response = SendUDPQuery(query, host, port);

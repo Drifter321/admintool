@@ -18,8 +18,8 @@ QList<ContextMenuItem> contextMenuItems;
 Settings::Settings(MainWindow *main)
 {
     this->pMain = main;
-    this->pSettings = new QSettings("settings.ini", QSettings::IniFormat);
-    this->pAppIds = new QSettings("app_list_map.ini", QSettings::IniFormat);
+    this->pSettings = new QSettings(QCoreApplication::applicationDirPath()+"/settings.ini", QSettings::IniFormat);
+    this->pAppIds = new QSettings(QCoreApplication::applicationDirPath()+"/app_list_map.ini", QSettings::IniFormat);
     GetAppIDListMap();
 }
 
@@ -264,7 +264,7 @@ void Settings::SaveSettings()
 
 void Settings::GetCtxCommands()
 {
-    QFile file("commands.xml");
+    QFile file(QCoreApplication::applicationDirPath()+"/commands.xml");
 
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;

@@ -55,10 +55,15 @@ macx
     ICON = icons/icon.icns
 }
 
-unix:!macx|win32: LIBS += -L$$PWD/thirdparty/miniupnpc/libs/ -lminiupnpc
+unix:!macx|win32: LIBS += -L$$PWD/thirdparty/miniupnpc/libs/ -L$$PWD/thirdparty/libmaxminddb/lib -lminiupnpc -llibmaxminddb
 
 INCLUDEPATH += $$PWD/thirdparty/miniupnpc
+INCLUDEPATH += $$PWD/thirdparty/libmaxminddb
 DEPENDPATH += $$PWD/thirdparty/miniupnpc
+DEPENDPATH += $$PWD/thirdparty/libmaxminddb
 
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/thirdparty/miniupnpc/libs/miniupnpc.lib
 else:unix:!macx|win32-g++: PRE_TARGETDEPS += $$PWD/thirdparty/miniupnpc/libs/libminiupnpc.a
+
+DISTFILES += \
+    GeoLite2-Country.mmdb

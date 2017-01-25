@@ -75,6 +75,7 @@ public:
     RconQuery *rcon;
     QHash<QString, PlayerLogInfo> logHashTable;
     QList<int> pingList;
+    QImage countryFlag;
 };
 
 //Q_DECLARE_METATYPE(ServerInfo)

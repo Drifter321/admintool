@@ -75,6 +75,7 @@ enum : size_t
     kBrowserColModIcon,
     kBrowserColVACIcon,
     kBrowserColLockIcon,
+    kBrowserColFlagIcon,
     kBrowserColHostname,
     kBrowserColMap,
     kBrowserColPlayerCount,

@@ -315,11 +315,18 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         info->haveInfo = true;
         info->serverID = reply->serverID;
 
+        if (!info->countryFlag.isNull())
+        {
+            QTableWidgetItem *flag = new QTableWidgetItem();
+            flag->setData(Qt::DecorationRole, info->countryFlag);
+            this->SetTableItemAndDelete(row, kBrowserColFlagIcon, flag);
+        }
+
         QTableWidgetItem *mod = new QTableWidgetItem();
 
         QImage icon;
 
-        icon.load(appIDMap.value(info->appId, QString(":/icons/icons/hl2.gif")));
+        icon.load(appIDMap.value(info->appId, ":/icons/icons/hl2.gif"));
 
         mod->setData(Qt::DecorationRole, icon);
 

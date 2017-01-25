@@ -67,6 +67,7 @@ void Settings::SetDefaultSettings()
 
     auto browserTable = pMain->GetUi()->browserTable;
     browserTable->setColumnWidth(kBrowserColIndex,         50);
+    browserTable->setColumnWidth(kBrowserColFlagIcon,        25);
     browserTable->setColumnWidth(kBrowserColModIcon,     25);
     browserTable->setColumnWidth(kBrowserColVACIcon,   25);
     browserTable->setColumnWidth(kBrowserColLockIcon,        25);
@@ -77,6 +78,7 @@ void Settings::SetDefaultSettings()
 
     auto header = pMain->GetUi()->browserTable->horizontalHeader();
     header->setSectionResizeMode(kBrowserColIndex, QHeaderView::ResizeToContents);
+    header->setSectionResizeMode(kBrowserColFlagIcon, QHeaderView::Fixed);
     header->setSectionResizeMode(kBrowserColModIcon, QHeaderView::Fixed);
     header->setSectionResizeMode(kBrowserColVACIcon, QHeaderView::Fixed);
     header->setSectionResizeMode(kBrowserColLockIcon, QHeaderView::Fixed);

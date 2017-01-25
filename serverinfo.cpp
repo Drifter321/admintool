@@ -34,7 +34,7 @@ ServerInfo::ServerInfo(QString server)
     }
 
     MMDB_s mmdb;
-    int status = MMDB_open(QString(QCoreApplication::applicationDirPath()+"/GeoLite2-Country.mmdb").toUtf8().data(), MMDB_MODE_MMAP, &mmdb);
+    int status = MMDB_open("./GeoLite2-Country.mmdb", MMDB_MODE_MMAP, &mmdb);
     if (status == MMDB_SUCCESS)
     {
         int gai_error, mmdb_error;

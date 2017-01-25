@@ -65,25 +65,28 @@ void Settings::SetDefaultSettings()
 
     pMain->GetUi()->browserSplitter->setSizes(intList);
 
-    intList.clear();
+    auto browserTable = pMain->GetUi()->browserTable;
+    browserTable->setColumnWidth(kBrowserColIndex,         50);
+    browserTable->setColumnWidth(kBrowserColModIcon,     25);
+    browserTable->setColumnWidth(kBrowserColVACIcon,   25);
+    browserTable->setColumnWidth(kBrowserColLockIcon,        25);
+    browserTable->setColumnWidth(kBrowserColHostname,    600);
+    browserTable->setColumnWidth(kBrowserColMap,         150);
+    browserTable->setColumnWidth(kBrowserColPlayerCount, 80);
+    browserTable->setColumnWidth(kBrowserColPing,        70);
 
-    intList.append(50);
-    intList.append(25);
-    intList.append(25);
-    intList.append(25);
-    intList.append(600);
-    intList.append(150);
-    intList.append(100);
-    intList.append(70);
+    auto header = pMain->GetUi()->browserTable->horizontalHeader();
+    header->setSectionResizeMode(kBrowserColIndex, QHeaderView::ResizeToContents);
+    header->setSectionResizeMode(kBrowserColModIcon, QHeaderView::Fixed);
+    header->setSectionResizeMode(kBrowserColVACIcon, QHeaderView::Fixed);
+    header->setSectionResizeMode(kBrowserColLockIcon, QHeaderView::Fixed);
+    header->setSectionResizeMode(kBrowserColHostname, QHeaderView::Stretch);
+    header->setSectionResizeMode(kBrowserColMap, QHeaderView::ResizeToContents);
+    header->setSectionResizeMode(kBrowserColPlayerCount, QHeaderView::Fixed);
+    header->setSectionResizeMode(kBrowserColPing, QHeaderView::Fixed);
 
-    for(int i = 0; i < intList.size(); i++)
-        pMain->GetUi()->browserTable->setColumnWidth(i, intList.at(i));
-
-    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(kBrowserColModIcon, QHeaderView::Fixed);
-    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(kBrowserColVACIcon, QHeaderView::Fixed);
-    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(kBrowserColLockIcon, QHeaderView::Fixed);
-    pMain->GetUi()->browserTable->horizontalHeaderItem(kBrowserColPlayerCount)->setTextAlignment(Qt::AlignLeft);
-    pMain->GetUi()->browserTable->horizontalHeaderItem(kBrowserColPing)->setTextAlignment(Qt::AlignLeft);
+    browserTable->horizontalHeaderItem(kBrowserColPlayerCount)->setTextAlignment(Qt::AlignLeft);
+    browserTable->horizontalHeaderItem(kBrowserColPing)->setTextAlignment(Qt::AlignLeft);
 
     intList.clear();
 
@@ -126,8 +129,6 @@ void Settings::ReadSettings()
     pMain->GetUi()->rulesSplitter->restoreState(pSettings->value("rulesSplitterState", pMain->GetUi()->rulesSplitter->saveState()).toByteArray());
 
     pMain->GetUi()->browserSplitter->restoreState(pSettings->value("browserSplitterState", pMain->GetUi()->browserSplitter->saveState()).toByteArray());
-
-    pMain->GetUi()->browserTable->horizontalHeader()->restoreState(pSettings->value("browserTableState", pMain->GetUi()->browserTable->horizontalHeader()->saveState()).toByteArray());
 
     pMain->GetUi()->playerTable->horizontalHeader()->restoreState(pSettings->value("playerTableState", pMain->GetUi()->playerTable->horizontalHeader()->saveState()).toByteArray());
 
@@ -220,8 +221,6 @@ void Settings::SaveSettings()
     pSettings->setValue("rulesSplitterState", pMain->GetUi()->rulesSplitter->saveState());
 
     pSettings->setValue("browserSplitterState", pMain->GetUi()->browserSplitter->saveState());
-
-    pSettings->setValue("browserTableState", pMain->GetUi()->browserTable->horizontalHeader()->saveState());
 
     pSettings->setValue("rulesTableState", pMain->GetUi()->rulesTable->horizontalHeader()->saveState());
 

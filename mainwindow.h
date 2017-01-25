@@ -69,6 +69,20 @@ struct ContextMenuItem
     }
 };
 
+enum : size_t
+{
+    kBrowserColIndex,
+    kBrowserColModIcon,
+    kBrowserColVACIcon,
+    kBrowserColLockIcon,
+    kBrowserColHostname,
+    kBrowserColMap,
+    kBrowserColPlayerCount,
+    kBrowserColPing,
+
+    kBrowserColCount
+};
+
 namespace Ui {
 class MainWindow;
 }

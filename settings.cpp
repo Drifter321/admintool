@@ -79,11 +79,11 @@ void Settings::SetDefaultSettings()
     for(int i = 0; i < intList.size(); i++)
         pMain->GetUi()->browserTable->setColumnWidth(i, intList.at(i));
 
-    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
-    pMain->GetUi()->browserTable->horizontalHeaderItem(5)->setTextAlignment(Qt::AlignLeft);
-    pMain->GetUi()->browserTable->horizontalHeaderItem(6)->setTextAlignment(Qt::AlignLeft);
+    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(kBrowserColModIcon, QHeaderView::Fixed);
+    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(kBrowserColVACIcon, QHeaderView::Fixed);
+    pMain->GetUi()->browserTable->horizontalHeader()->setSectionResizeMode(kBrowserColLockIcon, QHeaderView::Fixed);
+    pMain->GetUi()->browserTable->horizontalHeaderItem(kBrowserColPlayerCount)->setTextAlignment(Qt::AlignLeft);
+    pMain->GetUi()->browserTable->horizontalHeaderItem(kBrowserColPing)->setTextAlignment(Qt::AlignLeft);
 
     intList.clear();
 
@@ -183,8 +183,8 @@ void Settings::ReadSettings()
             item->setTextColor(queryingColor);
             item->setText(QString("Querying server %1...").arg(info->ipPort));
             item->setToolTip(info->ipPort);
-            pMain->GetUi()->browserTable->setItem(row, 0, id);
-            pMain->GetUi()->browserTable->setItem(row, 4, item);
+            pMain->GetUi()->browserTable->setItem(row, kBrowserColIndex, id);
+            pMain->GetUi()->browserTable->setItem(row, kBrowserColHostname, item);
 
             InfoQuery *infoQuery = new InfoQuery(pMain);
             infoQuery->query(&info->host, info->port, id);

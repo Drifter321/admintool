@@ -87,7 +87,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
             {
                 for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
                 {
-                    QTableWidgetItem *item = this->ui->browserTable->item(i, 0);
+                    QTableWidgetItem *item = this->ui->browserTable->item(i, kBrowserColIndex);
 
                     int other = item->data(Qt::DisplayRole).toInt();
 
@@ -100,7 +100,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
                 for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
                 {
-                    QTableWidgetItem *item = this->ui->browserTable->item(i, 0);
+                    QTableWidgetItem *item = this->ui->browserTable->item(i, kBrowserColIndex);
 
                     int other = item->data(Qt::DisplayRole).toInt();
 

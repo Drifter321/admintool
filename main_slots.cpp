@@ -189,8 +189,8 @@ void MainWindow::addServer()
                 item->setTextColor(queryingColor);
                 item->setText(QString("Querying server %1...").arg(server));
                 item->setToolTip(server);
-                this->ui->browserTable->setItem(row, 0, id);
-                this->ui->browserTable->setItem(row, 4, item);
+                this->ui->browserTable->setItem(row, kBrowserColIndex, id);
+                this->ui->browserTable->setItem(row, kBrowserColHostname, item);
 
                 InfoQuery *infoQuery = new InfoQuery(this);
                 infoQuery->query(&info->host, info->port, id);
@@ -260,17 +260,17 @@ void MainWindow::darkThemeTriggered()
 
     for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
     {
-        if(this->ui->browserTable->item(i, 2))
+        if(this->ui->browserTable->item(i, kBrowserColVACIcon))
         {
             QTableWidgetItem *vacItem = new QTableWidgetItem();
             vacItem->setData(Qt::DecorationRole, this->GetVACImage());
-            this->ui->browserTable->setItem(i, 2, vacItem);
+            this->ui->browserTable->setItem(i, kBrowserColVACIcon, vacItem);
         }
-        if(this->ui->browserTable->item(i, 3))
+        if(this->ui->browserTable->item(i, kBrowserColLockIcon))
         {
             QTableWidgetItem *lockedItem = new QTableWidgetItem();
             lockedItem->setData(Qt::DecorationRole, this->GetLockImage());
-            this->ui->browserTable->setItem(i, 3, lockedItem);
+            this->ui->browserTable->setItem(i, kBrowserColLockIcon, lockedItem);
         }
     }
 }

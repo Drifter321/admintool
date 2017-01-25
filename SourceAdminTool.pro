@@ -44,19 +44,14 @@ FORMS    += mainwindow.ui
 RESOURCES += \
     icons.qrc
 
-win32
-{
+win32 {
     RC_FILE = sourceadmin.rc
     LIBS += -lws2_32
     LIBS += -lIPHlpApi
 }
-macx
-{
+macx {
     ICON = icons/icon.icns
 }
-
-win32: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/win -L$$PWD/thirdparty/libmaxminddb/lib/win -lminiupnpc -llibmaxminddb
-macx: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/mac -L$$PWD/thirdparty/libmaxminddb/lib/mac -lminiupnpc -llibmaxminddb
 
 INCLUDEPATH += $$PWD/thirdparty/miniupnpc
 INCLUDEPATH += $$PWD/thirdparty/libmaxminddb
@@ -65,3 +60,6 @@ DEPENDPATH += $$PWD/thirdparty/libmaxminddb
 
 DISTFILES += \
     GeoLite2-Country.mmdb
+
+win32: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/win/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/win/ -lmaxminddb
+macx: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/mac/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/mac/ -lmaxminddb

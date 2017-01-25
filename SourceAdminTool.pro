@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     rcon_slots.cpp \
     query_slots.cpp \
     loghandler.cpp \
-    loghandler_slots.cpp
+    loghandler_slots.cpp \
+    util.cpp
 
 HEADERS  += mainwindow.h \
     query.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     rcon.h \
     simplecrypt.h \
     ui_mainwindow.h \
-    loghandler.h
+    loghandler.h \
+    util.h
 
 FORMS    += mainwindow.ui
 

@@ -3,6 +3,7 @@
 #include "query.h"
 #include "rcon.h"
 #include "simplecrypt.h"
+#include "util.h"
 #include <QImage>
 #include <QMap>
 #include <QTime>
@@ -18,8 +19,8 @@ QList<ContextMenuItem> contextMenuItems;
 Settings::Settings(MainWindow *main)
 {
     this->pMain = main;
-    this->pSettings = new QSettings("./settings.ini", QSettings::IniFormat);
-    this->pAppIds = new QSettings("./app_list_map.ini", QSettings::IniFormat);
+    this->pSettings = new QSettings(BuildPath("settings.ini"), QSettings::IniFormat);
+    this->pAppIds = new QSettings(BuildPath("app_list_map.ini"), QSettings::IniFormat);
     GetAppIDListMap();
 }
 
@@ -264,7 +265,7 @@ void Settings::SaveSettings()
 
 void Settings::GetCtxCommands()
 {
-    QFile file("./commands.xml");
+    QFile file(BuildPath("commands.xml"));
 
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;

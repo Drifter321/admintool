@@ -53,6 +53,9 @@ win32 {
 }
 macx {
     ICON = icons/icon.icns
+    bundle.files = $$PWD/GeoLite2-Country.mmdb $$PWD/commands.xml $$PWD/app_list_map.ini
+    bundle.path = Contents/MacOS
+    QMAKE_BUNDLE_DATA += bundle
 }
 
 INCLUDEPATH += $$PWD/thirdparty/miniupnpc

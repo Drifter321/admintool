@@ -76,16 +76,26 @@ QImage MainWindow::GetVACImage()
 {
     if(this->ui->actionDark_Theme->isChecked())
     {
-        return QImage(":/icons/icons/vac.png");
+        static QImage vacDark(":/icons/icons/vac.png");
+        return vacDark;
     }
-    return QImage(":/icons/icons/vac-light.png");
+    else
+    {
+        static QImage vacLight(":/icons/icons/vac-light.png");
+        return vacLight;
+    }
 }
 
 QImage MainWindow::GetLockImage()
 {
     if(this->ui->actionDark_Theme->isChecked())
     {
-        return QImage(":/icons/icons/lock.png");
+        static QImage lockDark(":/icons/icons/lock.png");
+        return lockDark;
     }
-    return QImage(":/icons/icons/lock-light.png");
+    else
+    {
+        static QImage lockLight(":/icons/icons/lock-light.png");
+        return lockLight;
+    }
 }

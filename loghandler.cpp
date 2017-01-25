@@ -170,24 +170,34 @@ void LogHandler::apiFinished(QNetworkReply *reply)
     emit UPnPReady();
 }
 
-#ifdef WIN32
+//TODO : Clean this up
 void Worker::setupUPnP(LogHandler *logger)
 {
+    int nResult;
+
+#ifdef WIN32
     WSADATA wsaData;
-    int nResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    nResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
     if(nResult != NO_ERROR)
     {
+#ifdef WIN32
+    WSACleanup();
+#endif
         emit UPnPReady();
         this->currentThread()->quit();
         return;
     }
+#endif
 
     int error;
     UPNPDev *devlist = upnpDiscover(2000, NULL, NULL, 0, 0, 2, &error);
 
     if(!devlist)
     {
+#ifdef WIN32
+        WSACleanup();
+#endif
         emit UPnPReady();
         this->currentThread()->quit();
         return;
@@ -198,7 +208,7 @@ void Worker::setupUPnP(LogHandler *logger)
     UPNPUrls urls;
     IGDdatas data;
 
-    nResult = UPNP_GetValidIGD(devlist, &urls, &data, lanaddress, sizeof(lanaddress));
+    UPNP_GetValidIGD(devlist, &urls, &data, lanaddress, sizeof(lanaddress));
 
     logger->internalIP = QHostAddress(QString(lanaddress));
 
@@ -207,6 +217,10 @@ void Worker::setupUPnP(LogHandler *logger)
 
     if(nResult != UPNPCOMMAND_SUCCESS)
     {
+        freeUPNPDevlist(devlist);
+#ifdef WIN32
+        WSACleanup();
+#endif
         emit UPnPReady();
         this->currentThread()->quit();
         return;
@@ -214,11 +228,25 @@ void Worker::setupUPnP(LogHandler *logger)
 
     logger->externalIP = QHostAddress(QString(externalIPAddress));
 
-    UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,  logger->szPort.toLatin1().data(), logger->szPort.toLatin1().data(), lanaddress, "Source Admin Tool", "UDP", 0, "0");
+    nResult = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,  logger->szPort.toLatin1().data(), logger->szPort.toLatin1().data(), lanaddress, "Source Admin Tool", "UDP", 0, "0");
+
+    if(nResult != UPNPCOMMAND_SUCCESS)
+    {
+        freeUPNPDevlist(devlist);
+#ifdef WIN32
+        WSACleanup();
+#endif
+        emit UPnPReady();
+        this->currentThread()->quit();
+        return;
+    }
+
     freeUPNPDevlist(devlist);
+
+#ifdef WIN32
     WSACleanup();
+#endif
 
     emit UPnPReady();
     this->currentThread()->quit();
 }
-#endif

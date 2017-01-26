@@ -72,6 +72,30 @@ AddServerError MainWindow::CheckServerList(QString server)
     return AddServerError_None;
 }
 
+ServerInfo *MainWindow::AddServer(QString server)
+{
+    ServerInfo *info = new ServerInfo(server);
+
+    if(!info)
+        return nullptr;
+
+    serverList.append(info);
+
+    int row = ui->browserTable->rowCount();
+    ui->browserTable->insertRow(row);
+
+    ServerTableIndexItem *id = new ServerTableIndexItem(info);
+    id->setData(Qt::DisplayRole, serverList.size());
+    ui->browserTable->setItem(row, kBrowserColIndex, id);
+
+    this->CreateTableItemOrUpdate(row, kBrowserColHostname, ui->browserTable, info);
+
+    InfoQuery *infoQuery = new InfoQuery(this);
+    infoQuery->query(&info->host, info->port, id);
+
+    return info;
+}
+
 QImage MainWindow::GetVACImage()
 {
     if(this->ui->actionDark_Theme->isChecked())

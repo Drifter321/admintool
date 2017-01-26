@@ -9,8 +9,6 @@
 #include <QTime>
 #include <QXmlStreamReader>
 
-QColor errorColor(255, 60, 60);
-QColor queryingColor(80, 170, 80);
 QMap<int, QString> appIDMap;
 Settings *settings;
 QList<ServerInfo *> serverList;
@@ -174,26 +172,9 @@ void Settings::ReadSettings()
 
         if(pMain->CheckServerList(list.at(0)) == AddServerError_None)
         {
-            ServerInfo *info = new ServerInfo(list.at(0));
-            serverList.append(info);
+            ServerInfo *info = pMain->AddServer(list.at(0));
 
-            int row = pMain->GetUi()->browserTable->rowCount();
-            pMain->GetUi()->browserTable->insertRow(row);
-
-            QTableWidgetItem *item = new QTableWidgetItem();
-            QTableWidgetItem *id = new QTableWidgetItem();
-            id->setData(Qt::DisplayRole, serverList.size());
-
-            item->setTextColor(queryingColor);
-            item->setText(QString("Querying server %1...").arg(info->ipPort));
-            item->setToolTip(info->ipPort);
-            pMain->GetUi()->browserTable->setItem(row, kBrowserColIndex, id);
-            pMain->GetUi()->browserTable->setItem(row, kBrowserColHostname, item);
-
-            InfoQuery *infoQuery = new InfoQuery(pMain);
-            infoQuery->query(&info->host, info->port, id);
-
-            if(list.size() == 2)
+            if(info && list.size() == 2)
             {
                 SimpleCrypt encrypt;
                 encrypt.setKey(list.at(0).toLongLong());

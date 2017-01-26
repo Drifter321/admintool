@@ -95,8 +95,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     AddServerError CheckServerList(QString server);
+    ServerInfo *AddServer(QString server);
     void UpdateSelectedItemInfo(bool removeFirst = true, bool updateRules = false);
-    void SetTableItemAndDelete(int row, int col, QTableWidgetItem *item);
+    void CreateTableItemOrUpdate(size_t row, size_t col, QTableWidget *table, ServerInfo *info);
+    ServerTableIndexItem *GetServerTableIndexItem(size_t row);
     Ui::MainWindow *GetUi(){return ui;}
     ~MainWindow();
     void parseLogLine(QString, ServerInfo *);
@@ -122,7 +124,7 @@ public slots:
     void AddChatHistory(QString txt);
 
 private slots:
-    void addServer();
+    void addServerEntry();
     void browserTableItemSelected();
     void TimedUpdate();
     void processCommand();

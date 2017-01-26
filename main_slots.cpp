@@ -29,7 +29,7 @@ void MainWindow::ConnectSlots()
     this->ui->rconSave->connect(this->ui->rconSave, &QCheckBox::toggled, this, &MainWindow::rconSaveToggled);
     this->ui->rconLogin->connect(this->ui->rconLogin, &QPushButton::released, this, &MainWindow::rconLogin);
     this->ui->logGetLog->connect(this->ui->logGetLog, &QPushButton::released, this, &MainWindow::getLog);
-    this->ui->actionAdd_Server->connect(this->ui->actionAdd_Server, &QAction::triggered, this, &MainWindow::addServer);
+    this->ui->actionAdd_Server->connect(this->ui->actionAdd_Server, &QAction::triggered, this, &MainWindow::addServerEntry);
     this->ui->actionDark_Theme->connect(this->ui->actionDark_Theme, &QAction::triggered, this, &MainWindow::darkThemeTriggered);
     this->ui->actionSet_Log_Port->connect(this->ui->actionSet_Log_Port, &QAction::triggered, this, &MainWindow::showPortEntry);
     this->ui->actionAbout->connect(this->ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
@@ -161,7 +161,7 @@ void MainWindow::playerContextMenuAction(const QString &cmd)
     info->rcon->execCommand(cmd, false);
 }
 
-void MainWindow::addServer()
+void MainWindow::addServerEntry()
 {
     QMessageBox message(this);
     while(true)
@@ -174,26 +174,8 @@ void MainWindow::addServer()
             AddServerError error = this->CheckServerList(server);
             if(error == AddServerError_None)
             {
-                ServerInfo *info = new ServerInfo(server);
-                serverList.append(info);
-
+                this->AddServer(server);
                 settings->SaveSettings();
-
-                int row = this->ui->browserTable->rowCount();
-                this->ui->browserTable->insertRow(row);
-
-                QTableWidgetItem *item = new QTableWidgetItem();
-                QTableWidgetItem *id = new QTableWidgetItem();
-                id->setData(Qt::DisplayRole, row+1);
-
-                item->setTextColor(queryingColor);
-                item->setText(QString("Querying server %1...").arg(server));
-                item->setToolTip(server);
-                this->ui->browserTable->setItem(row, kBrowserColIndex, id);
-                this->ui->browserTable->setItem(row, kBrowserColHostname, item);
-
-                InfoQuery *infoQuery = new InfoQuery(this);
-                infoQuery->query(&info->host, info->port, id);
                 break;
             }
             else if(error == AddServerError_AlreadyExists)//Valid ip but exists.

@@ -10,8 +10,9 @@
 
 extern QMap<int, QString> appIDMap;
 extern QList<ServerInfo *> serverList;
-extern QColor errorColor;
-extern QColor queryingColor;
+
+QColor errorColor(255, 60, 60);
+QColor queryingColor(80, 170, 80);
 
 #define UPDATE_TIME 15
 

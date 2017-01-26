@@ -181,9 +181,7 @@ void Worker::setupUPnP(LogHandler *logger)
 
     if(nResult != NO_ERROR)
     {
-#ifdef WIN32
-    WSACleanup();
-#endif
+        WSACleanup();
         emit UPnPReady();
         this->currentThread()->quit();
         return;

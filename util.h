@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-char * BuildPath(const char *file);
+#include <QString>
+
+QString BuildPath(const char *file);
 
 #endif // UTIL_H

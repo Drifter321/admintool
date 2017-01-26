@@ -1,5 +1,6 @@
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
+#include "customitems.h"
 #include "settings.h"
 #include <QKeyEvent>
 #include <QTimer>
@@ -121,5 +122,17 @@ QImage MainWindow::GetLockImage()
     {
         static QImage lockLight(":/icons/icons/lock-light.png");
         return lockLight;
+    }
+}
+
+QColor MainWindow::GetTextColor()
+{
+    if(this->ui->actionDark_Theme->isChecked())
+    {
+        return Qt::white;
+    }
+    else
+    {
+        return Qt::black;
     }
 }

@@ -205,11 +205,11 @@ void MainWindow::browserTableItemSelected()
 
     this->SetRconEnabled(true);
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
     this->SetRconSignals(true);
-    this->RestoreRcon(index-1);
+    this->RestoreRcon(info);
     this->SetRconSignals(false);
 
     this->UpdateSelectedItemInfo(true, true);
@@ -240,19 +240,23 @@ void MainWindow::darkThemeTriggered()
         qApp->setPalette(defaultPalette);
     }
 
+    QTableWidgetItem *hostname;
+    QColor color = this->GetTextColor();
+
     for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
     {
+        hostname = this->ui->browserTable->item(i, kBrowserColHostname);
         if(this->ui->browserTable->item(i, kBrowserColVACIcon))
         {
-            QTableWidgetItem *vacItem = new QTableWidgetItem();
-            vacItem->setData(Qt::DecorationRole, this->GetVACImage());
-            this->ui->browserTable->setItem(i, kBrowserColVACIcon, vacItem);
+            this->ui->browserTable->item(i, kBrowserColVACIcon)->setData(Qt::DecorationRole, this->GetVACImage());
         }
         if(this->ui->browserTable->item(i, kBrowserColLockIcon))
         {
-            QTableWidgetItem *lockedItem = new QTableWidgetItem();
-            lockedItem->setData(Qt::DecorationRole, this->GetLockImage());
-            this->ui->browserTable->setItem(i, kBrowserColLockIcon, lockedItem);
+            this->ui->browserTable->item(i, kBrowserColLockIcon)->setData(Qt::DecorationRole, this->GetLockImage());
+        }
+        if(hostname && (hostname->textColor() == Qt::white || hostname->textColor() == Qt::black))
+        {
+            hostname->setTextColor(color);
         }
     }
 }

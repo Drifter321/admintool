@@ -7,6 +7,13 @@
 #include <QDateTime>
 #include "rcon.h"
 
+enum QueryState
+{
+    QueryRunning,
+    QueryFailed,
+    QuerySuccess,
+};
+
 class PlayerLogInfo
 {
 public:
@@ -75,7 +82,12 @@ public:
     RconQuery *rcon;
     QHash<QString, PlayerLogInfo> logHashTable;
     QList<int> pingList;
+    quint16 lastPing;
+    quint16 avgPing;
     QImage countryFlag;
+    QueryState queryState;
+    quint8 currentPlayers;
+    quint8 maxPlayers;
 };
 
 //Q_DECLARE_METATYPE(ServerInfo)

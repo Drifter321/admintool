@@ -12,6 +12,8 @@
 #include "serverinfo.h"
 #include "loghandler.h"
 
+class ServerTableIndexItem;
+
 enum AddServerError
 {
     AddServerError_None,
@@ -112,9 +114,9 @@ protected:
     bool eventFilter(QObject *object, QEvent *event);
 
 public slots:
-    void ServerInfoReady(InfoReply *, QTableWidgetItem *);
-    void PlayerInfoReady(QList<PlayerInfo> *, QTableWidgetItem *);
-    void RulesInfoReady(QList<RulesInfo> *, QTableWidgetItem *);
+    void ServerInfoReady(InfoReply *, ServerTableIndexItem *);
+    void PlayerInfoReady(QList<PlayerInfo> *, ServerTableIndexItem *);
+    void RulesInfoReady(QList<RulesInfo> *, ServerTableIndexItem *);
     void RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds);
     void RconOutput(ServerInfo *info, QByteArray res);
     void darkThemeTriggered();
@@ -146,10 +148,11 @@ private:
     void UpdateInfoTable(ServerInfo *info, bool current = true, QList<RulesInfo> *list = NULL);
     void HookEvents();
     void SetRconSignals(bool block);
-    void RestoreRcon(int index);
+    void RestoreRcon(ServerInfo *info);
     void SetRconEnabled(bool);
     QImage GetVACImage();
     QImage GetLockImage();
+    QColor GetTextColor();
     void runCommand(ServerInfo *, QString);
     void rconLoginQueued(QList<QueuedCommand>);
     LogHandler *pLogHandler;

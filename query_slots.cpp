@@ -25,14 +25,14 @@ void MainWindow::TimedUpdate()
     {
         for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
         {
-            QTableWidgetItem *id = this->ui->browserTable->item(i, kBrowserColIndex);
-            int index = id->text().toInt();
+            ServerTableIndexItem *id = this->GetServerTableIndexItem(i);
+            ServerInfo *info = id->GetServerInfo();
 
             InfoQuery *infoQuery = new InfoQuery(this);
 
-            serverList.at(index-1)->cleanHashTable();
+            info->cleanHashTable();
 
-            infoQuery->query(&serverList.at(index-1)->host, serverList.at(index-1)->port, id);
+            infoQuery->query(&info->host, info->port, id);
         }
         if(run % 60 == 0)
         {
@@ -62,8 +62,8 @@ void MainWindow::UpdateSelectedItemInfo(bool removeFirst, bool updateRules)
     if(this->ui->browserTable->selectedItems().size() == 0)
         return;
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
     if(removeFirst)
     {
@@ -85,28 +85,114 @@ void MainWindow::UpdateSelectedItemInfo(bool removeFirst, bool updateRules)
     }
 
     pPlayerQuery = new PlayerQuery(this);
-    pPlayerQuery->query(&serverList.at(index-1)->host, serverList.at(index-1)->port, item);
+    pPlayerQuery->query(&info->host, info->port, item);
 
     if(updateRules)
     {
         pRulesQuery = new RulesQuery(this);
-        pRulesQuery->query(&serverList.at(index-1)->host, serverList.at(index-1)->port, item);
+        pRulesQuery->query(&info->host, info->port, item);
     }
-    this->UpdateInfoTable(serverList.at(index-1));
+    this->UpdateInfoTable(info);
 }
 
-void MainWindow::SetTableItemAndDelete(int row, int col, QTableWidgetItem *item)
+//Update
+void MainWindow::CreateTableItemOrUpdate(size_t row, size_t col, QTableWidget *table, ServerInfo *info)
 {
-    QTableWidgetItem *current = this->ui->browserTable->item(row, col);
-
-    if(current)
+    if(table == this->ui->browserTable)
     {
-        delete current;
-    }
+         bool bAddItem = (table->item(row, col) == nullptr);
+        //Handle player stuff differently
+        if(col == kBrowserColPlayerCount)
+        {
+            PlayerTableItem *playerItem = bAddItem ? new PlayerTableItem() : (PlayerTableItem *)table->item(row, col);;
+            playerItem->players = info->currentPlayers;
 
-    this->ui->browserTable->setItem(row, col, item);
+            if(info->currentPlayers == info->maxPlayers)
+                playerItem->setTextColor(errorColor);
+            else
+                playerItem->setTextColor(queryingColor);
+
+            playerItem->setText(info->playerCount);
+
+            if(bAddItem)
+            {
+                table->setItem(row, col, playerItem);
+            }
+
+            return;
+        }
+
+        QTableWidgetItem *item = bAddItem ? new QTableWidgetItem() : table->item(row, col);
+
+        if(bAddItem)
+        {
+            table->setItem(row, col, item);
+        }
+
+        switch(col)
+        {
+            case kBrowserColModIcon:
+            {
+                QImage icon;
+                icon.load(appIDMap.value(info->appId, ":/icons/icons/hl2.gif"));
+                item->setData(Qt::DecorationRole, icon);
+                break;
+            }
+            case kBrowserColVACIcon:
+                if(bAddItem)
+                {
+                    item->setData(Qt::DecorationRole, this->GetVACImage());
+                }
+                break;
+            case kBrowserColLockIcon:
+                if(bAddItem)
+                {
+                    item->setData(Qt::DecorationRole, this->GetLockImage());
+                }
+                break;
+            case kBrowserColFlagIcon:
+                if(bAddItem)
+                {
+                    item->setData(Qt::DecorationRole, info->countryFlag);
+                }
+                break;
+            case kBrowserColHostname:
+                if(info->queryState == QuerySuccess)
+                {
+                    item->setTextColor(this->GetTextColor());
+                    item->setText(info->serverName);
+                }
+                else if(info->queryState == QueryFailed)
+                {
+                    item->setTextColor(errorColor);
+                    item->setText(QString("Failed to query %1, retrying in %2 seconds").arg(info->ipPort, QString::number(UPDATE_TIME)));
+                }
+                else if(info->queryState == QueryRunning)
+                {
+                    item->setTextColor(queryingColor);
+                    item->setText(QString("Querying server %1...").arg(info->ipPort));
+                }
+                if(bAddItem)
+                {
+                    item->setToolTip(info->ipPort);
+                }
+                break;
+            case kBrowserColMap:
+                item->setText(info->currentMap);
+                item->setTextColor(errorColor);
+                break;
+            case kBrowserColPing:
+                item->setText(QString("%1, Ø%2").arg(QString::number(info->lastPing), QString::number(info->avgPing)));
+                if(info->lastPing > 200)
+                    item->setTextColor(errorColor);
+                else
+                    item->setTextColor(queryingColor);
+                break;
+        }
+    }
 }
 
+//Cleanup?
 void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo> *list)
 {
     QString mapString;
@@ -241,41 +327,35 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
 }
 
 //QUERY INFO READY
-void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
+void MainWindow::ServerInfoReady(InfoReply *reply, ServerTableIndexItem *indexCell)
 {
-    int index = -1;
+    QTableWidget *browserTable = this->ui->browserTable;
+
     int row = -1;
 
+    //Make sure our item still exists.
     for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
     {
-        QTableWidgetItem *cell = this->ui->browserTable->item(i, kBrowserColIndex);
-
-        if(cell == indexCell)
+        if(indexCell == this->GetServerTableIndexItem(i))
         {
             row = i;
-            index = cell->text().toInt();
             break;
         }
     }
 
-    if(index == -1)
+    if(row == -1)
     {
         if(reply)
             delete reply;
         return;
     }
 
-    ServerInfo *info = serverList.at(index-1);
-
-    if(!info || !info->isValid)
-    {
-        if(reply)
-            delete reply;
-        return;
-    }
+    ServerInfo *info = indexCell->GetServerInfo();
 
     if(reply)
     {
+        info->lastPing = reply->ping;
+
         while(info->pingList.length() >= 1000)
         {
             info->pingList.removeFirst();
@@ -289,18 +369,15 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
             totalPing += info->pingList.at(i);
         }
 
-        QTableWidgetItem *pingItem = new QTableWidgetItem(QString("%1, Ø%2").arg(QString::number(reply->ping), QString::number(totalPing/info->pingList.length())));
+        info->avgPing = totalPing/info->pingList.length();
 
-        if(reply->ping > 200)
-            pingItem->setTextColor(errorColor);
-        else
-            pingItem->setTextColor(queryingColor);
-
-        this->SetTableItemAndDelete(row, kBrowserColPing, pingItem);
+        this->CreateTableItemOrUpdate(row, kBrowserColPing, browserTable, info);
     }
 
     if(reply && reply->success)
     {
+        bool appIdChanged = info->appId != reply->appId;
+
         info->vac = reply->vac;
         info->appId = reply->appId;
         info->os = reply->os;
@@ -315,69 +392,48 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
         info->playerCount = QString("%1 (%3)/%2").arg(QString::number(reply->players), QString::number(reply->maxplayers), QString::number(reply->bots));
         info->haveInfo = true;
         info->serverID = reply->serverID;
+        info->queryState = QuerySuccess;
+        info->maxPlayers = reply->maxplayers;
+        info->currentPlayers = reply->players;
 
         if (!info->countryFlag.isNull())
         {
-            QTableWidgetItem *flag = new QTableWidgetItem();
-            flag->setData(Qt::DecorationRole, info->countryFlag);
-            this->SetTableItemAndDelete(row, kBrowserColFlagIcon, flag);
+            this->CreateTableItemOrUpdate(row, kBrowserColFlagIcon, browserTable, info);
         }
 
-        QTableWidgetItem *mod = new QTableWidgetItem();
-
-        QImage icon;
-
-        icon.load(appIDMap.value(info->appId, ":/icons/icons/hl2.gif"));
-
-        mod->setData(Qt::DecorationRole, icon);
-
-        this->ui->browserTable->setSortingEnabled(false);
-
-        this->SetTableItemAndDelete(row, kBrowserColModIcon, mod);
+        if(appIdChanged)
+        {
+            this->CreateTableItemOrUpdate(row, kBrowserColModIcon, browserTable, info);
+        }
 
         if(reply->vac)
         {
-            QTableWidgetItem *vacItem = new QTableWidgetItem();
-            vacItem->setData(Qt::DecorationRole, this->GetVACImage());
-            this->SetTableItemAndDelete(row, kBrowserColVACIcon, vacItem);
+            this->CreateTableItemOrUpdate(row, kBrowserColVACIcon, browserTable, info);
+        }
+        else if(!reply->vac && browserTable->item(row, kBrowserColVACIcon))
+        {
+            browserTable->removeCellWidget(row, kBrowserColVACIcon);
         }
 
         if(reply->visibility)
         {
-            QTableWidgetItem *lockedItem = new QTableWidgetItem();
-            lockedItem->setData(Qt::DecorationRole, this->GetLockImage());
-            this->SetTableItemAndDelete(row, kBrowserColLockIcon, lockedItem);
+            this->CreateTableItemOrUpdate(row, kBrowserColLockIcon, browserTable, info);
+        }
+        else if(!reply->visibility && browserTable->item(row, kBrowserColLockIcon))
+        {
+            browserTable->removeCellWidget(row, kBrowserColLockIcon);
         }
 
-        QTableWidgetItem *hostname = new QTableWidgetItem(reply->hostname);
-        hostname->setToolTip(info->ipPort);
-        this->ui->browserTable->setItem(row, kBrowserColHostname,hostname);
-        QTableWidgetItem *mapItem = new QTableWidgetItem(reply->map);
-        mapItem->setTextColor(errorColor);
-        this->SetTableItemAndDelete(row, kBrowserColMap, mapItem);
+        this->CreateTableItemOrUpdate(row, kBrowserColHostname, browserTable, info);
+        this->CreateTableItemOrUpdate(row, kBrowserColMap, browserTable, info);
+        this->CreateTableItemOrUpdate(row, kBrowserColPlayerCount, browserTable, info);
 
-        PlayerTableItem *playerItem = new PlayerTableItem();
-        playerItem->players = reply->players;
-
-        if(reply->players == reply->maxplayers)
-            playerItem->setTextColor(errorColor);
-        else
-            playerItem->setTextColor(queryingColor);
-
-        playerItem->setText(info->playerCount);
-        this->SetTableItemAndDelete(row, kBrowserColPlayerCount, playerItem);
-
-        this->ui->browserTable->setSortingEnabled(true);
         delete reply;
     }
     else
     {
-        QTableWidgetItem *item = new QTableWidgetItem();
-
-        item->setTextColor(errorColor);
-        item->setText(QString("Failed to query %1, retrying in %2 seconds").arg(info->ipPort, QString::number(UPDATE_TIME)));
-        item->setToolTip(info->ipPort);
-        this->SetTableItemAndDelete(row, kBrowserColHostname, item);
+        info->queryState = QueryFailed;
+         this->CreateTableItemOrUpdate(row, kBrowserColHostname, browserTable, info);
 
         if(reply)
             delete reply;
@@ -385,7 +441,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, QTableWidgetItem *indexCell)
     this->UpdateInfoTable(info, (row == this->ui->browserTable->currentRow()));
 }
 
-void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *indexCell)
+void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, ServerTableIndexItem *indexCell)
 {
     if(this->ui->browserTable->selectedItems().empty() || this->ui->browserTable->selectedItems().at(0) != indexCell)
     {
@@ -397,14 +453,8 @@ void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *inde
         return;
     }
 
-    int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
-
-    ServerInfo *info = serverList.at(index-1);
-
-    while(this->ui->playerTable->rowCount() > 0)
-    {
-        this->ui->playerTable->removeRow(0);
-    }
+    ServerInfo *info = indexCell->GetServerInfo();
+    this->ui->playerTable->clearContents();
 
     this->ui->playerTable->setSortingEnabled(false);
 
@@ -444,7 +494,7 @@ void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, QTableWidgetItem *inde
     this->ui->playerTable->setSortingEnabled(true);
 }
 
-void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexCell)
+void MainWindow::RulesInfoReady(QList<RulesInfo> *list, ServerTableIndexItem *indexCell)
 {
     if(this->ui->browserTable->selectedItems().empty() || this->ui->browserTable->selectedItems().at(0) != indexCell)
     {
@@ -455,10 +505,8 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
 
         return;
     }
+    ServerInfo *info = indexCell->GetServerInfo();
 
-    int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
-
-    ServerInfo *info = serverList.at(index-1);
     if(info->haveInfo)
     {
         list->append(RulesInfo("vac", QString::number(info->vac)));
@@ -472,11 +520,7 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, QTableWidgetItem *indexC
         }
     }
 
-    while(this->ui->rulesTable->rowCount() > 0)
-    {
-        this->ui->rulesTable->removeRow(0);
-    }
-
+    this->ui->rulesTable->clearContents();
     this->ui->rulesTable->setSortingEnabled(false);
 
     this->UpdateInfoTable(info, true, list);

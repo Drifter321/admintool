@@ -263,13 +263,16 @@ void MainWindow::SetRconSignals(bool block)
     this->ui->commandOutput->blockSignals(block);
 }
 
-void MainWindow::RestoreRcon(int index)
+void MainWindow::RestoreRcon(ServerInfo *info)
 {
-    this->ui->rconSave->setChecked(serverList.at(index)->saveRcon);
-    this->ui->rconPassword->setText(serverList.at(index)->rconPassword);
-    this->ui->commandOutput->setPlainText(serverList.at(index)->rconOutput.join(""));
-    this->ui->logOutput->setPlainText(serverList.at(index)->logOutput.join(""));
-    this->ui->chatOutput->setHtml(serverList.at(index)->chatOutput.join(""));
+    if(info == nullptr)
+        return;
+
+    this->ui->rconSave->setChecked(info->saveRcon);
+    this->ui->rconPassword->setText(info->rconPassword);
+    this->ui->commandOutput->setPlainText(info->rconOutput.join(""));
+    this->ui->logOutput->setPlainText(info->logOutput.join(""));
+    this->ui->chatOutput->setHtml(info->chatOutput.join(""));
     this->ui->logOutput->moveCursor(QTextCursor::End);
     this->ui->commandOutput->moveCursor(QTextCursor::End);
     this->ui->chatOutput->moveCursor(QTextCursor::End);

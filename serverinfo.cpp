@@ -11,12 +11,13 @@ ServerInfo::ServerInfo(QString server)
     this->appId = -1;
     this->rconPassword = "";
     this->saveRcon = false;
-    this->rcon = NULL;
+    this->rcon = nullptr;
     this->vac = 0;
     this->version = "";
     this->os = "";
     this->tags = "";
     this->haveInfo = false;
+    this->queryState = QueryRunning;
 
     QStringList address = server.split(":");
     bool ok;

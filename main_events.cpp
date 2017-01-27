@@ -101,11 +101,11 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
                     }
                 }
 
+                serverList.removeAll(info);
                 pLogHandler->removeServer(info);
                 delete info;
                 info = nullptr;
 
-                serverList.removeAll(info);
                 settings->SaveSettings();
 
                 if(this->ui->browserTable->selectedItems().size() == 0)

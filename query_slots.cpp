@@ -104,7 +104,7 @@ void MainWindow::CreateTableItemOrUpdate(size_t row, size_t col, QTableWidget *t
         //Handle player stuff differently
         if(col == kBrowserColPlayerCount)
         {
-            PlayerTableItem *playerItem = bAddItem ? new PlayerTableItem() : (PlayerTableItem *)table->item(row, col);;
+            PlayerTableItem *playerItem = bAddItem ? new PlayerTableItem() : (PlayerTableItem *)table->item(row, col);
             playerItem->players = info->currentPlayers;
 
             if(info->currentPlayers == info->maxPlayers)

@@ -111,9 +111,9 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
                 if(this->ui->browserTable->selectedItems().size() == 0)
                 {
                     //Clear everything no servers left.
-                    this->ui->rulesTable->clearContents();
-                    this->ui->playerTable->clearContents();
-                    this->ui->infoTable->clearContents();
+                    this->ui->rulesTable->setRowCount(0);
+                    this->ui->playerTable->setRowCount(0);
+                    this->ui->infoTable->setRowCount(0);
 
                     this->ui->chatOutput->setHtml("");
                     this->ui->commandOutput->setPlainText("");

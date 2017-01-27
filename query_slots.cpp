@@ -454,7 +454,7 @@ void MainWindow::PlayerInfoReady(QList<PlayerInfo> *list, ServerTableIndexItem *
     }
 
     ServerInfo *info = indexCell->GetServerInfo();
-    this->ui->playerTable->clearContents();
+    this->ui->playerTable->setRowCount(0);
 
     this->ui->playerTable->setSortingEnabled(false);
 
@@ -520,7 +520,7 @@ void MainWindow::RulesInfoReady(QList<RulesInfo> *list, ServerTableIndexItem *in
         }
     }
 
-    this->ui->rulesTable->clearContents();
+    this->ui->rulesTable->setRowCount(0);
     this->ui->rulesTable->setSortingEnabled(false);
 
     this->UpdateInfoTable(info, true, list);

@@ -171,10 +171,11 @@ void MainWindow::addServerEntry()
 
         if(ok && !server.isEmpty())
         {
-            AddServerError error = this->CheckServerList(server);
+            AddServerError error;
+            this->AddServerToList(server, &error);
+
             if(error == AddServerError_None)
             {
-                this->AddServer(server);
                 settings->SaveSettings();
                 break;
             }

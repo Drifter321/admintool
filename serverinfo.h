@@ -49,7 +49,6 @@ public:
 
     ServerInfo(QString);
     bool isEqual(ServerInfo *)const;
-    bool isEqual(ServerInfo) const;
     void cleanHashTable();
 public:
     bool haveInfo;
@@ -73,7 +72,6 @@ public:
     quint16 port;
     quint64 rawServerId;
     QString ipPort;
-    bool isValid;
     QString rconPassword;
     QStringList rconOutput;
     QStringList logOutput;

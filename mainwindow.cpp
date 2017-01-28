@@ -57,14 +57,24 @@ MainWindow::~MainWindow()
 
 AddServerError MainWindow::CheckServerList(QString server)
 {
-    ServerInfo info(server);
+    QStringList address = server.split(":");
+    bool ok;
 
-    if(!info.isValid)
+    if(address.size() != 2)
         return AddServerError_Invalid;
+
+    QString ip = address.at(0);
+    quint16 port = address.at(1).toInt(&ok);
+    QHostAddress addr;
+
+    if(!addr.setAddress(ip) || !port || !ok)
+    {
+        return AddServerError_Invalid;
+    }
 
     for(int i = 0; i < serverList.size(); i++)
     {
-        if(serverList.at(i)->isEqual(info))
+        if(serverList.at(i)->host == addr && serverList.at(i)->port == port)
         {
             return AddServerError_AlreadyExists;
         }
@@ -73,12 +83,21 @@ AddServerError MainWindow::CheckServerList(QString server)
     return AddServerError_None;
 }
 
-ServerInfo *MainWindow::AddServer(QString server)
+ServerInfo *MainWindow::AddServerToList(QString server, AddServerError *pError)
 {
-    ServerInfo *info = new ServerInfo(server);
+    AddServerError error = CheckServerList(server);
 
-    if(!info)
+    if(pError != nullptr)
+    {
+        *pError = error;
+    }
+
+    if(error != AddServerError_None)
+    {
         return nullptr;
+    }
+
+    ServerInfo *info = new ServerInfo(server);
 
     serverList.append(info);
 

@@ -170,20 +170,17 @@ void Settings::ReadSettings()
             continue;
         }
 
-        if(pMain->CheckServerList(list.at(0)) == AddServerError_None)
-        {
-            ServerInfo *info = pMain->AddServer(list.at(0));
+        ServerInfo *info = pMain->AddServerToList(list.at(0));
 
-            if(info && list.size() == 2)
+        if(info && list.size() == 2)
+        {
+            SimpleCrypt encrypt;
+            encrypt.setKey(list.at(0).toLongLong());
+            QString pass = encrypt.decryptToString(list.at(1));
+            if(encrypt.lastError() == SimpleCrypt::ErrorNoError)
             {
-                SimpleCrypt encrypt;
-                encrypt.setKey(list.at(0).toLongLong());
-                QString pass = encrypt.decryptToString(list.at(1));
-                if(encrypt.lastError() == SimpleCrypt::ErrorNoError)
-                {
-                    info->rconPassword = pass;
-                    info->saveRcon = true;
-                }
+                info->rconPassword = pass;
+                info->saveRcon = true;
             }
         }
     }

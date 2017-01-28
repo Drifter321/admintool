@@ -7,7 +7,6 @@
 
 ServerInfo::ServerInfo(QString server)
 {
-    this->isValid = false;
     this->appId = -1;
     this->rconPassword = "";
     this->saveRcon = false;
@@ -20,26 +19,17 @@ ServerInfo::ServerInfo(QString server)
     this->queryState = QueryRunning;
 
     QStringList address = server.split(":");
-    bool ok;
 
-    if(address.size() != 2)
-        return;
-
-    QString ip = address.at(0);
-    this->port = address.at(1).toInt(&ok);
-
-    if(this->host.setAddress(address.at(0)) && port && ok)
-    {
-        this->ipPort = server;
-        this->isValid = true;
-    }
+    this->host = QHostAddress(address.at(0));
+    this->port = address.at(1).toInt();
+    this->ipPort = server;
 
     MMDB_s mmdb;
     int status = MMDB_open(BuildPath("GeoLite2-Country.mmdb").toUtf8().data(), MMDB_MODE_MMAP, &mmdb);
     if (status == MMDB_SUCCESS)
     {
         int gai_error, mmdb_error;
-        MMDB_lookup_result_s results = MMDB_lookup_string(&mmdb, ip.toLatin1().data(), &gai_error, &mmdb_error);
+        MMDB_lookup_result_s results = MMDB_lookup_string(&mmdb, address.at(0).toLatin1().data(), &gai_error, &mmdb_error);
         if (gai_error == 0 && mmdb_error == MMDB_SUCCESS && results.found_entry)
         {
             MMDB_entry_data_s entry_data;
@@ -73,11 +63,6 @@ ServerInfo::ServerInfo(QString server)
     {
         qDebug() << "Failed to open MaxMind db (" << MMDB_strerror(status) << ")";
     }
-}
-
-bool ServerInfo::isEqual(ServerInfo other) const
-{
-    return (this->host == other.host && this->port == other.port);
 }
 
 bool ServerInfo::isEqual(ServerInfo *other) const

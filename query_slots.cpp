@@ -235,7 +235,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
         this->ui->infoTable->removeRow(0);
     }
 
-    if(info->haveInfo && current)
+    if(current)
     {
         if(!info->currentMap.isEmpty() && !info->nextMap.isEmpty())
         {
@@ -264,7 +264,10 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
         items.append(InfoTableItem("Map", mapString));
         items.append(InfoTableItem("Timelimit", info->timelimit));
         //This line is ugly, but im way too lazy.
-        items.append(InfoTableItem("Version", QString("v%1 (%2, %3, Protocol %4)").arg(info->version, info->os == "l" ? "Linux" : info->os == "m" ? "Mac" : "Windows", info->type == "d" ? "Dedicated" : "Local", QString::number(info->protocol))));
+        if(!info->version.isEmpty())
+        {
+            items.append(InfoTableItem("Version", QString("v%1 (%2, %3, Protocol %4)").arg(info->version, info->os == "l" ? "Linux" : info->os == "m" ? "Mac" : "Windows", info->type == "d" ? "Dedicated" : "Local", QString::number(info->protocol))));
+        }
 
         QString modString;
 

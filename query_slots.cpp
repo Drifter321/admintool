@@ -369,15 +369,21 @@ void MainWindow::ServerInfoReady(InfoReply *reply, ServerTableIndexItem *indexCe
         info->pingList.append(reply->ping);
 
         quint64 totalPing = 0;
+        quint16 totalPings = 0;
+
         for(int i = 0; i < info->pingList.length(); i++)
         {
             if(info->pingList.at(i) == 2000)//only count completed pings
                 continue;
 
             totalPing += info->pingList.at(i);
+            totalPings++;
         }
 
-        info->avgPing = totalPing/info->pingList.length();
+        if(totalPings)
+        {
+            info->avgPing = totalPing/totalPings;
+        }
 
         this->CreateTableItemOrUpdate(row, kBrowserColPing, browserTable, info);
     }

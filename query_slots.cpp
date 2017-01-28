@@ -182,12 +182,17 @@ void MainWindow::CreateTableItemOrUpdate(size_t row, size_t col, QTableWidget *t
                 item->setTextColor(errorColor);
                 break;
             case kBrowserColPing:
-                item->setText(QString("%1, Ø%2").arg(QString::number(info->lastPing), QString::number(info->avgPing)));
+            {
+                //If timedout show 2000 else show the actual avg.
+                quint16 avgPing = (info->lastPing == 2000) ? 2000 : info->avgPing;
+
+                item->setText(QString("%1, Ø%2").arg(QString::number(info->lastPing), QString::number(avgPing)));
                 if(info->lastPing > 200)
                     item->setTextColor(errorColor);
                 else
                     item->setTextColor(queryingColor);
                 break;
+            }
         }
     }
 }
@@ -366,6 +371,9 @@ void MainWindow::ServerInfoReady(InfoReply *reply, ServerTableIndexItem *indexCe
         quint64 totalPing = 0;
         for(int i = 0; i < info->pingList.length(); i++)
         {
+            if(info->pingList.at(i) == 2000)//only count completed pings
+                continue;
+
             totalPing += info->pingList.at(i);
         }
 

@@ -22,6 +22,7 @@ ServerInfo::ServerInfo(QString server, QueryState state, bool isIP)
     if(isIP)
     {
         this->host = QHostAddress(address.at(0));
+        this->GetCountryFlag();
     }
     else
     {

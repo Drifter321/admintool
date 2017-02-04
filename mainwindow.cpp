@@ -61,7 +61,9 @@ AddServerError MainWindow::CheckServerList(QString server)
     bool ok;
 
     if(address.size() != 2)
+    {
         return AddServerError_Invalid;
+    }
 
     QString ip = address.at(0);
     quint16 port = address.at(1).toInt(&ok);

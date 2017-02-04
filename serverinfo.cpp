@@ -29,7 +29,7 @@ ServerInfo::ServerInfo(QString server)
     if (status == MMDB_SUCCESS)
     {
         int gai_error, mmdb_error;
-        MMDB_lookup_result_s results = MMDB_lookup_string(&mmdb, address.at(0).toLatin1().data(), &gai_error, &mmdb_error);
+        MMDB_lookup_result_s results = MMDB_lookup_string(&mmdb, this->host.toLatin1().data(), &gai_error, &mmdb_error);
         if (gai_error == 0 && mmdb_error == MMDB_SUCCESS && results.found_entry)
         {
             MMDB_entry_data_s entry_data;

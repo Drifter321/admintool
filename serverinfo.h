@@ -5,13 +5,19 @@
 #include <QHostAddress>
 #include <QHash>
 #include <QDateTime>
+#include <QHostInfo>
 #include "rcon.h"
+#include "customitems.h"
+
+class MainWindow;
 
 enum QueryState
 {
     QueryRunning,
     QueryFailed,
     QuerySuccess,
+    QueryResolving,
+    QueryResolveFailed,
 };
 
 class PlayerLogInfo
@@ -47,9 +53,10 @@ public:
             delete this->rcon;
     }
 
-    ServerInfo(QString);
+    ServerInfo(QString, QueryState, bool);
     bool isEqual(ServerInfo *)const;
     void cleanHashTable();
+    void GetCountryFlag();
 public:
     bool haveInfo;
     qint8 protocol;
@@ -63,6 +70,7 @@ public:
     QString nextMap;
     QString ff;
     QString timelimit;
+    QString hostname;
     QStringList mods;
     QString playerCount;
     QString gameName;
@@ -71,7 +79,8 @@ public:
     QHostAddress host;
     quint16 port;
     quint64 rawServerId;
-    QString ipPort;
+    //This name sucks... this is IP:PORT or HOSTNAME:PORT
+    QString hostPort;
     QString rconPassword;
     QStringList rconOutput;
     QStringList logOutput;
@@ -88,6 +97,24 @@ public:
     quint8 maxPlayers;
 };
 
-//Q_DECLARE_METATYPE(ServerInfo)
+class HostQueryResult : public QObject
+{
+    Q_OBJECT
+public slots:
+    void HostInfoResolved(QHostInfo);
+public:
+    HostQueryResult(ServerInfo *p, MainWindow *main, ServerTableIndexItem *item)
+    {
+        info = p;
+        id = item;
+        mainWindow = main;
+    }
+
+private:
+    MainWindow *mainWindow;
+    ServerTableIndexItem *id;
+    ServerInfo *info;
+
+};
 
 #endif // SERVERINFO

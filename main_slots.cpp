@@ -174,7 +174,7 @@ void MainWindow::addServerEntry()
             AddServerError error;
             this->AddServerToList(server, &error);
 
-            if(error == AddServerError_None)
+            if(error == AddServerError_None || error == AddServerError_Hostname)
             {
                 settings->SaveSettings();
                 break;

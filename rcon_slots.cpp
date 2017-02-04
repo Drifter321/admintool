@@ -177,7 +177,7 @@ void MainWindow::RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds)
     if(!info->rcon->isAuthed)
     {
         QMessageBox message(this);
-        message.setText(QString("Failed to authenticate %1").arg(info->ipPort));
+        message.setText(QString("Failed to authenticate %1").arg(info->hostPort));
         message.exec();
         return;
     }

@@ -225,12 +225,12 @@ void Settings::SaveSettings()
         {
             ServerInfo *info = serverList.at(i);
             QStringList list;
-            list.append(info->ipPort);
+            list.append(info->hostPort);
 
             if(info->saveRcon && info->rconPassword.length() >0)
             {
                 SimpleCrypt encrypt;
-                encrypt.setKey(info->ipPort.toLongLong());
+                encrypt.setKey(info->hostPort.toLongLong());
                 list.append(encrypt.encryptToString(info->rconPassword));
 
             }

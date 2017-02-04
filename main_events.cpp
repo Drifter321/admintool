@@ -79,7 +79,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
             int index = serverList.indexOf(info);
 
             QMessageBox message(this);
-            message.setInformativeText(QString("Delete %1?").arg(info->ipPort));
+            message.setInformativeText(QString("Delete %1?").arg(info->hostPort));
             message.setText("Delete server from list?");
             message.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
             message.setDefaultButton(QMessageBox::Cancel);

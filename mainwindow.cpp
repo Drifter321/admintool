@@ -68,21 +68,36 @@ AddServerError MainWindow::CheckServerList(QString server)
     QString ip = address.at(0);
     quint16 port = address.at(1).toInt(&ok);
     QHostAddress addr;
+    AddServerError ret = AddServerError_None;
 
-    if(!addr.setAddress(ip) || !port || !ok)
+    if(!port || !ok)
     {
         return AddServerError_Invalid;
+    }
+    else if(!addr.setAddress(ip))
+    {
+        //Check if it is a hostname
+        QUrl url = QUrl::fromUserInput(ip);
+        if(url != QUrl())
+        {
+            ret = AddServerError_Hostname;
+        }
+        else
+        {
+            return AddServerError_Invalid;
+        }
     }
 
     for(int i = 0; i < serverList.size(); i++)
     {
-        if(serverList.at(i)->host == addr && serverList.at(i)->port == port)
+        //Check if the ip or hostname already exists.
+        if(serverList.at(i)->hostPort == server)
         {
             return AddServerError_AlreadyExists;
         }
     }
 
-    return AddServerError_None;
+    return ret;
 }
 
 ServerInfo *MainWindow::AddServerToList(QString server, AddServerError *pError)
@@ -94,12 +109,15 @@ ServerInfo *MainWindow::AddServerToList(QString server, AddServerError *pError)
         *pError = error;
     }
 
-    if(error != AddServerError_None)
+    if(error != AddServerError_None && error != AddServerError_Hostname)
     {
         return nullptr;
     }
 
-    ServerInfo *info = new ServerInfo(server);
+    bool isIP = (error == AddServerError_None);
+    QueryState state = (error == AddServerError_None) ? QueryRunning : QueryResolving;
+
+    ServerInfo *info = new ServerInfo(server, state, isIP);
 
     serverList.append(info);
 
@@ -112,9 +130,17 @@ ServerInfo *MainWindow::AddServerToList(QString server, AddServerError *pError)
 
     this->CreateTableItemOrUpdate(row, kBrowserColHostname, ui->browserTable, info);
 
-    InfoQuery *infoQuery = new InfoQuery(this);
-    infoQuery->query(&info->host, info->port, id);
-
+    if(isIP)
+    {
+        InfoQuery *infoQuery = new InfoQuery(this);
+        infoQuery->query(&info->host, info->port, id);
+    }
+    else
+    {
+        //Resolve Address
+        HostQueryResult *res = new HostQueryResult(info, this, id);
+        QHostInfo::lookupHost(info->hostname, res, SLOT(HostInfoResolved(QHostInfo)));
+    }
     return info;
 }
 

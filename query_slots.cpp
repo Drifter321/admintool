@@ -165,16 +165,26 @@ void MainWindow::CreateTableItemOrUpdate(size_t row, size_t col, QTableWidget *t
                 else if(info->queryState == QueryFailed)
                 {
                     item->setTextColor(errorColor);
-                    item->setText(QString("Failed to query %1, retrying in %2 seconds").arg(info->ipPort, QString::number(UPDATE_TIME)));
+                    item->setText(QString("Failed to query %1, retrying in %2 seconds").arg(info->hostPort, QString::number(UPDATE_TIME)));
                 }
                 else if(info->queryState == QueryRunning)
                 {
                     item->setTextColor(queryingColor);
-                    item->setText(QString("Querying server %1...").arg(info->ipPort));
+                    item->setText(QString("Querying server %1...").arg(info->hostPort));
+                }
+                else if(info->queryState == QueryResolving)
+                {
+                    item->setTextColor(queryingColor);
+                    item->setText(QString("Resolving hostname %1...").arg(info->hostPort));
+                }
+                else if(info->queryState == QueryResolveFailed)
+                {
+                    item->setTextColor(errorColor);
+                    item->setText(QString("Failed to resolve %1...").arg(info->hostPort));
                 }
                 if(bAddItem)
                 {
-                    item->setToolTip(info->ipPort);
+                    item->setToolTip(info->hostPort);
                 }
                 break;
             case kBrowserColMap:
@@ -256,7 +266,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
         }
 
         QList<InfoTableItem> items;
-        items.append(InfoTableItem("Server IP", info->ipPort));
+        items.append(InfoTableItem("Server IP", info->hostPort));
         items.append(InfoTableItem("PingGraph", ""));//Not used but place holder
         items.append(InfoTableItem("Server Name", info->serverName));
         items.append(InfoTableItem("Game", gameString));

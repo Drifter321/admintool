@@ -18,7 +18,8 @@ enum AddServerError
 {
     AddServerError_None,
     AddServerError_Invalid,
-    AddServerError_AlreadyExists
+    AddServerError_AlreadyExists,
+    AddServerError_Hostname,
 };
 
 enum ContextTypes

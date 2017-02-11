@@ -9,7 +9,7 @@ extern "C" {
 #define _POSIX_C_SOURCE 200112L
 #endif
 
-#include "maxminddb_config.h"
+#include <maxminddb_config.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -26,7 +26,7 @@ typedef ADDRESS_FAMILY sa_family_t;
 
 #if defined(_MSC_VER)
 /* MSVC doesn't define signed size_t, copy it from configure */
-#define ssize_t SSIZE_T
+#define ssize_t int
 
 /* MSVC doesn't support restricted pointers */
 #define restrict

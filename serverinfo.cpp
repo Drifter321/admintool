@@ -95,6 +95,7 @@ void ServerInfo::GetCountryFlag()
         }
     }
 }
+
 void HostQueryResult::HostInfoResolved(QHostInfo hostInfo)
 {
     QHostAddress addr;
@@ -115,5 +116,6 @@ void HostQueryResult::HostInfoResolved(QHostInfo hostInfo)
         }
     }
     info->queryState = QueryResolveFailed;
+    this->mainWindow->CreateTableItemOrUpdate(id->row(), kBrowserColHostname, id->tableWidget(), this->info);
     this->deleteLater();
 }

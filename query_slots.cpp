@@ -28,6 +28,9 @@ void MainWindow::TimedUpdate()
             ServerTableIndexItem *id = this->GetServerTableIndexItem(i);
             ServerInfo *info = id->GetServerInfo();
 
+            if(info->queryState == QueryResolveFailed || info->queryState == QueryResolving || info->queryState == QueryRunning)
+                continue;
+
             InfoQuery *infoQuery = new InfoQuery(this);
 
             info->cleanHashTable();

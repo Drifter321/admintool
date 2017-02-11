@@ -18,6 +18,10 @@ ServerInfo::ServerInfo(QString server, QueryState state, bool isIP)
     this->queryState = state;
 
     QStringList address = server.split(":");
+    if (address.count() == 1)
+    {
+        address.append("27015");
+    }
 
     if(isIP)
     {

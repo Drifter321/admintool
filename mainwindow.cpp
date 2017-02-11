@@ -60,7 +60,11 @@ AddServerError MainWindow::CheckServerList(QString server)
     QStringList address = server.split(":");
     bool ok;
 
-    if(address.size() != 2)
+    if(address.size() == 1)
+    {
+        address.append("27015");
+    }
+    else if (address.size() != 2)
     {
         return AddServerError_Invalid;
     }

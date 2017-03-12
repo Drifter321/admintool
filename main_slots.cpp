@@ -146,12 +146,10 @@ void MainWindow::playerContextMenuAction(const QString &cmd)
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
-    ServerInfo *info = serverList.at(index-1);
-
-    if(info->rcon == NULL || !info->rcon->isAuthed)
+    if(info && (info->rcon == NULL || !info->rcon->isAuthed))
     {
         QList<QueuedCommand>cmds;
         cmds.append(QueuedCommand(cmd, QueuedCommandType::ContextCommand));

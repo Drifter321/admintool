@@ -8,7 +8,11 @@
 
 #ifndef MMDB_UINT128_IS_BYTE_ARRAY
 /* Define as 1 if we don't have an unsigned __int128 type */
-#define MMDB_UINT128_IS_BYTE_ARRAY 1
+	#ifdef WIN32
+		#define MMDB_UINT128_IS_BYTE_ARRAY 1
+	#else
+		#define MMDB_UINT128_IS_BYTE_ARRAY 0
+	#endif
 #endif
 
 #endif                          /* MAXMINDDB_CONFIG_H */

@@ -17,11 +17,13 @@ Features
 Third Party
 -----------
 - [miniUPnP](https://github.com/miniupnp/miniupnp): Used for port mapping on UPnP enabled devices (primarily miniupnpc).
+- [libmaxminddb](https://github.com/maxmind/libmaxminddb): Used for GeoIP.
+- This product includes GeoLite2 data created by MaxMind, available from http://www.maxmind.com.
 
 References
 ---------
 - [Valve Developer Wiki](https://developer.valvesoftware.com/wiki/Main_Page)
 
-Credits
+Thanks
 -------
-- [psychonic](https://github.com/psychonic): Helping with log parsing.
+- [psychonic](https://github.com/psychonic)

@@ -1,5 +1,6 @@
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
+#include "customitems.h"
 #include "settings.h"
 #include <QKeyEvent>
 #include <QTimer>
@@ -56,20 +57,95 @@ MainWindow::~MainWindow()
 
 AddServerError MainWindow::CheckServerList(QString server)
 {
-    ServerInfo info(server);
+    QStringList address = server.split(":");
+    bool ok;
 
-    if(!info.isValid)
+    if(address.size() == 1)
+    {
+        address.append("27015");
+    }
+    else if (address.size() != 2)
+    {
         return AddServerError_Invalid;
+    }
+
+    QString ip = address.at(0);
+    quint16 port = address.at(1).toInt(&ok);
+    QHostAddress addr;
+    AddServerError ret = AddServerError_None;
+
+    if(!port || !ok)
+    {
+        return AddServerError_Invalid;
+    }
+    else if(!addr.setAddress(ip))
+    {
+        //Check if it is a hostname
+        QUrl url = QUrl::fromUserInput(ip);
+        if(url != QUrl())
+        {
+            ret = AddServerError_Hostname;
+        }
+        else
+        {
+            return AddServerError_Invalid;
+        }
+    }
 
     for(int i = 0; i < serverList.size(); i++)
     {
-        if(serverList.at(i)->isEqual(info))
+        //Check if the ip or hostname already exists.
+        if(serverList.at(i)->hostPort == server)
         {
             return AddServerError_AlreadyExists;
         }
     }
 
-    return AddServerError_None;
+    return ret;
+}
+
+ServerInfo *MainWindow::AddServerToList(QString server, AddServerError *pError)
+{
+    AddServerError error = CheckServerList(server);
+
+    if(pError != nullptr)
+    {
+        *pError = error;
+    }
+
+    if(error != AddServerError_None && error != AddServerError_Hostname)
+    {
+        return nullptr;
+    }
+
+    bool isIP = (error == AddServerError_None);
+    QueryState state = (error == AddServerError_None) ? QueryRunning : QueryResolving;
+
+    ServerInfo *info = new ServerInfo(server, state, isIP);
+
+    serverList.append(info);
+
+    int row = ui->browserTable->rowCount();
+    ui->browserTable->insertRow(row);
+
+    ServerTableIndexItem *id = new ServerTableIndexItem(info);
+    id->setData(Qt::DisplayRole, serverList.size());
+    ui->browserTable->setItem(row, kBrowserColIndex, id);
+
+    this->CreateTableItemOrUpdate(row, kBrowserColHostname, ui->browserTable, info);
+
+    if(isIP)
+    {
+        InfoQuery *infoQuery = new InfoQuery(this);
+        infoQuery->query(&info->host, info->port, id);
+    }
+    else
+    {
+        //Resolve Address
+        HostQueryResult *res = new HostQueryResult(info, this, id);
+        QHostInfo::lookupHost(info->hostname, res, SLOT(HostInfoResolved(QHostInfo)));
+    }
+    return info;
 }
 
 QImage MainWindow::GetVACImage()
@@ -97,5 +173,17 @@ QImage MainWindow::GetLockImage()
     {
         static QImage lockLight(":/icons/icons/lock-light.png");
         return lockLight;
+    }
+}
+
+QColor MainWindow::GetTextColor()
+{
+    if(this->ui->actionDark_Theme->isChecked())
+    {
+        return Qt::white;
+    }
+    else
+    {
+        return Qt::black;
     }
 }

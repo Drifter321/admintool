@@ -15,8 +15,8 @@ QRegularExpression actionRegex("^L\\d{2}\\/\\d{2}\\/\\d{4} - \\d{2}:\\d{2}:\\d{2
 
 void MainWindow::getLog()
 {
-    int index = this->ui->browserTable->selectedItems().at(0)->text().toInt();
-    ServerInfo *info = serverList.at(index-1);
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
     if(!info)
         return;//WHAT?!?!
@@ -37,7 +37,7 @@ void MainWindow::getLog()
 
     info->rcon->execCommand("log on", false);
     info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort), false);
-    pLogHandler->addServer(serverList.at(index-1));
+    pLogHandler->addServer(info);
 }
 
 void MainWindow::parseLogLine(QString line, ServerInfo *info)
@@ -58,11 +58,11 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
 
     QString logLine = QString("L%1").arg(line);
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *currentInfo = item->GetServerInfo();
 
     //Show and save the log line in the log tab
-    if(info == serverList.at(index-1))
+    if(info == currentInfo)
     {
         int sliderPos = this->ui->logOutput->verticalScrollBar()->sliderPosition();
         bool shouldAutoScroll = sliderPos == this->ui->logOutput->verticalScrollBar()->maximum();
@@ -124,7 +124,7 @@ void MainWindow::parseLogLine(QString line, ServerInfo *info)
                chatLine = QString("&lt;%1&gt;&lt;%1&gt; : %2<br>").arg(captures.at(3), captures.at(6));
             }
 
-            if(info == serverList.at(index-1))
+            if(info == currentInfo)
             {
                 int sliderPos = this->ui->chatOutput->verticalScrollBar()->sliderPosition();
                 bool shouldAutoScroll = sliderPos == this->ui->chatOutput->verticalScrollBar()->maximum();
@@ -163,12 +163,10 @@ void MainWindow::sendChat()
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
-    ServerInfo *info = serverList.at(index-1);
-
-    if(info->rcon == NULL || !info->rcon->isAuthed)
+    if(info && (info->rcon == NULL || !info->rcon->isAuthed))
     {
         QMessageBox message(this);
         message.setText("Please authenticate first.");

@@ -1,4 +1,6 @@
 #include "customitems.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 void PlayerTimeTableItem::updateTime(float newTime)
 {
@@ -30,4 +32,19 @@ void PlayerTimeTableItem::setTime()
     res.append(QString("%1%2").arg(QString::number(seconds), "s"));
 
     this->setText(res);
+}
+
+ServerTableIndexItem::ServerTableIndexItem(ServerInfo *info) : QTableWidgetItem()
+{
+    this->serverInfo = info;
+}
+
+ServerTableIndexItem::ServerTableIndexItem(ServerInfo *info, QString text) : QTableWidgetItem(text)
+{
+    this->serverInfo = info;
+}
+
+ServerTableIndexItem *MainWindow::GetServerTableIndexItem(size_t row)
+{
+    return ((ServerTableIndexItem *)ui->browserTable->item(row, kBrowserColIndex));
 }

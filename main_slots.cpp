@@ -29,7 +29,7 @@ void MainWindow::ConnectSlots()
     this->ui->rconSave->connect(this->ui->rconSave, &QCheckBox::toggled, this, &MainWindow::rconSaveToggled);
     this->ui->rconLogin->connect(this->ui->rconLogin, &QPushButton::released, this, &MainWindow::rconLogin);
     this->ui->logGetLog->connect(this->ui->logGetLog, &QPushButton::released, this, &MainWindow::getLog);
-    this->ui->actionAdd_Server->connect(this->ui->actionAdd_Server, &QAction::triggered, this, &MainWindow::addServer);
+    this->ui->actionAdd_Server->connect(this->ui->actionAdd_Server, &QAction::triggered, this, &MainWindow::addServerEntry);
     this->ui->actionDark_Theme->connect(this->ui->actionDark_Theme, &QAction::triggered, this, &MainWindow::darkThemeTriggered);
     this->ui->actionSet_Log_Port->connect(this->ui->actionSet_Log_Port, &QAction::triggered, this, &MainWindow::showPortEntry);
     this->ui->actionAbout->connect(this->ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
@@ -146,12 +146,10 @@ void MainWindow::playerContextMenuAction(const QString &cmd)
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
-    ServerInfo *info = serverList.at(index-1);
-
-    if(info->rcon == NULL || !info->rcon->isAuthed)
+    if(info && (info->rcon == NULL || !info->rcon->isAuthed))
     {
         QList<QueuedCommand>cmds;
         cmds.append(QueuedCommand(cmd, QueuedCommandType::ContextCommand));
@@ -161,7 +159,7 @@ void MainWindow::playerContextMenuAction(const QString &cmd)
     info->rcon->execCommand(cmd, false);
 }
 
-void MainWindow::addServer()
+void MainWindow::addServerEntry()
 {
     QMessageBox message(this);
     while(true)
@@ -171,29 +169,12 @@ void MainWindow::addServer()
 
         if(ok && !server.isEmpty())
         {
-            AddServerError error = this->CheckServerList(server);
-            if(error == AddServerError_None)
+            AddServerError error;
+            this->AddServerToList(server, &error);
+
+            if(error == AddServerError_None || error == AddServerError_Hostname)
             {
-                ServerInfo *info = new ServerInfo(server);
-                serverList.append(info);
-
                 settings->SaveSettings();
-
-                int row = this->ui->browserTable->rowCount();
-                this->ui->browserTable->insertRow(row);
-
-                QTableWidgetItem *item = new QTableWidgetItem();
-                QTableWidgetItem *id = new QTableWidgetItem();
-                id->setData(Qt::DisplayRole, row+1);
-
-                item->setTextColor(queryingColor);
-                item->setText(QString("Querying server %1...").arg(server));
-                item->setToolTip(server);
-                this->ui->browserTable->setItem(row, kBrowserColIndex, id);
-                this->ui->browserTable->setItem(row, kBrowserColHostname, item);
-
-                InfoQuery *infoQuery = new InfoQuery(this);
-                infoQuery->query(&info->host, info->port, id);
                 break;
             }
             else if(error == AddServerError_AlreadyExists)//Valid ip but exists.
@@ -223,11 +204,11 @@ void MainWindow::browserTableItemSelected()
 
     this->SetRconEnabled(true);
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
     this->SetRconSignals(true);
-    this->RestoreRcon(index-1);
+    this->RestoreRcon(info);
     this->SetRconSignals(false);
 
     this->UpdateSelectedItemInfo(true, true);
@@ -258,19 +239,23 @@ void MainWindow::darkThemeTriggered()
         qApp->setPalette(defaultPalette);
     }
 
+    QTableWidgetItem *hostname;
+    QColor color = this->GetTextColor();
+
     for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
     {
+        hostname = this->ui->browserTable->item(i, kBrowserColHostname);
         if(this->ui->browserTable->item(i, kBrowserColVACIcon))
         {
-            QTableWidgetItem *vacItem = new QTableWidgetItem();
-            vacItem->setData(Qt::DecorationRole, this->GetVACImage());
-            this->ui->browserTable->setItem(i, kBrowserColVACIcon, vacItem);
+            this->ui->browserTable->item(i, kBrowserColVACIcon)->setData(Qt::DecorationRole, this->GetVACImage());
         }
         if(this->ui->browserTable->item(i, kBrowserColLockIcon))
         {
-            QTableWidgetItem *lockedItem = new QTableWidgetItem();
-            lockedItem->setData(Qt::DecorationRole, this->GetLockImage());
-            this->ui->browserTable->setItem(i, kBrowserColLockIcon, lockedItem);
+            this->ui->browserTable->item(i, kBrowserColLockIcon)->setData(Qt::DecorationRole, this->GetLockImage());
+        }
+        if(hostname && (hostname->textColor() == Qt::white || hostname->textColor() == Qt::black))
+        {
+            hostname->setTextColor(color);
         }
     }
 }

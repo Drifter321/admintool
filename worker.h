@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QThread>
-#include <QTableWidgetItem>
 #include "rcon.h"
+#include "customitems.h"
 
 class RulesInfo;
 class InfoReply;
@@ -16,15 +16,15 @@ class Worker : public QThread
     Q_OBJECT
 
 public slots:
-    void getServerInfo(QHostAddress *host, quint16 port, QTableWidgetItem *item);
-    void getPlayerInfo(QHostAddress *host, quint16 port, QTableWidgetItem *item);
-    void getRulesInfo(QHostAddress *host, quint16 port, QTableWidgetItem *item);
+    void getServerInfo(QHostAddress *host, quint16 port, ServerTableIndexItem *item);
+    void getPlayerInfo(QHostAddress *host, quint16 port, ServerTableIndexItem *item);
+    void getRulesInfo(QHostAddress *host, quint16 port, ServerTableIndexItem *item);
     void setupUPnP(LogHandler *);
 
 signals:
-    void serverInfoReady(InfoReply *reply, QTableWidgetItem *item);
-    void playerInfoReady(QList<PlayerInfo> *, QTableWidgetItem *item);
-    void rulesInfoReady(QList<RulesInfo> *, QTableWidgetItem *item);
+    void serverInfoReady(InfoReply *reply, ServerTableIndexItem *item);
+    void playerInfoReady(QList<PlayerInfo> *, ServerTableIndexItem *item);
+    void rulesInfoReady(QList<RulesInfo> *, ServerTableIndexItem *item);
     void UPnPReady();
 };
 

@@ -2,6 +2,7 @@
 #define INFOQUERY
 
 #include "serverinfo.h"
+#include "customitems.h"
 #include <QUdpSocket>
 #include <QThread>
 #include <QTableWidgetItem>
@@ -79,7 +80,7 @@ public:
         workerThread.wait();
     }
 signals:
-    void query(QHostAddress *, quint16, QTableWidgetItem *item);
+    void query(QHostAddress *, quint16, ServerTableIndexItem *item);
 };
 
 class PlayerQuery : public QObject
@@ -94,7 +95,7 @@ private:
     MainWindow *pMain;
 
 signals:
-    void query(QHostAddress *, quint16, QTableWidgetItem *);
+    void query(QHostAddress *, quint16, ServerTableIndexItem *);
 };
 
 class RulesQuery : public QObject
@@ -109,7 +110,7 @@ private:
     MainWindow *pMain;
 
 signals:
-    void query(QHostAddress *, quint16, QTableWidgetItem *);
+    void query(QHostAddress *, quint16, ServerTableIndexItem *);
 };
 
 QList<PlayerInfo> *GetPlayerReply(QHostAddress, quint16);

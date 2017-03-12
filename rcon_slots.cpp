@@ -49,12 +49,10 @@ void MainWindow::processCommand()
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
-    ServerInfo *info = serverList.at(index-1);
-
-    if(info->rcon == NULL || !info->rcon->isAuthed)
+    if(info && (info->rcon == NULL || !info->rcon->isAuthed))
     {
         QList<QueuedCommand>cmds;
         cmds.append(QueuedCommand(this->ui->commandText->text(), QueuedCommandType::ConsoleCommand));
@@ -73,10 +71,10 @@ void MainWindow::rconSaveToggled(bool checked)
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
-    serverList.at(index-1)->saveRcon = checked;
+    info->saveRcon = checked;
 }
 
 void MainWindow::passwordUpdated(const QString &text)
@@ -87,10 +85,10 @@ void MainWindow::passwordUpdated(const QString &text)
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
-    serverList.at(index-1)->rconPassword = text;
+    info->rconPassword = text;
 }
 
 void MainWindow::rconLogin()
@@ -101,10 +99,8 @@ void MainWindow::rconLogin()
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
-
-    ServerInfo *info = serverList.at(index-1);
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
     if(info->rcon == NULL)
     {
@@ -135,10 +131,8 @@ void MainWindow::rconLoginQueued(QList<QueuedCommand>queuedcmds)
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
-
-    ServerInfo *info = serverList.at(index-1);
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = item->GetServerInfo();
 
     if(info->rcon == NULL)
     {
@@ -171,13 +165,13 @@ void MainWindow::RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds)
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *currentInfo = item->GetServerInfo();
 
     if(!info->rcon->isAuthed)
     {
         QMessageBox message(this);
-        message.setText(QString("Failed to authenticate %1").arg(info->ipPort));
+        message.setText(QString("Failed to authenticate %1").arg(info->hostPort));
         message.exec();
         return;
     }
@@ -198,11 +192,13 @@ void MainWindow::RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds)
             }
             else //command
             {
-                if(info == serverList.at(index-1))//If current server print the stuff
+                if(info == currentInfo)//If current server print the stuff
                     this->runCommand(info, queuedcmd.command);
                 else //Not current store it only.
+                {
                     info->rconOutput.append(QString("] %1\n").arg(queuedcmd.command));
                     info->rcon->execCommand(queuedcmd.command, true);
+                }
             }
         }
     }
@@ -221,10 +217,10 @@ void MainWindow::RconOutput(ServerInfo *info, QByteArray result)
         return;
     }
 
-    QTableWidgetItem *item = this->ui->browserTable->selectedItems().at(0);
-    int index = item->text().toInt();
+    ServerTableIndexItem *item = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *currentInfo = item->GetServerInfo();
 
-    if(info == serverList.at(index-1))
+    if(info == currentInfo)
     {
         int sliderPos = this->ui->commandOutput->verticalScrollBar()->sliderPosition();
         bool shouldAutoScroll = sliderPos == this->ui->commandOutput->verticalScrollBar()->maximum();
@@ -263,13 +259,16 @@ void MainWindow::SetRconSignals(bool block)
     this->ui->commandOutput->blockSignals(block);
 }
 
-void MainWindow::RestoreRcon(int index)
+void MainWindow::RestoreRcon(ServerInfo *info)
 {
-    this->ui->rconSave->setChecked(serverList.at(index)->saveRcon);
-    this->ui->rconPassword->setText(serverList.at(index)->rconPassword);
-    this->ui->commandOutput->setPlainText(serverList.at(index)->rconOutput.join(""));
-    this->ui->logOutput->setPlainText(serverList.at(index)->logOutput.join(""));
-    this->ui->chatOutput->setHtml(serverList.at(index)->chatOutput.join(""));
+    if(info == nullptr)
+        return;
+
+    this->ui->rconSave->setChecked(info->saveRcon);
+    this->ui->rconPassword->setText(info->rconPassword);
+    this->ui->commandOutput->setPlainText(info->rconOutput.join(""));
+    this->ui->logOutput->setPlainText(info->logOutput.join(""));
+    this->ui->chatOutput->setHtml(info->chatOutput.join(""));
     this->ui->logOutput->moveCursor(QTextCursor::End);
     this->ui->commandOutput->moveCursor(QTextCursor::End);
     this->ui->chatOutput->moveCursor(QTextCursor::End);

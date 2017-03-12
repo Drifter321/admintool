@@ -12,11 +12,14 @@
 #include "serverinfo.h"
 #include "loghandler.h"
 
+class ServerTableIndexItem;
+
 enum AddServerError
 {
     AddServerError_None,
     AddServerError_Invalid,
-    AddServerError_AlreadyExists
+    AddServerError_AlreadyExists,
+    AddServerError_Hostname,
 };
 
 enum ContextTypes
@@ -95,8 +98,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     AddServerError CheckServerList(QString server);
+    ServerInfo *AddServerToList(QString server, AddServerError *error = nullptr);
     void UpdateSelectedItemInfo(bool removeFirst = true, bool updateRules = false);
-    void SetTableItemAndDelete(int row, int col, QTableWidgetItem *item);
+    void CreateTableItemOrUpdate(size_t row, size_t col, QTableWidget *table, ServerInfo *info);
+    ServerTableIndexItem *GetServerTableIndexItem(size_t row);
     Ui::MainWindow *GetUi(){return ui;}
     ~MainWindow();
     void parseLogLine(QString, ServerInfo *);
@@ -110,9 +115,9 @@ protected:
     bool eventFilter(QObject *object, QEvent *event);
 
 public slots:
-    void ServerInfoReady(InfoReply *, QTableWidgetItem *);
-    void PlayerInfoReady(QList<PlayerInfo> *, QTableWidgetItem *);
-    void RulesInfoReady(QList<RulesInfo> *, QTableWidgetItem *);
+    void ServerInfoReady(InfoReply *, ServerTableIndexItem *);
+    void PlayerInfoReady(QList<PlayerInfo> *, ServerTableIndexItem *);
+    void RulesInfoReady(QList<RulesInfo> *, ServerTableIndexItem *);
     void RconAuthReady(ServerInfo *info, QList<QueuedCommand>queuedcmds);
     void RconOutput(ServerInfo *info, QByteArray res);
     void darkThemeTriggered();
@@ -122,7 +127,7 @@ public slots:
     void AddChatHistory(QString txt);
 
 private slots:
-    void addServer();
+    void addServerEntry();
     void browserTableItemSelected();
     void TimedUpdate();
     void processCommand();
@@ -144,10 +149,11 @@ private:
     void UpdateInfoTable(ServerInfo *info, bool current = true, QList<RulesInfo> *list = NULL);
     void HookEvents();
     void SetRconSignals(bool block);
-    void RestoreRcon(int index);
+    void RestoreRcon(ServerInfo *info);
     void SetRconEnabled(bool);
     QImage GetVACImage();
     QImage GetLockImage();
+    QColor GetTextColor();
     void runCommand(ServerInfo *, QString);
     void rconLoginQueued(QList<QueuedCommand>);
     LogHandler *pLogHandler;

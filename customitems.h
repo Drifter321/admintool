@@ -3,6 +3,9 @@
 
 #include <QTableWidgetItem>
 
+class ServerInfo;
+class MainWindow;
+
 //Time played in player area
 class PlayerTimeTableItem : public QTableWidgetItem
 {
@@ -17,6 +20,18 @@ private:
     void setTime();
     float time;
 };
+
+//Server items
+class ServerTableIndexItem : public QTableWidgetItem
+{
+public:
+    ServerTableIndexItem(ServerInfo *info);
+    ServerTableIndexItem(ServerInfo *info, QString text);
+    ServerInfo *GetServerInfo(){return serverInfo;}
+private:
+    ServerInfo *serverInfo = nullptr;
+};
+
 
 //Player count in browser area
 class PlayerTableItem : public QTableWidgetItem

@@ -9,8 +9,6 @@
 #include <QTime>
 #include <QXmlStreamReader>
 
-QColor errorColor(255, 60, 60);
-QColor queryingColor(80, 170, 80);
 QMap<int, QString> appIDMap;
 Settings *settings;
 QList<ServerInfo *> serverList;
@@ -172,37 +170,17 @@ void Settings::ReadSettings()
             continue;
         }
 
-        if(pMain->CheckServerList(list.at(0)) == AddServerError_None)
+        ServerInfo *info = pMain->AddServerToList(list.at(0));
+
+        if(info && list.size() == 2)
         {
-            ServerInfo *info = new ServerInfo(list.at(0));
-            serverList.append(info);
-
-            int row = pMain->GetUi()->browserTable->rowCount();
-            pMain->GetUi()->browserTable->insertRow(row);
-
-            QTableWidgetItem *item = new QTableWidgetItem();
-            QTableWidgetItem *id = new QTableWidgetItem();
-            id->setData(Qt::DisplayRole, serverList.size());
-
-            item->setTextColor(queryingColor);
-            item->setText(QString("Querying server %1...").arg(info->ipPort));
-            item->setToolTip(info->ipPort);
-            pMain->GetUi()->browserTable->setItem(row, kBrowserColIndex, id);
-            pMain->GetUi()->browserTable->setItem(row, kBrowserColHostname, item);
-
-            InfoQuery *infoQuery = new InfoQuery(pMain);
-            infoQuery->query(&info->host, info->port, id);
-
-            if(list.size() == 2)
+            SimpleCrypt encrypt;
+            encrypt.setKey(list.at(0).toLongLong());
+            QString pass = encrypt.decryptToString(list.at(1));
+            if(encrypt.lastError() == SimpleCrypt::ErrorNoError)
             {
-                SimpleCrypt encrypt;
-                encrypt.setKey(list.at(0).toLongLong());
-                QString pass = encrypt.decryptToString(list.at(1));
-                if(encrypt.lastError() == SimpleCrypt::ErrorNoError)
-                {
-                    info->rconPassword = pass;
-                    info->saveRcon = true;
-                }
+                info->rconPassword = pass;
+                info->saveRcon = true;
             }
         }
     }
@@ -247,12 +225,12 @@ void Settings::SaveSettings()
         {
             ServerInfo *info = serverList.at(i);
             QStringList list;
-            list.append(info->ipPort);
+            list.append(info->hostPort);
 
             if(info->saveRcon && info->rconPassword.length() >0)
             {
                 SimpleCrypt encrypt;
-                encrypt.setKey(info->ipPort.toLongLong());
+                encrypt.setKey(info->hostPort.toLongLong());
                 list.append(encrypt.encryptToString(info->rconPassword));
 
             }

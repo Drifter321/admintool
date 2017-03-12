@@ -68,4 +68,5 @@ DISTFILES += \
 
 win32: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/win/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/win/ -llibmaxminddb
 macx: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/mac/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/mac/ -lmaxminddb
+unix: QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/lib
 unix: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/linux/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/linux/ -lmaxminddb

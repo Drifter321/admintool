@@ -75,6 +75,8 @@ void MainWindow::customPlayerContextMenu(const QPoint &pos)
     if(row != -1)
     {
         QPoint globalpos = this->ui->playerTable->mapToGlobal(pos);
+        globalpos.setY(globalpos.y()+15);
+        globalpos.setX(globalpos.x()+5);
         QString name = this->ui->playerTable->item(row, NAME_COLUMN)->text();
         QString steamid = this->ui->playerTable->item(row, STEAMID_COLUMN)->text();
 

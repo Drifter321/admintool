@@ -1,26 +1,47 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>icons/alienswarm.png</file>
-        <file>icons/csgo.png</file>
-        <file>icons/cspromod.png</file>
-        <file>icons/dod.png</file>
-        <file>icons/dota2.png</file>
-        <file>icons/fortressforever.gif</file>
-        <file>icons/garrysmod.png</file>
-        <file>icons/hl2.gif</file>
-        <file>icons/insurgency.gif</file>
-        <file>icons/l4d.png</file>
-        <file>icons/nucleardawn.png</file>
-        <file>icons/rust.png</file>
-        <file>icons/zps.gif</file>
-        <file>icons/czero.gif</file>
-        <file>icons/cstrike.gif</file>
-        <file>icons/css.png</file>
-        <file>icons/dods.png</file>
+        <file>icons/7-days-to-die.png</file>
+        <file>icons/alien-swarm.png</file>
         <file>icons/ark.png</file>
-        <file>icons/l4d2.gif</file>
-        <file>icons/tf2.png</file>
-        <file>icons/tfc.png</file>
+        <file>icons/ballistic-overkill.png</file>
+        <file>icons/blade-symphony.png</file>
+        <file>icons/brainbread-2.png</file>
+        <file>icons/black-mesa.png</file>
+        <file>icons/codename-cure.png</file>
+        <file>icons/counter-strike.png</file>
+        <file>icons/counter-strike-condition-zero.png</file>
+        <file>icons/counter-strike-global-offensive.png</file>
+        <file>icons/counter-strike-source.png</file>
+        <file>icons/day-of-defeat.png</file>
+        <file>icons/day-of-defeat-source.png</file>
+        <file>icons/day-of-infamy.png</file>
+        <file>icons/deathmatch-classic.png</file>
+        <file>icons/dota-2.png</file>
+        <file>icons/double-action-boogaloo.png</file>
+        <file>icons/dystopia.png</file>
+        <file>icons/empires-mod.png</file>
+        <file>icons/garrys-mod.png</file>
+        <file>icons/fistful-of-frags.png</file>
+        <file>icons/half-life.png</file>
+        <file>icons/half-life-2.png</file>
+        <file>icons/half-life-deathmatch-source.png</file>
+        <file>icons/insurgency.png</file>
+        <file>icons/insurgency-mod.png</file>
+        <file>icons/natural-selection-2.png</file>
+        <file>icons/no-more-room-in-hell.png</file>
+        <file>icons/nuclear-dawn.png</file>
+        <file>icons/left-4-dead.png</file>
+        <file>icons/left-4-dead-2.png</file>
+        <file>icons/opposing-force.png</file>
+        <file>icons/pirates-vikings-knights-ii.png</file>
+        <file>icons/rust.png</file>
+        <file>icons/source-sdk.png</file>
+        <file>icons/source-sdk.png</file>
+        <file>icons/source-sdk.png</file>
+        <file>icons/sven-coop.png</file>
+        <file>icons/synergy.png</file>
+        <file>icons/team-fortress-2.png</file>
+        <file>icons/team-fortress-classic.png</file>
         <file>icons/lock.png</file>
         <file>icons/vac.png</file>
         <file>icons/lock-light.png</file>

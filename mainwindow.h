@@ -142,6 +142,7 @@ private slots:
     void customPlayerContextMenu(const QPoint &pos);
     void hideContextMenu();
     void playerContextMenuAction(const QString &cmd);
+    void serverBrowserContextMenu(const QPoint &pos);
 
 
 private:
@@ -158,6 +159,7 @@ private:
     QColor GetTextColor();
     void runCommand(ServerInfo *, QString);
     void rconLoginQueued(QList<QueuedCommand>);
+    bool deleteServerDialog();
     LogHandler *pLogHandler;
     QList<QString> commandHistory;
     QList<QString> sayHistory;

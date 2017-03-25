@@ -74,54 +74,8 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
         Qt::Key key = (Qt::Key)(((QKeyEvent *)event)->key());
         if(key == Qt::Key_Delete)
         {
-            ServerTableIndexItem *id = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
-            ServerInfo *info = id->GetServerInfo();
-            int index = serverList.indexOf(info);
-
-            QMessageBox message(this);
-            message.setInformativeText(QString("Delete %1?").arg(info->hostPort));
-            message.setText("Delete server from list?");
-            message.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
-            message.setDefaultButton(QMessageBox::Cancel);
-            int ret = message.exec();
-
-            if(ret == QMessageBox::Ok)
-            {
-                this->ui->browserTable->removeRow(this->ui->browserTable->currentRow());
-
-                for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
-                {
-                    QTableWidgetItem *item = this->ui->browserTable->item(i, kBrowserColIndex);
-
-                    int other = item->data(Qt::DisplayRole).toInt();
-
-                    if(other > index)
-                    {
-                        item->setData(Qt::DisplayRole, other-1);
-                    }
-                }
-
-                serverList.removeAll(info);
-                pLogHandler->removeServer(info);
-                delete info;
-                info = nullptr;
-
-                settings->SaveSettings();
-
-                if(this->ui->browserTable->selectedItems().size() == 0)
-                {
-                    //Clear everything no servers left.
-                    this->ui->rulesTable->setRowCount(0);
-                    this->ui->playerTable->setRowCount(0);
-                    this->ui->infoTable->setRowCount(0);
-
-                    this->ui->chatOutput->setHtml("");
-                    this->ui->commandOutput->setPlainText("");
-                    this->ui->rconPassword->setText("");
-                    this->ui->rconSave->setChecked(false);
-                }
+            if(this->deleteServerDialog())
                 return true;
-            }
         }
     }
     else if((object == this->ui->playerTable || object == this->ui->infoTable || object == this->ui->rulesTable) && event->type() == QEvent::KeyPress)

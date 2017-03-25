@@ -36,6 +36,7 @@ void MainWindow::ConnectSlots()
     this->ui->browserTable->connect(this->ui->browserTable, &QTableWidget::itemSelectionChanged, this, &MainWindow::browserTableItemSelected);
     this->ui->rconShow->connect(this->ui->rconShow, &QCheckBox::clicked, this, &MainWindow::showRconClicked);
     this->ui->playerTable->connect(this->ui->playerTable, &QTableWidget::customContextMenuRequested, this, &MainWindow::customPlayerContextMenu);
+    this->ui->browserTable->connect(this->ui->browserTable, &QTableWidget::customContextMenuRequested, this, &MainWindow::serverBrowserContextMenu);
 }
 
 QString CreateCommand(QString command, QString subValue, ContextTypes type, QString name, QString SteamID)
@@ -74,6 +75,8 @@ void MainWindow::customPlayerContextMenu(const QPoint &pos)
     if(row != -1)
     {
         QPoint globalpos = this->ui->playerTable->mapToGlobal(pos);
+        globalpos.setY(globalpos.y()+15);
+        globalpos.setX(globalpos.x()+5);
         QString name = this->ui->playerTable->item(row, NAME_COLUMN)->text();
         QString steamid = this->ui->playerTable->item(row, STEAMID_COLUMN)->text();
 
@@ -159,6 +162,30 @@ void MainWindow::playerContextMenuAction(const QString &cmd)
     info->rcon->execCommand(cmd, false);
 }
 
+void MainWindow::serverBrowserContextMenu(const QPoint &pos)
+{
+    int row = this->ui->browserTable->rowAt(pos.y());
+
+    QPoint globalpos = this->ui->browserTable->mapToGlobal(pos);
+    globalpos.setY(globalpos.y()+15);
+    globalpos.setX(globalpos.x()+5);
+    QMenu *pContextMenu = new QMenu(this);
+
+    QAction *add = new QAction("Add Server", pContextMenu);
+    add->connect(add, &QAction::triggered, this, [this]{addServerEntry();});
+    pContextMenu->addAction(add);
+
+    if(row != -1)
+    {
+        //Add delete action.
+        QAction *del = new QAction("Delete Server", pContextMenu);
+        del->connect(del, &QAction::triggered, this, [this]{deleteServerDialog();});
+        pContextMenu->addAction(del);
+    }
+    pContextMenu->connect(pContextMenu, &QMenu::aboutToHide, this, &MainWindow::hideContextMenu);
+    pContextMenu->exec(globalpos);
+}
+
 void MainWindow::addServerEntry()
 {
     QMessageBox message(this);
@@ -192,6 +219,59 @@ void MainWindow::addServerEntry()
         else
             break;
     }
+}
+
+bool MainWindow::deleteServerDialog()
+{
+    ServerTableIndexItem *id = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+    ServerInfo *info = id->GetServerInfo();
+    int index = serverList.indexOf(info);
+
+    QMessageBox message(this);
+    message.setInformativeText(QString("Delete %1?").arg(info->hostPort));
+    message.setText("Delete server from list?");
+    message.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+    message.setDefaultButton(QMessageBox::Cancel);
+    int ret = message.exec();
+
+    if(ret == QMessageBox::Ok)
+    {
+        this->ui->browserTable->removeRow(this->ui->browserTable->currentRow());
+
+        for(int i = 0; i < this->ui->browserTable->rowCount(); i++)
+        {
+            QTableWidgetItem *item = this->ui->browserTable->item(i, kBrowserColIndex);
+
+            int other = item->data(Qt::DisplayRole).toInt();
+
+            if(other > index)
+            {
+                item->setData(Qt::DisplayRole, other-1);
+            }
+        }
+
+        serverList.removeAll(info);
+        pLogHandler->removeServer(info);
+        delete info;
+        info = nullptr;
+
+        settings->SaveSettings();
+
+        if(this->ui->browserTable->selectedItems().size() == 0)
+        {
+            //Clear everything no servers left.
+            this->ui->rulesTable->setRowCount(0);
+            this->ui->playerTable->setRowCount(0);
+            this->ui->infoTable->setRowCount(0);
+
+            this->ui->chatOutput->setHtml("");
+            this->ui->commandOutput->setPlainText("");
+            this->ui->rconPassword->setText("");
+            this->ui->rconSave->setChecked(false);
+        }
+        return true;
+    }
+    return false;
 }
 
 void MainWindow::browserTableItemSelected()

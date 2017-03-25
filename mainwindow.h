@@ -37,14 +37,16 @@ struct InfoTableItem
         val = "";
     }
 
-    InfoTableItem(QString name, QString value)
+    InfoTableItem(QString name, QString value, bool richValue = false)
     {
         display = name;
         val = value;
+        this->richValue = richValue;
     }
 
     QString display;
     QString val;
+    bool richValue = false;
 };
 
 struct CtxSubItem

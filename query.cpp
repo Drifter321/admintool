@@ -3,6 +3,10 @@
 #include "mainwindow.h"
 #include <QDateTime>
 
+const qint32 k_nAppIDTheShip = 2400;
+const qint32 k_nAppIDKillingFloor = 1250;
+const qint32 k_nAppIDKillingFloor2 = 232090;
+
 QString GetStringFromStream(QDataStream &stream)
 {
     qint64 pos = stream.device()->pos();
@@ -27,6 +31,71 @@ QString GetStringFromStream(QDataStream &stream)
             QString res = QString(ret);
             delete [] ret;
             return res;
+        }
+
+    }while(stream.device()->bytesAvailable() > 0);
+
+    stream.device()->reset();
+    stream.skipRawData(pos);
+
+    return NULL;
+}
+
+QString GetRichUEStringFromStream(QDataStream &stream)
+{
+    qint64 pos = stream.device()->pos();
+    qint64 bytes = stream.device()->bytesAvailable();
+
+    do
+    {
+        qint8 byte;
+        stream >> byte;
+
+        if(byte == 0x00)
+        {
+            qint64 size = bytes - stream.device()->bytesAvailable();
+
+            char *ret = new char[size];
+
+            stream.device()->reset();
+            stream.skipRawData(pos);
+
+            stream.readRawData(ret, size);
+
+            std::string res;
+            bool inColor = false;
+            for (size_t i = 0; i < size; ++i)
+            {
+                if (ret[i] == 0x1B && ((i + 3) < size))
+                {
+                    if (inColor)
+                    {
+                        res += "</font>";
+                    }
+
+                    unsigned char r = ret[i+1];
+                    unsigned char g = ret[i+2];
+                    unsigned char b = ret[i+3];
+                    res += QString("<font color=\"%1\">").arg(
+                        QColor::fromRgb(r, g, b).name()
+                        ).toStdString();
+
+                    i += 3;
+                }
+                else
+                {
+                    res += ret[i];
+                }
+            }
+
+            if (inColor)
+            {
+                res += "</font>";
+            }
+
+            delete [] ret;
+
+            return QString::fromLatin1(res.c_str());
         }
 
     }while(stream.device()->bytesAvailable() > 0);
@@ -175,7 +244,8 @@ InfoReply::InfoReply(QByteArray response, qint64 ping)
         {
             this->success = true;
             data >> this->protocol;
-            this->hostname = GetStringFromStream(data);
+            qint64 hostnamePos = data.device()->pos();
+            this->hostnameRich = GetStringFromStream(data);
             this->map = GetStringFromStream(data);
             this->mod = GetStringFromStream(data);
             this->gamedesc = GetStringFromStream(data);
@@ -191,7 +261,7 @@ InfoReply::InfoReply(QByteArray response, qint64 ping)
             data >> this->vac;
 
             //The ship stuff...
-            if(this->appId == 2400)
+            if(this->appId == k_nAppIDTheShip)
             {
                 data.skipRawData(sizeof(qint8)*3);
             }
@@ -242,6 +312,14 @@ InfoReply::InfoReply(QByteArray response, qint64 ping)
                 data >> temp;
 
                 this->appId = temp & ((1 << 24) - 1);
+            }
+
+            // TODO: move these out to a config and add more games.
+            // Unreal Engine uses Extended ASCII instead of UTF8, and also supports colors in hostname.
+            if (this->appId == k_nAppIDKillingFloor || this->appId == k_nAppIDKillingFloor2)
+            {
+                data.device()->seek(hostnamePos);
+                this->hostnameRich = GetRichUEStringFromStream(data);
             }
         }
     }

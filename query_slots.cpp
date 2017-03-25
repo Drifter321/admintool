@@ -162,8 +162,12 @@ void MainWindow::CreateTableItemOrUpdate(size_t row, size_t col, QTableWidget *t
             case kBrowserColHostname:
                 if(info->queryState == QuerySuccess)
                 {
-                    item->setTextColor(this->GetTextColor());
-                    item->setText(info->serverName);
+                    item->setText("");
+                    auto *hostnameLabel = new QLabel();
+                    QString hostname;
+                    hostnameLabel->setTextFormat(Qt::RichText);
+                    hostnameLabel->setText(info->serverNameRich);
+                    table->setCellWidget(row, col, hostnameLabel);
                 }
                 else if(info->queryState == QueryFailed)
                 {
@@ -271,7 +275,7 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
         QList<InfoTableItem> items;
         items.append(InfoTableItem("Server IP", info->hostPort));
         items.append(InfoTableItem("PingGraph", ""));//Not used but place holder
-        items.append(InfoTableItem("Server Name", info->serverName));
+        items.append(InfoTableItem("Server Name", info->serverNameRich, true));
         items.append(InfoTableItem("Game", gameString));
         items.append(InfoTableItem("Players", info->playerCount));
         items.append(InfoTableItem("Map", mapString));
@@ -339,7 +343,16 @@ void MainWindow::UpdateInfoTable(ServerInfo *info, bool current, QList<RulesInfo
             {
                 this->ui->infoTable->insertRow(row);
                 this->ui->infoTable->setItem(row, 0, new QTableWidgetItem(item.display));
-                this->ui->infoTable->setItem(row, 1, new QTableWidgetItem(item.val));
+                if (item.richValue)
+                {
+                    auto label = new QLabel(item.val);
+                    label->setTextFormat(Qt::RichText);
+                    this->ui->infoTable->setCellWidget(row, 1, label);
+                }
+                else
+                {
+                    this->ui->infoTable->setItem(row, 1, new QTableWidgetItem(item.val));
+                }
                 row++;
             }
         }
@@ -418,7 +431,7 @@ void MainWindow::ServerInfoReady(InfoReply *reply, ServerTableIndexItem *indexCe
         info->currentMap = reply->map;
         info->gameName = reply->gamedesc;
         info->type = reply->type;
-        info->serverName = reply->hostname;
+        info->serverNameRich = reply->hostnameRich;
         info->playerCount = QString("%1 (%3)/%2").arg(QString::number(reply->players), QString::number(reply->maxplayers), QString::number(reply->bots));
         info->haveInfo = true;
         info->serverID = reply->serverID;

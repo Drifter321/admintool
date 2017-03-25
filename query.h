@@ -30,7 +30,7 @@ class InfoReply
 {
 public:
     InfoReply(QByteArray, qint64);
-    QString hostname;
+    QString hostnameRich;
     QString map;
     QString mod;
     QString gamedesc;

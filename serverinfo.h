@@ -65,7 +65,7 @@ public:
     QString version;
     QString os;
     qint32 appId;
-    QString serverName;
+    QString serverNameRich;
     QString currentMap;
     QString nextMap;
     QString ff;

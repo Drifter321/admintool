@@ -62,7 +62,7 @@ void RconQuery::socketReadyRead()
         }
         else if(type == RCON_EXEC_RESPONSE && id == rconID)
         {
-            char data[4096];
+            char data[4097];
             stream.readRawData(data, size-sizeof(qint32)*2);
             emit rconOutput(this->server, data);
         }

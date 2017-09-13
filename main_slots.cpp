@@ -8,6 +8,7 @@
 #include <QInputDialog>
 #include <QPalette>
 #include <QSignalMapper>
+#include <QDesktopServices>
 
 #define STEAMID_COLUMN 4
 #define NAME_COLUMN 1
@@ -171,16 +172,24 @@ void MainWindow::serverBrowserContextMenu(const QPoint &pos)
     globalpos.setX(globalpos.x()+5);
     QMenu *pContextMenu = new QMenu(this);
 
-    QAction *add = new QAction("Add Server", pContextMenu);
-    add->connect(add, &QAction::triggered, this, [this]{addServerEntry();});
-    pContextMenu->addAction(add);
-
-    if(row != -1)
+    if(row == -1)
+    {
+        QAction *add = new QAction("Add Server", pContextMenu);
+        add->connect(add, &QAction::triggered, this, [this]{addServerEntry();});
+        pContextMenu->addAction(add);
+    }
+    else
     {
         //Add delete action.
         QAction *del = new QAction("Delete Server", pContextMenu);
         del->connect(del, &QAction::triggered, this, [this]{deleteServerDialog();});
         pContextMenu->addAction(del);
+
+        //Add connect action
+        QAction *con = new QAction("Connect", pContextMenu);
+        con->connect(con, &QAction::triggered, this, [this]{connectToServer();}, Qt::QueuedConnection);
+        pContextMenu->addAction(con);
+        //QDesktopServices::openUrl(QUrl("steam://connect/192.168.1.101:27015"));
     }
     pContextMenu->connect(pContextMenu, &QMenu::aboutToHide, this, &MainWindow::hideContextMenu);
     pContextMenu->exec(globalpos);
@@ -224,6 +233,10 @@ void MainWindow::addServerEntry()
 bool MainWindow::deleteServerDialog()
 {
     ServerTableIndexItem *id = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+
+    if(!id)
+        return false;
+
     ServerInfo *info = id->GetServerInfo();
     int index = serverList.indexOf(info);
 
@@ -272,6 +285,18 @@ bool MainWindow::deleteServerDialog()
         return true;
     }
     return false;
+}
+
+void MainWindow::connectToServer()
+{
+    ServerTableIndexItem *id = this->GetServerTableIndexItem(this->ui->browserTable->currentRow());
+
+    if(!id)
+        return;
+
+    ServerInfo *info = id->GetServerInfo();
+    QString url = QString("steam://connect/%1").arg(info->hostPort);
+    QDesktopServices::openUrl(QUrl(url));
 }
 
 void MainWindow::browserTableItemSelected()

@@ -160,6 +160,7 @@ private:
     void runCommand(ServerInfo *, QString);
     void rconLoginQueued(QList<QueuedCommand>);
     bool deleteServerDialog();
+    void connectToServer();
     LogHandler *pLogHandler;
     QList<QString> commandHistory;
     QList<QString> sayHistory;

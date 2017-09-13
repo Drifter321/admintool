@@ -189,7 +189,6 @@ void MainWindow::serverBrowserContextMenu(const QPoint &pos)
         QAction *con = new QAction("Connect", pContextMenu);
         con->connect(con, &QAction::triggered, this, [this]{connectToServer();}, Qt::QueuedConnection);
         pContextMenu->addAction(con);
-        //QDesktopServices::openUrl(QUrl("steam://connect/192.168.1.101:27015"));
     }
     pContextMenu->connect(pContextMenu, &QMenu::aboutToHide, this, &MainWindow::hideContextMenu);
     pContextMenu->exec(globalpos);

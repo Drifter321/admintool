@@ -3,6 +3,7 @@
 #include "worker.h"
 #include <QMessageBox>
 #include <QNetworkReply>
+#include <QNetworkInterface>
 
 #define MINIUPNP_STATICLIB
 #include <miniupnpc.h>
@@ -17,8 +18,12 @@ LogHandler::LogHandler(MainWindow *main)
     this->logPort = 0;
     this->manager = NULL;
     this->logsocket = NULL;
+    this->pExternalIP = NULL;
+    this->pInternalIP = NULL;
+    this->pLocalAddress = NULL;
     this->createSocket();
     this->pMain = main;
+    this->findLocalAddress();
 }
 
 LogHandler::~LogHandler()
@@ -28,6 +33,71 @@ LogHandler::~LogHandler()
         this->logsocket->close();
         delete this->logsocket;
     }
+
+    if(this->pExternalIP)
+        delete this->pExternalIP;
+    if(this->pInternalIP)
+        delete this->pInternalIP;
+    if(this->pLocalAddress)
+        delete this->pLocalAddress;
+
+    if(this->manager)
+        delete this->manager;
+
+}
+
+/* Checks if ip is within the following ranges
+ *
+ * 10.0.0.0 – 10.255.255.255
+ * 172.16.0.0 – 172.31.255.255
+ * 192.168.0.0 – 192.168.255.255
+ *
+*/
+bool LogHandler::isPrivateIP(QHostAddress address)
+{
+    static QHostAddress arryPrivate[] = {QHostAddress("10.0.0.0"), QHostAddress("10.255.255.255"), QHostAddress("172.16.0.0"), QHostAddress("172.31.255.255"), QHostAddress("192.168.0.0"), QHostAddress("192.168.255.255")};
+
+    quint32 iAddress = address.toIPv4Address();
+
+    for(int i = 0; i < (sizeof(arryPrivate)/sizeof(arryPrivate[0])); i+=2)
+    {
+        if(iAddress >= arryPrivate[i].toIPv4Address() && iAddress <= arryPrivate[i+1].toIPv4Address())
+            return true;
+    }
+    return false;
+}
+
+void LogHandler::findLocalAddress()
+{
+    if(!this->pLocalAddress)
+        this->pLocalAddress = new QHostAddress();
+
+    this->pLocalAddress->clear();
+
+    foreach (const QHostAddress &address, QNetworkInterface::allAddresses())
+    {
+        if(address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost) && this->isPrivateIP(address))
+        {
+            this->pLocalAddress->setAddress(address.toString());
+            return;
+        }
+    }
+}
+
+void LogHandler::setExternalIP(QString szAddress)
+{
+    if(!this->pExternalIP)
+        this->pExternalIP = new QHostAddress();
+
+    this->pExternalIP->setAddress(szAddress);
+}
+
+void LogHandler::setInternalIP(QString szAddress)
+{
+    if(!this->pInternalIP)
+        this->pInternalIP = new QHostAddress();
+
+    this->pInternalIP->setAddress(szAddress);
 }
 
 void LogHandler::createSocket()
@@ -132,7 +202,7 @@ void LogHandler::createBind(quint16 port)
 
 void LogHandler::UPnPReady()
 {
-    if(!this->externalIP.isNull())
+    if(this->pExternalIP && !this->pExternalIP->isNull())
     {
         if(this->manager)
         {
@@ -141,7 +211,7 @@ void LogHandler::UPnPReady()
         }
         if(pMain->showLoggingInfo)
         {
-            QMessageBox::information(this->pMain, "Log Handler", QString("Listening on: %1:%2").arg(this->externalIP.toString(), this->szPort));
+            QMessageBox::information(this->pMain, "Log Handler", QString("Listening on: %1:%2").arg(this->pExternalIP->toString(), this->szPort));
             pMain->showLoggingInfo = false;
         }
     }
@@ -164,7 +234,7 @@ void LogHandler::apiFinished(QNetworkReply *reply)
     if(!reply->error())
     {
         QString external = reply->readAll();
-        this->externalIP = QHostAddress(external);
+        this->setExternalIP(external);
     }
     reply->deleteLater();
     emit UPnPReady();
@@ -208,7 +278,7 @@ void Worker::setupUPnP(LogHandler *logger)
 
     UPNP_GetValidIGD(devlist, &urls, &data, lanaddress, sizeof(lanaddress));
 
-    logger->internalIP = QHostAddress(QString(lanaddress));
+    logger->setInternalIP(QString(lanaddress));
 
     char externalIPAddress[64] = "";
     nResult = UPNP_GetExternalIPAddress(urls.controlURL, data.first.servicetype, externalIPAddress);
@@ -224,7 +294,7 @@ void Worker::setupUPnP(LogHandler *logger)
         return;
     }
 
-    logger->externalIP = QHostAddress(QString(externalIPAddress));
+    logger->setExternalIP(QString(externalIPAddress));
 
     nResult = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,  logger->szPort.toLatin1().data(), logger->szPort.toLatin1().data(), lanaddress, "Source Admin Tool", "UDP", 0, "0");
 
@@ -247,4 +317,17 @@ void Worker::setupUPnP(LogHandler *logger)
 
     emit UPnPReady();
     this->currentThread()->quit();
+}
+
+// Returns internal ip (from either network interface look up or UPnP creation) or external depending on if server is LAN or not.
+QHostAddress *LogHandler::getAddressToLogTo(QHostAddress serverAddress)
+{
+    if(this->isPrivateIP(serverAddress) && ((this->pInternalIP && !this->pInternalIP->isNull()) || (this->pLocalAddress && !this->pLocalAddress->isNull())))
+    {
+        if(this->pInternalIP && !this->pInternalIP->isNull())
+            return this->pInternalIP;
+
+        return this->pLocalAddress;
+    }
+    return this->pExternalIP;
 }

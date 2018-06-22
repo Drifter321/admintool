@@ -17,11 +17,15 @@ public:
     void createBind(quint16);
     void removeServer(ServerInfo *);
     void addServer(ServerInfo *);
-    void createSocket();
+    bool isPrivateIP(QHostAddress address);
+    QHostAddress *getAddressToLogTo(QHostAddress serverAddress);
     QString szPort;
     bool isBound;
-    QHostAddress externalIP;
-    QHostAddress internalIP;
+    void setExternalIP(QString szAddress);
+    void setInternalIP(QString szAddress);
+private:
+    void findLocalAddress();
+    void createSocket();
 
 signals:
     void setupUPnP(LogHandler *);
@@ -42,7 +46,11 @@ private:
     QThread workerThread;
     Worker *worker;
     QNetworkAccessManager *manager;
-
+    // Grabbed for UPnP
+    QHostAddress *pExternalIP;
+    QHostAddress *pInternalIP;
+    //Grabbed from network interfaces
+    QHostAddress *pLocalAddress;
 };
 
 #endif // LOGHANDLER_H

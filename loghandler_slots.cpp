@@ -21,22 +21,24 @@ void MainWindow::getLog()
     if(!info)
         return;//WHAT?!?!
 
-    if(this->pLogHandler->externalIP.isNull())
+    QHostAddress *pLogIP = this->pLogHandler->getAddressToLogTo(info->host);
+
+    if(!pLogIP || pLogIP->isNull())
     {
-        QMessageBox::critical(this, "Log Handler Error", "Failed to get external ip. Logging can not be enabled.");
+        QMessageBox::critical(this, "Log Handler Error", "Failed to get logging ip. Logging can not be enabled.");
         return;
     }
     else if(!info->rcon || !info->rcon->isAuthed)
     {
         QList<QueuedCommand>cmds;
         cmds.append(QueuedCommand("log on", QueuedCommandType::GetLogCommand));
-        cmds.append(QueuedCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort), QueuedCommandType::GetLogCommand));
+        cmds.append(QueuedCommand(QString("logaddress_add %1:%2").arg(pLogIP->toString(), this->pLogHandler->szPort), QueuedCommandType::GetLogCommand));
         this->rconLoginQueued(cmds);
         return;
     }
 
     info->rcon->execCommand("log on", false);
-    info->rcon->execCommand(QString("logaddress_add %1:%2").arg(this->pLogHandler->externalIP.toString(), this->pLogHandler->szPort), false);
+    info->rcon->execCommand(QString("logaddress_add %1:%2").arg(pLogIP->toString(), this->pLogHandler->szPort), false);
     pLogHandler->addServer(info);
 }
 

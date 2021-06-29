@@ -33,18 +33,27 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
             if(object == this->ui->commandText && this->commandHistory.size() > 0)
             {
                 if(!this->commandIter->hasNext())
-                {
                     this->commandIter->toFront();
+                if(this->commandIterDirection == kIterBackwards) {
+                    this->commandIter->next();
+                    if(!this->commandIter->hasNext())
+                        this->commandIter->toFront();
                 }
+
                 this->ui->commandText->setText(this->commandIter->next());
+                this->commandIterDirection = kIterForwards;
             }
             else if(object == this->ui->sendChat && this->sayHistory.size() > 0)
             {
                 if(!this->sayIter->hasNext())
-                {
                     this->sayIter->toFront();
+                if(this->sayIterDirection == kIterBackwards) {
+                    this->sayIter->next();
+                    if(!this->sayIter->hasNext())
+                        this->sayIter->toFront();
                 }
                 this->ui->sendChat->setText(this->sayIter->next());
+                this->sayIterDirection = kIterForwards;
             }
             return true;
         }
@@ -53,18 +62,26 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
             if(object == this->ui->commandText && this->commandHistory.size() > 0)
             {
                 if(!this->commandIter->hasPrevious())
-                {
                     this->commandIter->toBack();
+                if(this->commandIterDirection == kIterForwards) {
+                    this->commandIter->previous();
+                    if(!this->commandIter->hasPrevious())
+                        this->commandIter->toBack();
                 }
                 this->ui->commandText->setText(this->commandIter->previous());
+                this->commandIterDirection = kIterBackwards;
             }
             else if(object == this->ui->sendChat && this->sayHistory.size() > 0)
             {
                 if(!this->sayIter->hasPrevious())
-                {
                     this->sayIter->toBack();
+                if(this->sayIterDirection == kIterForwards) {
+                    this->sayIter->previous();
+                    if(!this->sayIter->hasPrevious())
+                        this->sayIter->toBack();
                 }
                 this->ui->sendChat->setText(this->sayIter->previous());
+                this->sayIterDirection = kIterBackwards;
             }
             return true;
         }

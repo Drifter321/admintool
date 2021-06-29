@@ -89,6 +89,13 @@ enum : size_t
     kBrowserColCount
 };
 
+enum : uint8_t
+{
+    kIterInit,
+    kIterForwards,
+    kIterBackwards
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -165,6 +172,8 @@ private:
     QList<QString> commandHistory;
     QList<QString> sayHistory;
     QMutableListIterator<QString> *commandIter;
+    uint8_t commandIterDirection;
     QMutableListIterator<QString> *sayIter;
+    uint8_t sayIterDirection;
 };
 #endif // MAINWINDOW_H

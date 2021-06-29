@@ -341,12 +341,13 @@ InfoReply *GetInfoReply(QHostAddress host, quint16 port)
 {
     QByteArray query;
     QDataStream data(&query, QIODevice::ReadWrite);
+    data.setByteOrder(QDataStream::LittleEndian);
 
     data << A2S_HEADER << (qint8)A2S_INFO;
     data.writeRawData(A2S_INFO_STRING, sizeof(A2S_INFO_STRING));
 
     qint64 ping = QDateTime::currentMSecsSinceEpoch();
-    QByteArray response = SendUDPQuery(query, host, port);
+    QByteArray byteResponse = SendUDPQuery(query, host, port);
     ping = QDateTime::currentMSecsSinceEpoch()-ping;
     if(ping > 2000)
     {
@@ -357,7 +358,33 @@ InfoReply *GetInfoReply(QHostAddress host, quint16 port)
         ping = 2000;
     }
 
-    return new InfoReply(response, ping);
+    // The A2S_INFO request was changed to require a challenge value
+    // like the other two query types in November 2020.
+    // If we receive a challenge response instead of the server info,
+    // resend the request with the received challenge value.
+    if(byteResponse.size() >= 9)
+    {
+        QDataStream response(byteResponse);
+        response.setByteOrder(QDataStream::LittleEndian);
+
+        qint32 header;
+        qint8 check;
+
+        response >> header;
+        response >> check;
+
+        if(header == -1 && check == A2S_INFO_CHALLENGE_CHECK)
+        {
+            qint32 challenge;
+            response >> challenge;
+
+            data << challenge;
+
+            byteResponse = SendUDPQuery(query, host, port);
+        }
+    }
+
+    return new InfoReply(byteResponse, ping);
 }
 
 PlayerQuery::PlayerQuery(MainWindow *main)

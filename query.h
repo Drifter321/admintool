@@ -12,6 +12,7 @@
 #define A2S_HEADER  0xFFFFFFFF
 
 #define A2S_INFO 0x54
+#define A2S_INFO_CHALLENGE_CHECK 0x41
 #define A2S_INFO_CHECK 0x49
 #define A2S_INFO_STRING "Source Engine Query"
 

@@ -57,9 +57,6 @@ macx {
     bundle.path = Contents/MacOS
     QMAKE_BUNDLE_DATA += bundle
 }
-unix:!macx {
-    QMAKE_CXXFLAGS_RELEASE += -no-pie
-}
 
 INCLUDEPATH += $$PWD/thirdparty/miniupnpc
 INCLUDEPATH += $$PWD/thirdparty/libmaxminddb

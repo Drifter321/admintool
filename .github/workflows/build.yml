@@ -1,0 +1,79 @@
+name: Continuous Integration
+on: 
+  push:
+  pull_request:
+    branches:
+     - master
+  workflow_dispatch:
+  schedule:
+    - cron: '53 05 01 */3 *' # Artifacts expire every 3 months
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: windows-latest
+            qt_arch: win32_msvc2019
+            os_short: win
+          - os: ubuntu-latest
+            os_short: linux
+          - os: macos-latest
+            os_short: mac
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare short commit sha
+        shell: bash
+        run: echo "GITHUB_SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Configure build for x86
+        if: startsWith(runner.os, 'Windows')
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64_x86
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v1
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          arch: ${{ matrix.qt_arch }}
+          aqtversion: '>=1.2.1'
+          py7zrversion: '>=0.16.1'
+
+      - name: Configure
+        run: qmake SourceAdminTool.pro -config release
+      - name: Build Linux
+        if: startsWith(runner.os, 'Linux')
+        shell: bash
+        run: |
+          make -j4
+          mkdir -p package/admintool/lib
+          cp GeoLite2-Country.mmdb app_list_map.ini commands.xml qt.conf package/admintool
+          cp $Qt5_DIR/lib/{libQt5Widgets.so.5,libQt5Gui.so.5,libQt5Network.so.5,libQt5Core.so.5,libicui18n.so.56,libicuuc.so.56,libicudata.so.56} package/admintool/lib
+      - name: Build macOS
+        if: startsWith(runner.os, 'macOS')
+        run: |
+          make -j4
+          macdeployqt SourceAdminTool.app
+          mkdir package
+          mv SourceAdminTool.app package
+      - name: Build Windows
+        if: startsWith(runner.os, 'Windows')
+        run: | 
+          nmake
+          windeployqt --no-compiler-runtime --no-opengl-sw --no-system-d3d-compiler --no-translations --no-angle --dir package release/SourceAdminTool.exe
+          Copy-Item GeoLite2-Country.mmdb,app_list_map.ini,commands.xml,release\SourceAdminTool.exe -Destination package -PassThru
+
+      - name: Create archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: SAT-${{ matrix.os_short }}-${{ env.GITHUB_SHA_SHORT }}
+          path: package

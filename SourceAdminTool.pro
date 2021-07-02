@@ -64,9 +64,12 @@ DEPENDPATH += $$PWD/thirdparty/miniupnpc
 DEPENDPATH += $$PWD/thirdparty/libmaxminddb
 
 DISTFILES += \
-    GeoLite2-Country.mmdb
+    GeoLite2-Country.mmdb \
+    commands.xml \
+    app_list_map.ini
 
 win32: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/win/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/win/ -llibmaxminddb
 macx: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/mac/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/mac/ -lmaxminddb
 unix:!macx: QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/lib
 unix:!macx: LIBS += -L$$PWD/thirdparty/miniupnpc/lib/linux/ -lminiupnpc -L$$PWD/thirdparty/libmaxminddb/lib/linux/ -lmaxminddb
+unix:!macx: DESTDIR = package/admintool

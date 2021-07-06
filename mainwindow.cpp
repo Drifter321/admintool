@@ -17,7 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Source Admin Tool");
     commandIter = new QMutableListIterator<QString>(this->commandHistory);
+    commandIterDirection = kIterInit;
     sayIter = new QMutableListIterator<QString>(this->sayHistory);
+    sayIterDirection = kIterInit;
     this->ui->commandOutput->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
     this->SetRconEnabled(false);

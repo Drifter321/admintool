@@ -397,6 +397,7 @@ void MainWindow::AddRconHistory(QString chat)
 
     this->commandHistory.prepend(chat);
     this->commandIter->toFront();
+    this->commandIterDirection = kIterInit;
 }
 
 void MainWindow::AddChatHistory(QString txt)
@@ -406,4 +407,5 @@ void MainWindow::AddChatHistory(QString txt)
 
     this->sayHistory.prepend(txt);
     this->sayIter->toFront();
+    this->sayIterDirection = kIterInit;
 }

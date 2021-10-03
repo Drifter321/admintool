@@ -336,6 +336,8 @@ void MainWindow::darkThemeTriggered()
 
         palette.setColor(QPalette::Highlight, QColor(80,80,80).lighter());
         palette.setColor(QPalette::HighlightedText, Qt::black);
+        palette.setColor(QPalette::Link,Qt::white);
+        palette.setColor(QPalette::LinkVisited, Qt::white);
         qApp->setPalette(palette);
     }
     else
@@ -381,7 +383,7 @@ void MainWindow::showAbout()
     QMessageBox message(this);
     message.setTextFormat(Qt::RichText);
     message.setText(
-                "Version: 1.1.0\n"
+                "Version: 1.1.1\n"
                 "Created by Dr!fter @ <a href=\"https://github.com/Drifter321\">https://github.com/Drifter321</a><br>"
                 "Using miniupnpc @ <a href=\"https://github.com/miniupnp/miniupnp\">https://github.com/miniupnp/miniupnp</a><br><br>"
                 "This product includes GeoLite2 data created by MaxMind, available from<br>"

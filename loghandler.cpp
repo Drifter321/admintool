@@ -181,7 +181,7 @@ void LogHandler::createBind(quint16 port)
 
     if(!this->logsocket->bind(QHostAddress::AnyIPv4, logPort))
     {
-        QMessageBox::critical(pMain, "Log Handler Error", "Failed to bind to port");
+        QMessageBox::critical(pMain, "Log Handler Error", "Failed to bind to port:\n" + this->logsocket->errorString());
         return;
     }
 

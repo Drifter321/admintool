@@ -42,7 +42,7 @@ LogHandler::~LogHandler()
         delete this->pLocalAddress;
 
     if(this->manager)
-        delete this->manager;
+        this->manager->deleteLater();
 
 }
 
@@ -206,7 +206,7 @@ void LogHandler::UPnPReady()
     {
         if(this->manager)
         {
-            delete this->manager;
+            this->manager->deleteLater();
             this->manager = NULL;
         }
         if(pMain->showLoggingInfo)
@@ -223,7 +223,7 @@ void LogHandler::UPnPReady()
     }
     else
     {
-        delete this->manager;
+        this->manager->deleteLater();
         this->manager = NULL;
         QMessageBox::critical(this->pMain, "Log Handler Error", QString("Failed to retrieve external IP."));
     }

@@ -42,7 +42,7 @@ LogHandler::~LogHandler()
         delete this->pLocalAddress;
 
     if(this->manager)
-        delete this->manager;
+        this->manager->deleteLater();
 
 }
 
@@ -181,7 +181,7 @@ void LogHandler::createBind(quint16 port)
 
     if(!this->logsocket->bind(QHostAddress::AnyIPv4, logPort))
     {
-        QMessageBox::critical(pMain, "Log Handler Error", "Failed to bind to port");
+        QMessageBox::critical(pMain, "Log Handler Error", "Failed to bind to port:\n" + this->logsocket->errorString());
         return;
     }
 
@@ -206,7 +206,7 @@ void LogHandler::UPnPReady()
     {
         if(this->manager)
         {
-            delete this->manager;
+            this->manager->deleteLater();
             this->manager = NULL;
         }
         if(pMain->showLoggingInfo)
@@ -223,7 +223,7 @@ void LogHandler::UPnPReady()
     }
     else
     {
-        delete this->manager;
+        this->manager->deleteLater();
         this->manager = NULL;
         QMessageBox::critical(this->pMain, "Log Handler Error", QString("Failed to retrieve external IP."));
     }

@@ -6,7 +6,8 @@ on:
      - master
   workflow_dispatch:
   schedule:
-    - cron: '53 05 01 */3 *' # Artifacts expire every 3 months
+    # Artifacts expire every 90 days
+    - cron: '53 05 01 * *'
 jobs:
   build:
     strategy:

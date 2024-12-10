@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Prepare short commit sha
         shell: bash
         run: echo "GITHUB_SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
@@ -35,16 +35,9 @@ jobs:
         with:
           arch: amd64_x86
 
-      - name: Cache Qt
-        id: cache-qt
-        uses: actions/cache@v1
-        with:
-          path: ../Qt
-          key: ${{ runner.os }}-QtCache
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v4
         with:
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
           arch: ${{ matrix.qt_arch }}
           aqtversion: '>=1.2.1'
           py7zrversion: '>=0.16.1'
@@ -58,10 +51,10 @@ jobs:
           make -j4
           mkdir -p package/lib/{platforms,xcbglintegrations}
           cp GeoLite2-Country.mmdb app_list_map.ini commands.xml qt.conf package
-          cp $Qt5_DIR/lib/{libQt5Widgets.so.5,libQt5Gui.so.5,libQt5Network.so.5,libQt5Core.so.5,libQt5XcbQpa.so.5,libicui18n.so.56,libicuuc.so.56,libicudata.so.56} package/lib
-          cp $Qt5_DIR/plugins/platforms/libqxcb.so package/lib/platforms
-          cp $Qt5_DIR/plugins/xcbglintegrations/{libqxcb-egl-integration.so,libqxcb-glx-integration.so} package/lib/xcbglintegrations
-          cp -r $Qt5_DIR/plugins/imageformats package/lib
+          cp $QT_ROOT_DIR/lib/{libQt5Widgets.so.5,libQt5Gui.so.5,libQt5Network.so.5,libQt5Core.so.5,libQt5XcbQpa.so.5,libicui18n.so.56,libicuuc.so.56,libicudata.so.56} package/lib
+          cp $QT_ROOT_DIR/plugins/platforms/libqxcb.so package/lib/platforms
+          cp $QT_ROOT_DIR/plugins/xcbglintegrations/{libqxcb-egl-integration.so,libqxcb-glx-integration.so} package/lib/xcbglintegrations
+          cp -r $QT_ROOT_DIR/plugins/imageformats package/lib
       - name: Build macOS
         if: startsWith(runner.os, 'macOS')
         run: |
@@ -77,7 +70,7 @@ jobs:
           Copy-Item GeoLite2-Country.mmdb,app_list_map.ini,commands.xml,release\SourceAdminTool.exe -Destination package -PassThru
 
       - name: Create archive
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: SAT-${{ matrix.os_short }}-${{ env.GITHUB_SHA_SHORT }}
           path: package

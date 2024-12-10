@@ -51,10 +51,10 @@ jobs:
           make -j4
           mkdir -p package/lib/{platforms,xcbglintegrations}
           cp GeoLite2-Country.mmdb app_list_map.ini commands.xml qt.conf package
-          cp $Qt5_DIR/lib/{libQt5Widgets.so.5,libQt5Gui.so.5,libQt5Network.so.5,libQt5Core.so.5,libQt5XcbQpa.so.5,libicui18n.so.56,libicuuc.so.56,libicudata.so.56} package/lib
-          cp $Qt5_DIR/plugins/platforms/libqxcb.so package/lib/platforms
-          cp $Qt5_DIR/plugins/xcbglintegrations/{libqxcb-egl-integration.so,libqxcb-glx-integration.so} package/lib/xcbglintegrations
-          cp -r $Qt5_DIR/plugins/imageformats package/lib
+          cp $QT_ROOT_DIR/lib/{libQt5Widgets.so.5,libQt5Gui.so.5,libQt5Network.so.5,libQt5Core.so.5,libQt5XcbQpa.so.5,libicui18n.so.56,libicuuc.so.56,libicudata.so.56} package/lib
+          cp $QT_ROOT_DIR/plugins/platforms/libqxcb.so package/lib/platforms
+          cp $QT_ROOT_DIR/plugins/xcbglintegrations/{libqxcb-egl-integration.so,libqxcb-glx-integration.so} package/lib/xcbglintegrations
+          cp -r $QT_ROOT_DIR/plugins/imageformats package/lib
       - name: Build macOS
         if: startsWith(runner.os, 'macOS')
         run: |

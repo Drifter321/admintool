@@ -53,6 +53,7 @@ win32 {
 }
 macx {
     ICON = icons/icon.icns
+    QMAKE_LIBS_OPENGL = -framework OpenGL
     bundle.files = $$PWD/GeoLite2-Country.mmdb $$PWD/commands.xml $$PWD/app_list_map.ini
     bundle.path = Contents/MacOS
     QMAKE_BUNDLE_DATA += bundle

@@ -75,3 +75,4 @@ jobs:
         with:
           name: SAT-${{ matrix.os_short }}-${{ env.GITHUB_SHA_SHORT }}
           path: package
+          if-no-files-found: error

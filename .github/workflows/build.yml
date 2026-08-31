@@ -24,16 +24,16 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Prepare short commit sha
         shell: bash
         run: echo "GITHUB_SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Configure build for x86
         if: startsWith(runner.os, 'Windows')
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: egor-tensin/vs-shell@v2
         with:
-          arch: amd64_x86
+          arch: x86
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
@@ -71,7 +71,8 @@ jobs:
           Copy-Item GeoLite2-Country.mmdb,app_list_map.ini,commands.xml,release\SourceAdminTool.exe -Destination package -PassThru
 
       - name: Create archive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: SAT-${{ matrix.os_short }}-${{ env.GITHUB_SHA_SHORT }}
           path: package
+          if-no-files-found: error
